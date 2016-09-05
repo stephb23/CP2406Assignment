@@ -5,6 +5,7 @@ public class Card {
     private String imageFile, imageName, cardName;
 
     public Card() {
+        // let all set to null
     }
 
     public Card(String cardName) {

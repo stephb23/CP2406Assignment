@@ -38,7 +38,7 @@ public class TestPlayCard {
         System.out.println("Expected Image Name = Slide25, Actual Image Name = " + testCard1.getImageName());
         System.out.println("Expected Card Name = Topaz, Actual Image Name = " + testCard1.getCardName());
         System.out.println("Expected Chemistry = Al_2 Si O_4 (F, OH)_2, Actual Chemistry = " + testCard1.getChemistry());
-        System.out.println("Expected Classification = nesosilicate, Actual Classification = " + testCard1.getClass());
+        System.out.println("Expected Classification = nesosilicate, Actual Classification = " + testCard1.getClassification());
         System.out.println("Expected Crystal System = orthorhombic, Actual Crystal System = " + testCard1.getCrystalSystem());
         System.out.println("Expected Occurrences = [metamorphic, sedimentary], Actual Occurences = " + testCard1.getOccurrences());
         System.out.println("Expected Hardness = 8, Actual Hardness = " + testCard1.getHardness());
@@ -46,5 +46,21 @@ public class TestPlayCard {
         System.out.println("Expected Cleavage = 1 poor, Actual Cleavage = " + testCard1.getCleavage());
         System.out.println("Expected Crystal Abundances = trace, Actual Crystal Abundances = " + testCard1.getCrystalAbundances());
         System.out.println("Expected Economic Value = moderate, Actual Economic Value = " + testCard1.getEconomicValue());
+
+        System.out.println("\nTest creating card using default constructor");
+        System.out.println(new PlayCard().toString());
+
+        System.out.println("\nTest creating card using card name parameter only");
+        System.out.println(new PlayCard("Ace"));
+
+        System.out.println("\nTest creating card using card name, image file, and image name");
+        System.out.println(new PlayCard("Deadshot.jpg", "Deadshot", "Ace"));
+
+        System.out.println("\nTest creating card using all parameters besides image name and file");
+        occurences.clear();
+        occurences.add("Air");
+        System.out.println(new PlayCard("Oxygen", "O2", "Gas", "Not-A-Crystal", occurences, "0", "0", "poor", "lots", "not much"));
+
+        System.out.println("\nAll constructors, getters and setters have been tested");
     }
 }

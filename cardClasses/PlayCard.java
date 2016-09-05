@@ -9,8 +9,8 @@ public class PlayCard extends Card {
     private ArrayList<String> occurrences = new ArrayList<>();
     private String hardness, specificGravity, cleavage, crystalAbundances, economicValue;
 
-    public PlayCard(){
-        super();
+    public PlayCard() {
+        // let all set to null;
     }
 
     public PlayCard(String cardName) {
