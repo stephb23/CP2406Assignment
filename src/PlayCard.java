@@ -7,9 +7,7 @@ import java.util.ArrayList;
 public class PlayCard extends Card {
     private String chemistry, classification, crystalSystem;
     private ArrayList<String> occurrences = new ArrayList<>();
-    private int hardness;
-    private double specificGravity;
-    private String cleavage, crystalAbundances, economicValue;
+    private String hardness, specificGravity, cleavage, crystalAbundances, economicValue;
 
     public PlayCard(){
         super();
@@ -31,8 +29,8 @@ public class PlayCard extends Card {
         this.classification = classification;
         this.crystalSystem = crystalSystem;
         this.occurrences = occurrences;
-        this.hardness = Integer.parseInt(hardness);
-        this.specificGravity = Double.parseDouble(specificGravity);
+        this.hardness = hardness;
+        this.specificGravity = specificGravity;
         this.cleavage = cleavage;
         this.crystalAbundances = crystalAbundances;
         this.economicValue = economicValue;
@@ -46,8 +44,8 @@ public class PlayCard extends Card {
         this.classification = classification;
         this.crystalSystem = crystalSystem;
         this.occurrences = occurrences;
-        this.hardness = Integer.parseInt(hardness);
-        this.specificGravity = Double.parseDouble(specificGravity);
+        this.hardness = hardness;
+        this.specificGravity = specificGravity;
         this.cleavage = cleavage;
         this.crystalAbundances = crystalAbundances;
         this.economicValue = economicValue;
@@ -85,19 +83,19 @@ public class PlayCard extends Card {
         return occurrences;
     }
 
-    public void setHardness(int hardness) {
+    public void setHardness(String hardness) {
         this.hardness = hardness;
     }
 
-    public int getHardness() {
+    public String getHardness() {
         return hardness;
     }
 
-    public void setSpecificGravity(double specificGravity) {
+    public void setSpecificGravity(String specificGravity) {
         this.specificGravity = specificGravity;
     }
 
-    public double getSpecificGravity() {
+    public String getSpecificGravity() {
         return specificGravity;
     }
 
