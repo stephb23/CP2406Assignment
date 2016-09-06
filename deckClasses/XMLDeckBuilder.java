@@ -5,17 +5,36 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by Stephanie on 5/09/2016.
  */
 public class XMLDeckBuilder implements DeckBuilder{
 
+    public enum CardField {
+        FILENAME, IMAGE_NAME, CARD_TITLE
+    }
+
+    public enum PlayCardField {
+        FILENAME, IMAGE_NAME, CARD_TITLE, CHEMISTRY, CLASSIFICATION,
+        CRYSTAL_SYSTEM, OCCURRENCE, HARDNESS, SPECIFIC_GRAVITY, CLEAVAGE, CRUSTAL_ABUNDANCE, ECONOMIC_VALUE
+    }
+
+    public enum TrumpCardField {
+        FILENAME, IMAGE_NAME, CARD_NAME, DESCRIPTION
+    }
+
     public static void main(String[] args) {
+        final int cardTypeIndex = 3;
+        String fileName, imageName, cardTitle, chemistry, classification, crystalSystem, hardness, specificGravity,
+                cleavage, crustalAbundance, economicValue;
+        ArrayList<String> occurrences = new ArrayList<>();
+        int shiftValue = 0;
+        PlayCard playCard;
+        TrumpCard trumpCard;
+
         try {
             // Read our XML file into a Java Document
             File xmlFile = new File("MstCards_151021.plist");
@@ -24,15 +43,48 @@ public class XMLDeckBuilder implements DeckBuilder{
             Document document = documentBuilder.parse(xmlFile);
 
             // These are the nodes you're looking for *jedi wave*
-            // Item 0 in this list is a write-off; it's the whole bloody file.
+            // Item 0 in this list is a write-off; it's the whole file.
             // Last three items are game info cards, not playing cards. IGNORE.
             NodeList nodeList = document.getElementsByTagName("dict");
             for (int i = 1; i < nodeList.getLength() - 3; ++i) {
                 Node node = nodeList.item(i);
-                System.out.println("Node: " + node.getTextContent());
                 if (node.getNodeType()== Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-                    System.out.println(element.getElementsByTagName("string").item(2).getTextContent());
+                    NodeList allKeys = element.getElementsByTagName("key");
+                    NodeList allValues = element.getElementsByTagName("string");
+
+                    if (allKeys.item(cardTypeIndex).getTextContent().equals("play")){
+                        occurrences.add(allValues.item(PlayCardField.OCCURRENCE.ordinal()).getTextContent());
+
+                        if (allValues.getLength() == 14) {
+                            shiftValue = 2;
+                            occurrences.add(allValues.item(PlayCardField.OCCURRENCE.ordinal() + 1).getTextContent());
+                            occurrences.add(allValues.item(PlayCardField.OCCURRENCE.ordinal() + 2).getTextContent());
+                        } else if (allValues.getLength() == 13) {
+                            shiftValue = 1;
+                            occurrences.add(allValues.item(PlayCardField.OCCURRENCE.ordinal() + 1).getTextContent());
+                        } else {
+                            shiftValue = 0;
+                        }
+
+                        fileName = allValues.item(PlayCardField.FILENAME.ordinal()).getTextContent();
+                        imageName = allValues.item(PlayCardField.IMAGE_NAME.ordinal()).getTextContent();
+                        cardTitle = allValues.item(PlayCardField.CARD_TITLE.ordinal()).getTextContent();
+                        chemistry = allValues.item(PlayCardField.CHEMISTRY.ordinal()).getTextContent();
+                        classification = allValues.item(PlayCardField.CLASSIFICATION.ordinal()).getTextContent();
+                        crystalSystem = allValues.item(PlayCardField.CRYSTAL_SYSTEM.ordinal()).getTextContent();
+                        hardness = allValues.item(PlayCardField.HARDNESS.ordinal() + shiftValue).getTextContent();
+                        specificGravity = allValues.item(PlayCardField.SPECIFIC_GRAVITY.ordinal() + shiftValue).getTextContent();
+                        cleavage = allValues.item(PlayCardField.CLEAVAGE.ordinal() + shiftValue).getTextContent();
+                        crustalAbundance = allValues.item(PlayCardField.CRUSTAL_ABUNDANCE.ordinal() + shiftValue).getTextContent();
+                        economicValue = allValues.item(PlayCardField.ECONOMIC_VALUE.ordinal() + shiftValue).getTextContent();
+
+                        playCard = new PlayCard(fileName, imageName, cardTitle, chemistry, classification, crystalSystem,
+                                occurrences, hardness, specificGravity, cleavage, crustalAbundance, economicValue);
+
+                        System.out.println(playCard.toString()+ "\n");
+                        cardDeck.add(playCard);
+                    }
                 }
             }
 

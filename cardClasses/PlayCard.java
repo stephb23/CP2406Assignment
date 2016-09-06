@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +6,7 @@ import java.util.ArrayList;
 public class PlayCard extends Card {
     private String chemistry, classification, crystalSystem;
     private ArrayList<String> occurrences = new ArrayList<>();
-    private String hardness, specificGravity, cleavage, crystalAbundances, economicValue;
+    private String hardness, specificGravity, cleavage, crustalAbundances, economicValue;
 
     public PlayCard() {
         // let all set to null;
@@ -23,7 +22,7 @@ public class PlayCard extends Card {
 
     public PlayCard(String cardName, String chemistry, String classification, String crystalSystem,
                     ArrayList<String> occurrences, String hardness, String specificGravity, String cleavage,
-                    String crystalAbundances, String economicValue) {
+                    String crustalAbundances, String economicValue) {
         super(cardName);
         this.chemistry = chemistry;
         this.classification = classification;
@@ -32,7 +31,7 @@ public class PlayCard extends Card {
         this.hardness = hardness;
         this.specificGravity = specificGravity;
         this.cleavage = cleavage;
-        this.crystalAbundances = crystalAbundances;
+        this.crustalAbundances = crustalAbundances;
         this.economicValue = economicValue;
     }
 
@@ -47,7 +46,7 @@ public class PlayCard extends Card {
         this.hardness = hardness;
         this.specificGravity = specificGravity;
         this.cleavage = cleavage;
-        this.crystalAbundances = crystalAbundances;
+        this.crustalAbundances = crystalAbundances;
         this.economicValue = economicValue;
     }
 
@@ -107,12 +106,12 @@ public class PlayCard extends Card {
         return cleavage;
     }
 
-    public void setCrystalAbundances(String crystalAbundances) {
-        this.crystalAbundances = crystalAbundances;
+    public void setCrustalAbundances(String crustalAbundances) {
+        this.crustalAbundances = crustalAbundances;
     }
 
-    public String getCrystalAbundances(){
-        return crystalAbundances;
+    public String getCrustalAbundances(){
+        return crustalAbundances;
     }
 
     public void setEconomicValue(String economicValue) {
@@ -128,8 +127,8 @@ public class PlayCard extends Card {
         String playCardString = super.toString();
         playCardString += ",\nChemistry = " + chemistry + ", Classification = " + classification + ", Crystal System = "
                 + crystalSystem + ",\nOccurences = " + occurrences.toString() + ",\nHardness = " + hardness +
-                ", Specific Gravity = " + specificGravity + ", Cleavage = " + cleavage + ",\nCrystal Abundances = " +
-                crystalAbundances + " and Economic Value = " + economicValue;
+                ", Specific Gravity = " + specificGravity + ", Cleavage = " + cleavage + ",\nCrustal Abundances = " +
+                crustalAbundances + " and Economic Value = " + economicValue;
         return playCardString;
 
     }

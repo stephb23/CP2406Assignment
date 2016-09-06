@@ -28,7 +28,7 @@ public class TestPlayCard {
         testCard1.setHardness("8");
         testCard1.setSpecificGravity("3.5 - 3.6");
         testCard1.setCleavage("1 poor");
-        testCard1.setCrystalAbundances("trace");
+        testCard1.setCrustalAbundances("trace");
         testCard1.setEconomicValue("moderate");
         System.out.println("Card information now is: ");
         System.out.println(testCard1.toString());
@@ -44,7 +44,7 @@ public class TestPlayCard {
         System.out.println("Expected Hardness = 8, Actual Hardness = " + testCard1.getHardness());
         System.out.println("Expected Specific Gravity = 3.5 - 3.6, Actual Specific Gravity = " + testCard1.getSpecificGravity());
         System.out.println("Expected Cleavage = 1 poor, Actual Cleavage = " + testCard1.getCleavage());
-        System.out.println("Expected Crystal Abundances = trace, Actual Crystal Abundances = " + testCard1.getCrystalAbundances());
+        System.out.println("Expected Crustal Abundances = trace, Actual Crustal Abundances = " + testCard1.getCrustalAbundances());
         System.out.println("Expected Economic Value = moderate, Actual Economic Value = " + testCard1.getEconomicValue());
 
         System.out.println("\nTest creating card using default constructor");
