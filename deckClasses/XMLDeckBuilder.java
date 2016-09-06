@@ -22,7 +22,7 @@ public class XMLDeckBuilder implements DeckBuilder{
         FILENAME, IMAGE_NAME, CARD_NAME, DESCRIPTION
     }
 
-    public static void main(String[] args) {
+    public XMLDeckBuilder() {
         final int cardTypeIndex = 3;
         String fileName, imageName, cardTitle, chemistry, classification, crystalSystem, hardness, specificGravity,
                 cleavage, crustalAbundance, economicValue;
@@ -78,7 +78,6 @@ public class XMLDeckBuilder implements DeckBuilder{
                         playCard = new PlayCard(fileName, imageName, cardTitle, chemistry, classification, crystalSystem,
                                 occurrences, hardness, specificGravity, cleavage, crustalAbundance, economicValue);
 
-                        System.out.println(playCard.toString()+ "\n");
                         cardDeck.add(playCard);
                     } else if (allKeys.item(cardTypeIndex).getTextContent().equals("trump")) {
                         fileName = allValues.item(TrumpCardField.FILENAME.ordinal()).getTextContent();
@@ -88,14 +87,10 @@ public class XMLDeckBuilder implements DeckBuilder{
 
                         trumpCard = new TrumpCard(fileName, imageName, cardTitle, description);
 
-                        System.out.println(trumpCard.toString() + "\n");
                         cardDeck.add(trumpCard);
                     }
                 }
             }
-
-
-
         } catch (Exception e) {
             System.out.println("Error reading the XML File");
         }

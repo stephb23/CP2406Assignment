@@ -33,17 +33,25 @@ public class Deck {
         cardDeck.remove(index);
     }
 
-    public void shuffleDeck() {
+    public void shuffle() {
         long seed = System.nanoTime();
         Collections.shuffle(cardDeck, new Random(seed));
     }
 
+    public int length() {
+        return cardDeck.size();
+    }
+
+    @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
         Card card;
         for (int i = 0; i < cardDeck.size(); ++i) {
             card = cardDeck.get(i);
-            builder.append(card.getCardName() + "\n");
+            builder.append(card.getCardName() + ". ");
+            if (i%5 == 0 && i != 0) {
+                builder.append("\n");
+            }
         }
         return builder.toString();
     }

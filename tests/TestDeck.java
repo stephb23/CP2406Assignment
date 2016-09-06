@@ -30,11 +30,11 @@ public class TestDeck {
         System.out.println(deck.getCardAt(2).toString());
 
         System.out.println("Shuffling the deck. Deck is now...");
-        deck.shuffleDeck();
+        deck.shuffle();
         System.out.println(deck.toString());
 
         System.out.println("Shuffling deck one more time for good measure. Deck is now...");
-        deck.shuffleDeck();
+        deck.shuffle();
         System.out.println(deck.toString());
 
     }
