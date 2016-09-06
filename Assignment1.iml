@@ -6,6 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/cardClasses" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/deckClasses" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/playerClasses" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/gameClasses" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
