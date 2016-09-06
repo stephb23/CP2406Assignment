@@ -13,16 +13,12 @@ import java.util.ArrayList;
  */
 public class XMLDeckBuilder implements DeckBuilder{
 
-    public enum CardField {
-        FILENAME, IMAGE_NAME, CARD_TITLE
-    }
-
-    public enum PlayCardField {
+    private enum PlayCardField {
         FILENAME, IMAGE_NAME, CARD_TITLE, CHEMISTRY, CLASSIFICATION,
         CRYSTAL_SYSTEM, OCCURRENCE, HARDNESS, SPECIFIC_GRAVITY, CLEAVAGE, CRUSTAL_ABUNDANCE, ECONOMIC_VALUE
     }
 
-    public enum TrumpCardField {
+    private enum TrumpCardField {
         FILENAME, IMAGE_NAME, CARD_NAME, DESCRIPTION
     }
 
@@ -32,6 +28,7 @@ public class XMLDeckBuilder implements DeckBuilder{
                 cleavage, crustalAbundance, economicValue;
         ArrayList<String> occurrences = new ArrayList<>();
         int shiftValue = 0;
+        String description;
         PlayCard playCard;
         TrumpCard trumpCard;
 
@@ -44,9 +41,8 @@ public class XMLDeckBuilder implements DeckBuilder{
 
             // These are the nodes you're looking for *jedi wave*
             // Item 0 in this list is a write-off; it's the whole file.
-            // Last three items are game info cards, not playing cards. IGNORE.
             NodeList nodeList = document.getElementsByTagName("dict");
-            for (int i = 1; i < nodeList.getLength() - 3; ++i) {
+            for (int i = 1; i < nodeList.getLength(); ++i) {
                 Node node = nodeList.item(i);
                 if (node.getNodeType()== Node.ELEMENT_NODE) {
                     Element element = (Element) node;
@@ -84,6 +80,16 @@ public class XMLDeckBuilder implements DeckBuilder{
 
                         System.out.println(playCard.toString()+ "\n");
                         cardDeck.add(playCard);
+                    } else if (allKeys.item(cardTypeIndex).getTextContent().equals("trump")) {
+                        fileName = allValues.item(TrumpCardField.FILENAME.ordinal()).getTextContent();
+                        imageName = allValues.item(TrumpCardField.IMAGE_NAME.ordinal()).getTextContent();
+                        cardTitle = allValues.item(TrumpCardField.CARD_NAME.ordinal()).getTextContent();
+                        description = allValues.item(TrumpCardField.DESCRIPTION.ordinal()).getTextContent();
+
+                        trumpCard = new TrumpCard(fileName, imageName, cardTitle, description);
+
+                        System.out.println(trumpCard.toString() + "\n");
+                        cardDeck.add(trumpCard);
                     }
                 }
             }
