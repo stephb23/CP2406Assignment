@@ -9,16 +9,24 @@ import java.util.Random;
 public class Deck {
     private ArrayList<Card> cardDeck;
 
+    public Deck() {
+        cardDeck = new ArrayList<>();
+    }
+
     public Deck(ArrayList<Card> cardDeck) {
         this.cardDeck = cardDeck;
     }
 
-    public ArrayList<Card> getAllCardsInDeck() {
-        return cardDeck;
-    }
-
     public Card getCardAt(int index) {
         return cardDeck.get(index);
+    }
+
+    public void addCard(Card card) {
+        cardDeck.add(card);
+    }
+
+    public void addCardAt(Card card, int index) {
+        cardDeck.add(index, card);
     }
 
     public void removeCardAt(int index) {
@@ -30,5 +38,14 @@ public class Deck {
         Collections.shuffle(cardDeck, new Random(seed));
     }
 
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        Card card;
+        for (int i = 0; i < cardDeck.size(); ++i) {
+            card = cardDeck.get(i);
+            builder.append(card.getCardName() + "\n");
+        }
+        return builder.toString();
+    }
 
 }
