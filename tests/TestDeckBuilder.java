@@ -1,3 +1,6 @@
+import decks.Deck;
+import decks.XMLDeckBuilder;
+
 /**
  * Created by Stephanie on 6/09/2016.
  */
@@ -10,7 +13,7 @@ public class TestDeckBuilder {
         System.out.println("The deck contains the following cards: ");
         System.out.println(deck.toString());
 
-        System.out.println("\nNow let's shuffle the cards! Deck now is: ");
+        System.out.println("\nNow let's shuffle the cards! decks.Deck now is: ");
         deck.shuffle();
         System.out.println(deck.toString());
 

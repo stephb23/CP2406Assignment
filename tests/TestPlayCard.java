@@ -1,3 +1,5 @@
+import cards.PlayCard;
+
 import java.util.ArrayList;
 
 /**
@@ -13,7 +15,7 @@ public class TestPlayCard {
         PlayCard testCard1 = new PlayCard("Slide01.jpg", "Slide01", "Quartz", "SiO_2", "tectosilicate", "hexagonal",
                 occurences, "7", "2.65", "poor/none", "high", "moderate");
 
-        System.out.println("Testing PlayCard using Quartz card from assignment specification...");
+        System.out.println("Testing cards.PlayCard using Quartz card from assignment specification...");
         System.out.println(testCard1.toString());
 
         System.out.println("\nTesting setter methods by changing the card to Topaz card from assignment");
@@ -30,13 +32,13 @@ public class TestPlayCard {
         testCard1.setCleavage("1 poor");
         testCard1.setCrustalAbundances("trace");
         testCard1.setEconomicValue("moderate");
-        System.out.println("Card information now is: ");
+        System.out.println("cards.Card information now is: ");
         System.out.println(testCard1.toString());
 
         System.out.println("\nTest getters using this card");
         System.out.println("Expected Image File = Slide25.jpg, Actual Image File = " + testCard1.getImageFile());
         System.out.println("Expected Image Name = Slide25, Actual Image Name = " + testCard1.getImageName());
-        System.out.println("Expected Card Name = Topaz, Actual Image Name = " + testCard1.getCardName());
+        System.out.println("Expected cards.Card Name = Topaz, Actual Image Name = " + testCard1.getCardName());
         System.out.println("Expected Chemistry = Al_2 Si O_4 (F, OH)_2, Actual Chemistry = " + testCard1.getChemistry());
         System.out.println("Expected Classification = nesosilicate, Actual Classification = " + testCard1.getClassification());
         System.out.println("Expected Crystal System = orthorhombic, Actual Crystal System = " + testCard1.getCrystalSystem());

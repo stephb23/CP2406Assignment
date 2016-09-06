@@ -1,3 +1,10 @@
+package decks;
+
+import cards.Card;
+import cards.PlayCard;
+import cards.TrumpCard;
+import decks.Deck;
+import decks.DeckBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -11,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by Stephanie on 5/09/2016.
  */
-public class XMLDeckBuilder implements DeckBuilder{
+public class XMLDeckBuilder implements DeckBuilder {
 
     private enum PlayCardField {
         FILENAME, IMAGE_NAME, CARD_TITLE, CHEMISTRY, CLASSIFICATION,

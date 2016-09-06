@@ -1,3 +1,7 @@
+package cards;
+
+import cards.Card;
+
 /**
  * Created by Stephanie on 5/09/2016.
  */
@@ -29,7 +33,7 @@ public class TrumpCard extends Card {
     @Override
     public String toString() {
         String trumpString = super.toString();
-        trumpString += "\nCard Description = " + cardDescription;
+        trumpString += "\ncards.Card Description = " + cardDescription;
         return trumpString;
     }
 }

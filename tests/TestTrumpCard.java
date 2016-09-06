@@ -1,3 +1,5 @@
+import cards.TrumpCard;
+
 /**
  * Created by Stephanie on 5/09/2016.
  */
@@ -16,11 +18,11 @@ public class TestTrumpCard {
 
         System.out.println("\nTest new setter by changing description of the first card");
         testTrumpCard.setCardDescription("This is a card");
-        System.out.println("Card is now: ");
+        System.out.println("cards.Card is now: ");
         System.out.println(testTrumpCard.toString());
 
         System.out.println("\nTesting new getter using the edited card");
-        System.out.println("Expected Card Description = This is a card, Actual Card Description = " +
+        System.out.println("Expected cards.Card Description = This is a card, Actual cards.Card Description = " +
                 testTrumpCard.getCardDescription());
 
         System.out.println("\nAll tests complete");

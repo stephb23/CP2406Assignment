@@ -1,3 +1,7 @@
+package players;
+
+import cards.Card;
+
 import java.util.ArrayList;
 
 /**

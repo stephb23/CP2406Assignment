@@ -1,3 +1,5 @@
+package cards;
+
 /**
  * Created by Stephanie on 2/09/2016.
  */
@@ -45,7 +47,7 @@ public class Card {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Card Name = " + cardName);
+        builder.append("cards.Card Name = " + cardName);
         builder.append(", Image Name = " + imageName);
         builder.append(", Image File = " + imageFile);
 
