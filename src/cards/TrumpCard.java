@@ -33,7 +33,7 @@ public class TrumpCard extends Card {
     @Override
     public String toString() {
         String trumpString = super.toString();
-        trumpString += "\ncards.Card Description = " + cardDescription;
+        trumpString += "\nCard Description = " + cardDescription;
         return trumpString;
     }
 }

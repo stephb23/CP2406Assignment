@@ -17,6 +17,10 @@ public class Player {
         hasPassed = false;
     }
 
+    public void setHand(ArrayList<Card> playerHand) {
+        this.playerHand = playerHand;
+    }
+
     public void playCard(int index) {
         playerHand.remove(index);
     }
@@ -39,6 +43,10 @@ public class Player {
 
     public String getName() {
         return name;
+    }
+
+    public Card getCardAt(int index) {
+        return playerHand.get(index);
     }
 
 }

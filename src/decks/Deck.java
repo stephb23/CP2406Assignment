@@ -45,6 +45,25 @@ public class Deck {
         return cardDeck.size();
     }
 
+    public ArrayList<Card> dealHand() {
+        ArrayList<Card> hand = new ArrayList<>();
+        for (int i = 0; i < 8; ++i) {
+            hand.add(cardDeck.get(i));
+        }
+
+        for (int i = 0; i < 8; ++i) {
+            cardDeck.remove(0);
+        }
+
+        return hand;
+    }
+
+    public Card dealCard() {
+        Card card = cardDeck.get(0);
+        cardDeck.remove(0);
+        return card;
+    }
+
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
