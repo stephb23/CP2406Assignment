@@ -6,7 +6,7 @@ import java.util.Scanner;
 /**
  * Created by Stephanie on 6/09/2016.
  */
-public class Runner {
+public class GameRunner {
     private static String playerName;
 
     public static void main(String[] args) {
