@@ -7,18 +7,21 @@ import cards.Card;
  */
 public class TrumpCard extends Card {
     private String cardDescription;
+    private final String TYPE_STRING = "trump";
 
     public TrumpCard() {
-        // let all set to null
+        setType(TYPE_STRING);
     }
 
     public TrumpCard(String cardName, String cardDescription) {
         super(cardName);
+        setType(TYPE_STRING);
         this.cardDescription = cardDescription;
     }
 
     public TrumpCard(String imageFile, String imageName, String cardName, String cardDescription) {
         super(imageFile, imageName, cardName);
+        setType(TYPE_STRING);
         this.cardDescription = cardDescription;
     }
 
@@ -34,6 +37,11 @@ public class TrumpCard extends Card {
     public String toString() {
         String trumpString = super.toString();
         trumpString += "\nCard Description = " + cardDescription;
+        return trumpString;
+    }
+
+    public String toShortString() {
+        String trumpString = "Name: " + getCardName() + ", Trump Suit: " + getCardDescription();
         return trumpString;
     }
 }

@@ -14,4 +14,8 @@ public class AIPlayer extends Player {
         super(name);
     }
 
+    public void playCard(Card currentCard) {
+
+    }
+
 }

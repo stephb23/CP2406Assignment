@@ -4,7 +4,7 @@ package cards;
  * Created by Stephanie on 2/09/2016.
  */
 public class Card {
-    private String imageFile, imageName, cardName;
+    private String imageFile, imageName, cardName, type;
 
     public Card() {
         // let all set to null
@@ -42,6 +42,14 @@ public class Card {
 
     public String getCardName() {
         return cardName;
+    }
+
+    protected void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 
     @Override

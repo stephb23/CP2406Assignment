@@ -1,33 +1,35 @@
 package cards;
 
-import cards.Card;
-
 import java.util.ArrayList;
 
 /**
  * Created by Stephanie on 2/09/2016.
  */
 public class PlayCard extends Card {
+    private final String TYPE_STRING = "play";
     private String chemistry, classification, crystalSystem;
     private ArrayList<String> occurrences = new ArrayList<>();
     private String hardness, specificGravity, cleavage, crustalAbundances, economicValue;
 
     public PlayCard() {
-        // let all set to null;
+        setType(TYPE_STRING);
     }
 
     public PlayCard(String cardName) {
         super(cardName);
+        setType(TYPE_STRING);
     }
 
     public PlayCard(String imageFile, String imageName, String cardName) {
         super(imageFile, imageName, cardName);
+        setType(TYPE_STRING);
     }
 
     public PlayCard(String cardName, String chemistry, String classification, String crystalSystem,
                     ArrayList<String> occurrences, String hardness, String specificGravity, String cleavage,
                     String crustalAbundances, String economicValue) {
         super(cardName);
+        setType(TYPE_STRING);
         this.chemistry = chemistry;
         this.classification = classification;
         this.crystalSystem = crystalSystem;
@@ -43,6 +45,7 @@ public class PlayCard extends Card {
                     String crystalSystem, ArrayList<String> occurrences, String hardness, String specificGravity,
                     String cleavage, String crystalAbundances, String economicValue) {
         super(imageFile, imageName, cardName);
+        setType(TYPE_STRING);
         this.chemistry = chemistry;
         this.classification = classification;
         this.crystalSystem = crystalSystem;
@@ -137,4 +140,10 @@ public class PlayCard extends Card {
 
     }
 
+    public String toShortString() {
+        String playCardString = "Name: "  + getCardName() + ", Hardness = " + hardness + ", Specific Gravity = " +
+                specificGravity + ", Cleavage: " + cleavage + ", Crustal Abundances: " + crustalAbundances + " and " +
+                "Economic Value: " + economicValue;
+        return playCardString;
+    }
 }

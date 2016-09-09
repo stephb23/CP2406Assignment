@@ -13,6 +13,7 @@ public class Player {
     private boolean hasPassed;
 
     public Player(String name) {
+        this.name = name;
         playerHand = new ArrayList<>();
         hasPassed = false;
     }
@@ -47,6 +48,12 @@ public class Player {
 
     public Card getCardAt(int index) {
         return playerHand.get(index);
+    }
+
+    @Override
+    public String toString(){
+        String playerString = "Player's name is " + name;
+        return playerString;
     }
 
 }
