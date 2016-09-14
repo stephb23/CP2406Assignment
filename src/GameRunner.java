@@ -11,13 +11,13 @@ import java.util.Scanner;
  */
 public class GameRunner {
     private static String playerName;
+    private static ArrayList<Player> allPlayers;
+    private static MessageDisplayer messageDisplayer = new MessageDisplayer();
+    private static InputReader inputReader = new InputReader();
+    private static int numberOfAIPlayers, numberOfPlayers;
+    private static SupertrumpGame game;
 
     public static void main(String[] args) {
-        MessageDisplayer messageDisplayer = new MessageDisplayer();
-        InputReader inputReader = new InputReader();
-        int numberOfAIPlayers, numberOfPlayers;
-        SupertrumpGame game;
-        ArrayList<Player> allPlayers;
 
         // Welcome the player & display menu
         messageDisplayer.displayWelcome();
@@ -32,7 +32,7 @@ public class GameRunner {
         game = new SupertrumpGame(numberOfAIPlayers);
 
         // Create the players
-        allPlayers = createPlayers(numberOfPlayers);
+        createPlayers(numberOfPlayers);
         System.out.println("Players in this game are: ");
         for (Player player : allPlayers) {
             System.out.println(player.toString());
@@ -48,27 +48,33 @@ public class GameRunner {
         int startingPlayer = game.selectDealer(numberOfPlayers);
         System.out.println(allPlayers.get(startingPlayer).getName() + " will start the game!\n");
 
-        // Begin round 1
-        if (startingPlayer == 0) {
-            System.out.println("You go first, " + playerName);
-            HumanPlayer player = (HumanPlayer) allPlayers.get(0);
-            player.viewAllCards();
-        }
+        // Play round 1
+        playRound(startingPlayer);
 
         // The following code will only run if the player chooses to play a game while menuHandler() is running
         System.out.println("YAY PLAY A GAME");
 
     }
 
-    public static void playGame() {
-
-
+    public static void playRound(int startingPlayer) {
+        // Begin round 1
+        if (startingPlayer == 0) {
+            System.out.println("You go first, " + playerName);
+            HumanPlayer player = (HumanPlayer) allPlayers.get(0);
+            player.viewAllCards();
+            System.out.println("\nType 'view' and the card number to view more info (e.g. view 2)");
+            System.out.println("Type 'play', the card number, and the category you wish to play to start the round "
+                    + "(e.g. play 3 hardness)");
+        } else {
+            AIPlayer player = (AIPlayer) allPlayers.get(startingPlayer);
+            System.out.println(player.getName() + " goes first");
+            game.setCurrentCard(player.chooseStartingCard());
+            game.setCurrentCategory(player.chooseCategory());
+        }
     }
 
     public static void menuHandler() {
         int menuOption;
-        MessageDisplayer messageDisplayer = new MessageDisplayer();
-        InputReader inputReader = new InputReader();
         messageDisplayer.displayMenu();
         menuOption = inputReader.getMenuChoice();
 
@@ -96,8 +102,7 @@ public class GameRunner {
         }
     }
 
-    public static ArrayList<Player> createPlayers(int numberOfPlayers) {
-        ArrayList<Player> allPlayers = new ArrayList<>();
+    public static void createPlayers(int numberOfPlayers) {
         allPlayers.add(new HumanPlayer(playerName));
         allPlayers.add(new AIPlayer("AI Jarvis"));
         if (numberOfPlayers >= 3) {
@@ -111,7 +116,6 @@ public class GameRunner {
         if (numberOfPlayers == 5) {
             allPlayers.add(new AIPlayer("AI Jocasta"));
         }
-        return allPlayers;
     }
 
 }

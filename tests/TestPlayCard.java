@@ -63,6 +63,6 @@ public class TestPlayCard {
         occurences.add("Air");
         System.out.println(new PlayCard("Oxygen", "O2", "Gas", "Not-A-Crystal", occurences, "0", "0", "poor", "lots", "not much"));
 
-        System.out.println("\nAll constructors, getters and setters have been tested");
+        System.out.println(testCard1.getHardnessAsDouble());
     }
 }

@@ -18,4 +18,14 @@ public class AIPlayer extends Player {
 
     }
 
+    public Card chooseStartingCard() {
+
+        return null;
+    }
+
+    public String chooseCategory() {
+
+        return null;
+    }
+
 }
