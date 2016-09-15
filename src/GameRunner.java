@@ -1,4 +1,6 @@
 
+import cards.Card;
+import cards.TrumpCard;
 import players.AIPlayer;
 import players.HumanPlayer;
 import players.Player;
@@ -57,6 +59,7 @@ public class GameRunner {
     }
 
     public static void playRound(int startingPlayer) {
+        Card tempCard;
         // Begin round 1
         if (startingPlayer == 0) {
             System.out.println("You go first, " + playerName);
@@ -66,13 +69,80 @@ public class GameRunner {
             System.out.println("Type 'play', the card number, and the category you wish to play to start the round "
                     + "(e.g. play 3 hardness)");
         } else {
+            tempCard = null;
             AIPlayer player = (AIPlayer) allPlayers.get(startingPlayer);
             System.out.println(player.getName() + " goes first");
             player.viewAllCards();
             game.setCurrentCategory(player.chooseCategory());
             System.out.println(game.getCurrentCategory());
-            game.setCurrentCard(player.playFirstCard(game.getCurrentCategory()));
+            tempCard = player.playFirstCard(game.getCurrentCategory());
+            if (tempCard != null) {
+                game.setCurrentCard(tempCard);
+            } else {
+                System.out.println(player.getName() + " has passed.");
+            }
+
             System.out.println(game.getCurrentCard().toString());
+        }
+
+        while (game.isFinished() == false && game.isRoundFinished() == false) {
+            game.nextTurn();
+            tempCard = null;
+            boolean roundFinished = false;
+
+            Player player = allPlayers.get(game.getCurrentTurn());
+            if (player.getPassed() == false) {
+                if (game.getCurrentTurn() == 0) {
+                    // human stuff
+                } else {
+                    AIPlayer aiPlayer = (AIPlayer) player;
+                    System.out.println(player.getName() + " chose: ");
+                    if (game.getCurrentCard().getType().equals("trump")) {
+                        tempCard = aiPlayer.playFirstCard(game.getCurrentCategory());
+                    } else {
+                        tempCard = aiPlayer.playCard(game.getCurrentCard(), game.getCurrentCategory());
+                    }
+
+                    if (tempCard != null) {
+                        game.setCurrentCard(tempCard);
+                    } else {
+                        aiPlayer.pass();
+                        System.out.println(aiPlayer.getName() + " passed");
+                    }
+
+                    if (game.getCurrentCard().getType() == "trump") {
+                        TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                        if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                            game.setCurrentCategory(aiPlayer.chooseCategory());
+                        } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
+                            game.setCurrentCategory("crustal abundances");
+                        } else {
+                            game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                        }
+
+                    }
+
+                    if (aiPlayer.getHandSize() == 0) {
+                        game.setFinished(true);
+                    }
+                }
+            }
+
+            int playersPassed = 0;
+
+            for (int i = 0; i < allPlayers.size(); ++i) {
+                if (allPlayers.get(i).getPassed()) {
+                    ++playersPassed;
+                }
+            }
+
+            if (playersPassed == numberOfPlayers - 2) {
+                roundFinished = true;
+            }
+
+            if (roundFinished) {
+                game.setRoundFinished(true);
+            }
         }
     }
 

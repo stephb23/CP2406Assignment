@@ -58,6 +58,10 @@ public class SupertrumpGame {
         return finished;
     }
 
+    public void setRoundFinished(boolean roundFinished) {
+        this.roundFinished = roundFinished;
+    }
+
     public boolean isRoundFinished() {
         return roundFinished;
     }

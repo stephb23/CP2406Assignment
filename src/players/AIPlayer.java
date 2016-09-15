@@ -43,7 +43,9 @@ public class AIPlayer extends Player {
             chosenCard = getStartingCard(currentCategory);
         }
 
-        removeCard(locationOf(chosenCard.getCardName()));
+        if (chosenCard != null) {
+            removeCard(locationOf(chosenCard.getCardName()));
+        }
 
         return chosenCard;
     }
