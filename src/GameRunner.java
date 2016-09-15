@@ -71,7 +71,8 @@ public class GameRunner {
             player.viewAllCards();
             game.setCurrentCategory(player.chooseCategory());
             System.out.println(game.getCurrentCategory());
-            game.setCurrentCard(player.playCard(game.getCurrentCard(), game.getCurrentCategory()));
+            game.setCurrentCard(player.playFirstCard(game.getCurrentCategory()));
+            System.out.println(game.getCurrentCard().toString());
         }
     }
 

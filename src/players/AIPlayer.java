@@ -2,10 +2,6 @@ package players;
 
 import cards.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-
 /**
  * Created by Stephanie on 8/09/2016.
  */
@@ -43,18 +39,46 @@ public class AIPlayer extends Player {
             if (chosenCard == null) {
                 chosenCard = getTrumpCard();
             }
+        } else if (currentCard.getType().equals("trump")) {
+            chosenCard = getStartingCard(currentCategory);
         }
 
-        if (currentCard.getType().equals("trump")) {
-            chosenCard = playFirstCard(currentCategory);
-        }
+        removeCard(locationOf(chosenCard.getCardName()));
 
         return chosenCard;
     }
 
-    public Card playFirstCard(String currentCategory) {
-        Card chosenCard = new Card();
+    public Card getStartingCard(String currentCategory) {
+        Card chosenCard;
+        PlayCard nullCard = new PlayCard();
 
+        if (currentCategory.equals("hardness")) {
+            chosenCard = chooseBestHardnessCard(nullCard);
+        } else if (currentCategory.equals("specific gravity")) {
+            chosenCard = chooseBestSpecificGravityCard(nullCard);
+        } else if (currentCategory.equals("cleavage")) {
+            chosenCard = chooseBestCleavageCard(nullCard);
+        } else if (currentCategory.equals("crustal abundances")) {
+            chosenCard = chooseBestCrustalAbundancesCard(nullCard);
+        } else if (currentCategory.equals("economic value")) {
+            chosenCard = chooseBestEconomicValueCard(nullCard);
+        } else {
+            chosenCard = null;
+        }
+
+        if (chosenCard == null) {
+            chosenCard = getTrumpCard();
+        }
+
+        if (chosenCard == null) {
+            pass();
+        }
+        return chosenCard;
+    }
+
+    public Card playFirstCard(String currentCategory) {
+        Card chosenCard = getStartingCard(currentCategory);
+        removeCard(locationOf(chosenCard.getCardName()));
         return chosenCard;
     }
 
@@ -87,7 +111,6 @@ public class AIPlayer extends Player {
                 ++playCardCounter;
             }
         }
-        System.out.println("Hardness total: " + hardnessTotal);
 
         double hardnessPercentage = (hardnessTotal/playCardCounter)/maxHardness * 100;
         double specificGravityPercentage = (specificGravityTotal/playCardCounter)/maxSpecificGravity * 100;
@@ -97,12 +120,6 @@ public class AIPlayer extends Player {
 
         double[] allPercentages = {hardnessPercentage, specificGravityPercentage, cleavagePercentage,
                 crustalAbundancePercentage, economicValuePercentage};
-
-        System.out.println("Hardness %: " + hardnessPercentage);
-        System.out.println("Specific gravity %: " + specificGravityPercentage);
-        System.out.println("Cleavage %: " + cleavagePercentage);
-        System.out.println("Crustal Abundances %: " + crustalAbundancePercentage);
-        System.out.println("Economic: %: " + economicValuePercentage);
 
         double currentMax = hardnessPercentage;
         int indexOfMax = 0;

@@ -13,9 +13,12 @@ public class TestDeckBuilder {
         System.out.println("The deck contains the following cards: ");
         System.out.println(deck.toString());
 
+        for (int i = 0; i < deck.length(); ++i) {
+            System.out.println(deck.getCardAt(i).toString());
+        }
+
         System.out.println("\nNow let's shuffle the cards! decks.Deck now is: ");
         deck.shuffle();
         System.out.println(deck.toString());
-
     }
 }

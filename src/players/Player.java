@@ -26,12 +26,16 @@ public class Player {
         return playerHand;
     }
 
-    public void playCard(int index) {
+    protected void removeCard(int index) {
         playerHand.remove(index);
     }
 
-    public void setPassed(boolean hasPassed){
-        this.hasPassed = hasPassed;
+    public void pass(){
+        this.hasPassed = true;
+    }
+
+    public void activate() {
+        this.hasPassed = false;
     }
 
     public boolean getPassed() {
@@ -52,6 +56,16 @@ public class Player {
 
     public Card getCardAt(int index) {
         return playerHand.get(index);
+    }
+
+    protected int locationOf (String cardName) {
+        for (int i = 0; i < getHandSize(); ++i) {
+            if (playerHand.get(i).getCardName().equals(cardName)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     @Override

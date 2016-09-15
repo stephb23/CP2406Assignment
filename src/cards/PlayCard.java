@@ -12,6 +12,11 @@ public class PlayCard extends Card {
     private String hardness, specificGravity, cleavage, crustalAbundances, economicValue;
 
     public PlayCard() {
+        this.hardness = "0";
+        this.specificGravity = "0";
+        this.cleavage = "none";
+        this.crustalAbundances = "ultratrace";
+        this.economicValue = "low";
         setType(TYPE_STRING);
     }
 
