@@ -11,7 +11,7 @@ import java.util.Scanner;
  */
 public class GameRunner {
     private static String playerName;
-    private static ArrayList<Player> allPlayers;
+    private static ArrayList<Player> allPlayers = new ArrayList<>();
     private static MessageDisplayer messageDisplayer = new MessageDisplayer();
     private static InputReader inputReader = new InputReader();
     private static int numberOfAIPlayers, numberOfPlayers;
@@ -41,7 +41,7 @@ public class GameRunner {
         // Create the deck and deal cards
         game.createDeck();
         for (Player player : allPlayers) {
-            player.setHand(game.dealHand());
+            player.setPlayerHand(game.dealHand());
         }
 
         // Choose first player
@@ -68,8 +68,10 @@ public class GameRunner {
         } else {
             AIPlayer player = (AIPlayer) allPlayers.get(startingPlayer);
             System.out.println(player.getName() + " goes first");
-            game.setCurrentCard(player.chooseStartingCard());
+            player.viewAllCards();
             game.setCurrentCategory(player.chooseCategory());
+            System.out.println(game.getCurrentCategory());
+            game.setCurrentCard(player.playCard(game.getCurrentCard(), game.getCurrentCategory()));
         }
     }
 

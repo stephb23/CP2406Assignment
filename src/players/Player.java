@@ -18,8 +18,12 @@ public class Player {
         hasPassed = false;
     }
 
-    public void setHand(ArrayList<Card> playerHand) {
+    public void setPlayerHand(ArrayList<Card> playerHand) {
         this.playerHand = playerHand;
+    }
+
+    protected ArrayList<Card> getPlayerHand() {
+        return playerHand;
     }
 
     public void playCard(int index) {

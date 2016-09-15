@@ -98,7 +98,15 @@ public class PlayCard extends Card {
     }
 
     public Double getHardnessAsDouble() {
-        String[] hardnessRange = hardness.split("-");
+        String[] hardnessRange;
+        if (hardness.contains(" - ")) {
+            hardnessRange = hardness.split(" - ");
+        } else if (hardness.contains("-")) {
+            hardnessRange = hardness.split("-");
+        } else {
+            hardnessRange = hardness.split(" ");
+        }
+
         double highestHardness = Double.parseDouble(hardnessRange[hardnessRange.length - 1]);
         return highestHardness;
     }
@@ -112,7 +120,15 @@ public class PlayCard extends Card {
     }
 
     public Double getSpecificGravityAsDouble() {
-        String[] specificGravityRange = specificGravity.split("-");
+        String[] specificGravityRange;
+        if (specificGravity.contains(" - ")) {
+            specificGravityRange = specificGravity.split(" - ");
+        } else if (specificGravity.contains("-")) {
+            specificGravityRange = specificGravity.split("-");
+        } else {
+            specificGravityRange = specificGravity.split(" ");
+        }
+
         double highestSpecificGravity = Double.parseDouble(specificGravityRange[specificGravityRange.length - 1]);
         return highestSpecificGravity;
     }

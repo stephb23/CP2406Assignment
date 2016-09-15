@@ -1,4 +1,5 @@
 import cards.Card;
+import cards.PlayCard;
 import decks.Deck;
 import decks.DeckBuilder;
 import decks.XMLDeckBuilder;
@@ -27,6 +28,7 @@ public class SupertrumpGame {
         this.numberOfPlayers = numberOfAIPlayers + numberOfHumanPlayers;
         this.numberOfAIPlayers = numberOfAIPlayers;
         currentPlayer = numberOfHumanPlayers + (int)(Math.random() * numberOfPlayers);
+        currentCard = new PlayCard();
     }
 
     public void createDeck() {
