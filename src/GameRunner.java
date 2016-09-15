@@ -6,7 +6,6 @@ import players.HumanPlayer;
 import players.Player;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Created by Stephanie on 6/09/2016.
@@ -47,11 +46,19 @@ public class GameRunner {
         }
 
         // Choose first player
-        int startingPlayer = game.selectDealer(numberOfPlayers);
-        System.out.println(allPlayers.get(startingPlayer).getName() + " will start the game!\n");
+        game.selectDealer(numberOfPlayers);
+        System.out.println(allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
 
         // Play round 1
-        playRound(startingPlayer);
+        while (!game.isFinished()){
+            System.out.println("\n\nNEW ROUND");
+            playRound(game.getCurrentPlayer());
+            for (int i = 0; i < allPlayers.size(); ++i) {
+                allPlayers.get(i).activate();
+            }
+        }
+
+        System.out.println("The winning player is " + game.getCurrentPlayer());
 
         // The following code will only run if the player chooses to play a game while menuHandler() is running
         System.out.println("YAY PLAY A GAME");
@@ -72,9 +79,7 @@ public class GameRunner {
             tempCard = null;
             AIPlayer player = (AIPlayer) allPlayers.get(startingPlayer);
             System.out.println(player.getName() + " goes first");
-            player.viewAllCards();
             game.setCurrentCategory(player.chooseCategory());
-            System.out.println(game.getCurrentCategory());
             tempCard = player.playFirstCard(game.getCurrentCategory());
             if (tempCard != null) {
                 game.setCurrentCard(tempCard);
@@ -85,15 +90,16 @@ public class GameRunner {
             System.out.println(game.getCurrentCard().toString());
         }
 
-        while (game.isFinished() == false && game.isRoundFinished() == false) {
-            game.nextTurn();
-            tempCard = null;
-            boolean roundFinished = false;
+        game.nextTurn();
 
-            Player player = allPlayers.get(game.getCurrentTurn());
-            if (player.getPassed() == false) {
-                if (game.getCurrentTurn() == 0) {
+        while (!game.isFinished() && !game.isRoundFinished()) {
+            game.nextTurn();
+
+            Player player = allPlayers.get(game.getCurrentPlayer());
+            if (!player.getPassed()) {
+                if (game.getCurrentPlayer() == 0) {
                     // human stuff
+                    game.nextTurn();
                 } else {
                     AIPlayer aiPlayer = (AIPlayer) player;
                     System.out.println(player.getName() + " chose: ");
@@ -110,7 +116,7 @@ public class GameRunner {
                         System.out.println(aiPlayer.getName() + " passed");
                     }
 
-                    if (game.getCurrentCard().getType() == "trump") {
+                    if (game.getCurrentCard().getType().equals("trump")) {
                         TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
                         if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
                             game.setCurrentCategory(aiPlayer.chooseCategory());
@@ -119,8 +125,11 @@ public class GameRunner {
                         } else {
                             game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                         }
-
+                    } else {
+                        game.nextTurn();
                     }
+
+                    System.out.println(game.getCurrentCard().toString());
 
                     if (aiPlayer.getHandSize() == 0) {
                         game.setFinished(true);
@@ -137,10 +146,13 @@ public class GameRunner {
             }
 
             if (playersPassed == numberOfPlayers - 2) {
-                roundFinished = true;
-            }
+                for (int i = 1; i < allPlayers.size(); ++i) {
+                    if (!allPlayers.get(i).getPassed()){
+                        System.out.println(allPlayers.get(i).getName() + " wins this round!");
+                        game.setCurrentPlayer(i);
+                    }
+                }
 
-            if (roundFinished) {
                 game.setRoundFinished(true);
             }
         }

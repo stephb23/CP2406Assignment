@@ -14,7 +14,6 @@ public class SupertrumpGame {
     private int numberOfPlayers, numberOfAIPlayers, currentPlayer;
     private Deck deck;
     private boolean finished, roundFinished;
-    private int currentTurn;
     private String currentCategory;
     private Card currentCard;
 
@@ -41,13 +40,16 @@ public class SupertrumpGame {
         return deck.dealHand();
     }
 
-    public int selectDealer(int numberOfPlayers) {
-        currentTurn = (int) (Math.random() * numberOfPlayers);
-        return currentTurn;
+    public void selectDealer(int numberOfPlayers) {
+        currentPlayer = (int) (Math.random() * numberOfPlayers);
     }
 
-    public int getCurrentTurn() {
-        return currentTurn;
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(int currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 
     public void setFinished(boolean finished) {
@@ -83,9 +85,9 @@ public class SupertrumpGame {
     }
 
     public void nextTurn() {
-        ++currentTurn;
-        if (currentTurn >= numberOfPlayers) {
-            currentTurn = 0;
+        ++currentPlayer;
+        if (currentPlayer >= numberOfPlayers) {
+            currentPlayer = 0;
         }
     }
 }
