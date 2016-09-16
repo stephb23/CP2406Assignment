@@ -25,4 +25,10 @@ public class HumanPlayer extends Player{
             }
         }
     }
+
+    public Card playCard(int index) {
+        Card card = getCardAt(index);
+        removeCard(index);
+        return card;
+    }
 }

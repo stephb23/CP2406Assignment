@@ -1,6 +1,7 @@
 import jdk.internal.util.xml.impl.Input;
 
 import java.util.Scanner;
+import java.util.concurrent.SynchronousQueue;
 import java.util.stream.Collector;
 
 /**
@@ -55,7 +56,7 @@ public class InputReader {
         try {
             integer = input.nextInt();
             while (integer > max || integer < min) {
-                System.out.print("Invalid input, choice must be between 1-4. Try again: ");
+                System.out.print("Invalid input, choice must be between " + min + "-" + max + ". Try again: ");
                 integer = input.nextInt();
             }
         } catch (Exception e) {
@@ -64,5 +65,41 @@ public class InputReader {
         }
 
         return integer;
+    }
+
+    public int getCardNumber(int handSize) {
+        int chosenCardNumber;
+
+        chosenCardNumber = getInt(1, handSize);
+
+        return chosenCardNumber - 1;
+    }
+
+    public String getCategory() {
+        String chosenCategory;
+        Scanner input = new Scanner(System.in);
+
+        chosenCategory = input.nextLine().toLowerCase();
+
+        while (!chosenCategory.equals("hardness") && !chosenCategory.equals("specific gravity") && !chosenCategory.equals("cleavage")
+                && !chosenCategory.equals("crustal abundances") && !chosenCategory.equals("economic value")) {
+            System.out.print("Invalid category! Type hardness, specific gravity, cleavage, crustal abundances, or economic value: ");
+            chosenCategory = input.nextLine().toLowerCase();
+        }
+
+        return chosenCategory;
+    }
+
+    public String passOrPlay() {
+        String playChoice;
+        Scanner input = new Scanner(System.in);
+
+        playChoice = input.nextLine().toLowerCase();
+
+        while (!playChoice.equals("play") && !playChoice.equals("pass")) {
+            System.out.print("Invalid choice! Please type 'pass' or 'play': ");
+            playChoice = input.nextLine().toLowerCase();
+        }
+        return playChoice;
     }
 }

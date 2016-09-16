@@ -36,8 +36,16 @@ public class SupertrumpGame {
         deck.shuffle();
     }
 
+    public int getDeckSize() {
+        return deck.length();
+    }
+
     public ArrayList<Card> dealHand() {
         return deck.dealHand();
+    }
+
+    public Card dealSingleCard() {
+        return deck.dealCard();
     }
 
     public void selectDealer(int numberOfPlayers) {

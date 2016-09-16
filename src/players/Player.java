@@ -30,6 +30,14 @@ public class Player {
         playerHand.remove(index);
     }
 
+    public boolean hasFinished() {
+        if (getHandSize() == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void pass(){
         this.hasPassed = true;
     }
@@ -66,6 +74,10 @@ public class Player {
         }
 
         return -1;
+    }
+
+    public void pickUpCard(Card card) {
+        playerHand.add(card);
     }
 
     @Override
