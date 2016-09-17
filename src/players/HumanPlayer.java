@@ -31,4 +31,43 @@ public class HumanPlayer extends Player{
         removeCard(index);
         return card;
     }
+
+    public boolean canPlayCard(Card currentCard, String currentCategory) {
+
+        if (currentCard.getType().equals("trump")) {
+            return true;
+        } else {
+            for (int i = 0; i < getHandSize(); ++i) {
+                if (getCardAt(i).getType().equals("trump")) {
+                    return true;
+                } else {
+                    PlayCard currentPlayCard = (PlayCard) currentCard;
+                    PlayCard playCard = (PlayCard) getCardAt(i);
+                    if (currentCategory.equals("hardness")) {
+                        if (playCard.getHardnessAsDouble() > currentPlayCard.getHardnessAsDouble()) {
+                            return true;
+                        }
+                    } else if (currentCategory.equals("specific gravity")) {
+                        if (playCard.getSpecificGravityAsDouble() > currentPlayCard.getSpecificGravityAsDouble()) {
+                            return true;
+                        }
+                    } else if (currentCategory.equals("cleavage")) {
+                        if (playCard.getCleavageAsInt() > currentPlayCard.getCleavageAsInt()) {
+                            return true;
+                        }
+                    } else if (currentCategory.equals("crustal abundances")) {
+                        if (playCard.getCrustalAbundancesAsInt() > currentPlayCard.getCrustalAbundancesAsInt()) {
+                            return true;
+                        }
+                    } else if (currentCategory.equals("economic value")) {
+                        if (playCard.getEconomicValueAsInt() > currentPlayCard.getEconomicValueAsInt()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }

@@ -1,5 +1,6 @@
 
 import cards.Card;
+import cards.PlayCard;
 import cards.TrumpCard;
 import players.AIPlayer;
 import players.HumanPlayer;
@@ -69,44 +70,38 @@ public class GameRunner {
     public static void playRound(int startingPlayer) {
         Card tempCard;
         if (startingPlayer == 0) {
-            String passOrPlay;
-
             System.out.println("You go first, " + playerName);
             HumanPlayer player = (HumanPlayer) allPlayers.get(0);
             player.viewAllCards();
-            System.out.print("Do you wish to 'pass' or 'play'? ");
-            passOrPlay = inputReader.passOrPlay();
-            if (passOrPlay.equals("pass")) {
-                player.pass();
-                player.pickUpCard(game.dealSingleCard());
-                System.out.println("You chose to pass.");
-            } else {
-                System.out.print("Enter the number of the card you wish to play: ");
-                game.setCurrentCard(player.playCard(inputReader.getCardNumber(player.getHandSize())));
+            System.out.print("Enter the number of the card you wish to play: ");
+            game.setCurrentCard(player.playCard(inputReader.getCardNumber(player.getHandSize())));
 
-                if (game.getCurrentCard().getType().equals("trump")) {
-                    TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
-                    if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
-                        System.out.print("Choose a trump category: ");
-                        game.setCurrentCategory(inputReader.getCategory());
-                    } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
-                        game.setCurrentCategory("crustal abundances");
-                    } else {
-                        game.setCurrentCategory(trumpCard.getCardDescription());
-                    }
-
-                    System.out.print("You played a trump card! Now choose another card to play: ");
-                    game.setCurrentCard(player.playCard(inputReader.getCardNumber(player.getHandSize())));
-                } else {
+            if (game.getCurrentCard().getType().equals("trump")) {
+                TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
                     System.out.print("Choose a trump category: ");
                     game.setCurrentCategory(inputReader.getCategory());
+                } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
+                    game.setCurrentCategory("crustal abundances");
+                } else {
+                    game.setCurrentCategory(trumpCard.getCardDescription());
                 }
+
+                System.out.print("You played a trump card! Now choose another card to play: ");
+                game.setCurrentCard(player.playCard(inputReader.getCardNumber(player.getHandSize())));
+            } else {
+                System.out.print("Choose a trump category: ");
+                game.setCurrentCategory(inputReader.getCategory());
+            }
+
+            if (player.getHandSize() == 0) {
+                game.setFinished(true);
+                return;
             }
 
             game.nextTurn();
 
         } else {
-            tempCard = null;
             AIPlayer player = (AIPlayer) allPlayers.get(startingPlayer);
             System.out.println(player.getName() + " goes first");
             game.setCurrentCategory(player.chooseCategory());
@@ -119,13 +114,75 @@ public class GameRunner {
 
             game.nextTurn();
             System.out.println(game.getCurrentCard().toString());
+
+            if (player.getHandSize() == 0) {
+                game.setFinished(true);
+                return;
+            }
         }
 
         while (!game.isFinished() && !game.isRoundFinished()) {
             Player player = allPlayers.get(game.getCurrentPlayer());
             if (!player.getPassed()) {
                 if (game.getCurrentPlayer() == 0) {
-                    // human stuff
+                    HumanPlayer humanPlayer = (HumanPlayer) player;
+                    System.out.print("Your turn! ");
+                    if (game.getCurrentCard().getType().equals("trump")) {
+                        System.out.print("The current category is " + game.getCurrentCategory() + " and you may play any card!");
+                    } else {
+                        messageDisplayer.displayCardToBeatInformation(game.getCurrentCard(), game.getCurrentCategory());
+                    }
+                    System.out.println("\nYour hand is: ");
+                    humanPlayer.viewAllCards();
+                    if (!humanPlayer.canPlayCard(game.getCurrentCard(), game.getCurrentCategory())) {
+                        System.out.println("You have no cards that you can play! Press enter to pass.");
+                        humanPlayer.pass();
+                        if (game.getDeckSize() != 0) {
+                            humanPlayer.pickUpCard(game.dealSingleCard());
+                        }
+                    } else {
+                        System.out.print("Do you want to 'pass' or 'play'? ");
+                        if (inputReader.passOrPlay().equals("pass")) {
+                            System.out.println("You have chosen to pass.");
+                            humanPlayer.pass();
+                            if (game.getDeckSize() != 0) {
+                                humanPlayer.pickUpCard(game.dealSingleCard());
+                            }
+                        } else {
+                            System.out.print("Enter the number of the card you wish to play: ");
+                            int cardIndex = inputReader.getCardNumber(player.getHandSize());
+                            tempCard = humanPlayer.getCardAt(cardIndex);
+
+                            while (!compareCards(tempCard, game.getCurrentCard(), game.getCurrentCategory())){
+                                System.out.println("Error! You must play a card with a HIGHER " + game.getCurrentCategory());
+                                cardIndex = inputReader.getCardNumber(player.getHandSize());
+                                tempCard = humanPlayer.getCardAt(cardIndex);
+                            }
+
+                            game.setCurrentCard(humanPlayer.playCard(cardIndex));
+
+                            if (humanPlayer.getHandSize() == 0) {
+                                game.setFinished(true);
+                                return;
+                            }
+
+                            if (game.getCurrentCard().getType().equals("trump")) {
+                                TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                                if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                                    System.out.print("Choose a trump category: ");
+                                    game.setCurrentCategory(inputReader.getCategory());
+                                } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
+                                    game.setCurrentCategory("crustal abundances");
+                                } else {
+                                    game.setCurrentCategory(trumpCard.getCardDescription());
+                                }
+
+                                System.out.print("You played a trump card! Now choose another card to play: ");
+                                game.setCurrentCard(humanPlayer.playCard(inputReader.getCardNumber(player.getHandSize())));
+                            }
+                        }
+                    }
+
                     game.nextTurn();
                 } else {
                     AIPlayer aiPlayer = (AIPlayer) player;
@@ -140,7 +197,10 @@ public class GameRunner {
                         game.setCurrentCard(tempCard);
                     } else {
                         aiPlayer.pass();
-                        aiPlayer.pickUpCard(game.dealSingleCard());
+                        if (game.getDeckSize() == 0) {
+                            aiPlayer.pickUpCard(game.dealSingleCard());
+                        }
+
                         System.out.println(aiPlayer.getName() + " passed");
                     }
 
@@ -188,6 +248,38 @@ public class GameRunner {
                 game.setRoundFinished(true);
             }
         }
+    }
+
+    private static boolean compareCards(Card tempCard, Card currentCard, String currentCategory) {
+        if (currentCard.getType().equals("trump")) {
+            return true;
+        } else {
+            PlayCard tempPlayCard = (PlayCard) tempCard;
+            PlayCard currentPlayCard = (PlayCard) currentCard;
+
+            if (currentCategory.equals("hardness")) {
+                if (tempPlayCard.getHardnessAsDouble() > currentPlayCard.getHardnessAsDouble()) {
+                    return true;
+                }
+            } else if (currentCategory.equals("specific gravity")) {
+                if (tempPlayCard.getSpecificGravityAsDouble() > currentPlayCard.getSpecificGravityAsDouble()) {
+                    return true;
+                }
+            } else if (currentCategory.equals("cleavage")) {
+                if (tempPlayCard.getCleavageAsInt() > currentPlayCard.getCleavageAsInt()) {
+                    return true;
+                }
+            } else if (currentCategory.equals("crustal abundances")) {
+                if (tempPlayCard.getCrustalAbundancesAsInt() > currentPlayCard.getCrustalAbundancesAsInt()) {
+                    return true;
+                }
+            } else if (currentCategory.equals("economic value")) {
+                if (tempPlayCard.getEconomicValueAsInt() > currentPlayCard.getEconomicValueAsInt()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static void menuHandler() {

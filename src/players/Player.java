@@ -10,12 +10,13 @@ import java.util.ArrayList;
 public class Player {
     private String name;
     private ArrayList<Card> playerHand;
-    private boolean hasPassed;
+    private boolean passed;
+    private boolean finished;
 
     public Player(String name) {
         this.name = name;
         playerHand = new ArrayList<>();
-        hasPassed = false;
+        passed = false;
     }
 
     public void setPlayerHand(ArrayList<Card> playerHand) {
@@ -39,15 +40,15 @@ public class Player {
     }
 
     public void pass(){
-        this.hasPassed = true;
+        this.passed = true;
     }
 
     public void activate() {
-        this.hasPassed = false;
+        this.passed = false;
     }
 
     public boolean getPassed() {
-        return hasPassed;
+        return passed;
     }
 
     public int getHandSize() {
@@ -78,6 +79,14 @@ public class Player {
 
     public void pickUpCard(Card card) {
         playerHand.add(card);
+    }
+
+    public void finished() {
+        finished = true;
+    }
+
+    public boolean isFinished(){
+        return finished;
     }
 
     @Override

@@ -1,3 +1,6 @@
+import cards.Card;
+import cards.PlayCard;
+
 /**
  * Created by Stephanie on 8/09/2016.
  */
@@ -35,5 +38,22 @@ public class MessageDisplayer {
         System.out.print("Great! You've chosen to start a game. To begin, \n" +
                 "we just need to know how many AI players you want to verse! \n" +
                 "Please enter a number between 1-4: ");
+    }
+
+    public void displayCardToBeatInformation(Card currentCard, String currentCategory) {
+        PlayCard playCard = (PlayCard) currentCard;
+        System.out.print("The current category is " + currentCategory + " and you must play a card with \n" +
+                currentCategory + " greater than ");
+        if (currentCategory.equals("hardness")) {
+            System.out.print(playCard.getHardness());
+        } else if (currentCategory.equals("specific gravity")) {
+            System.out.print(playCard.getSpecificGravity());
+        } else if (currentCategory.equals("cleavage")) {
+            System.out.print(playCard.getCleavage());
+        } else if (currentCategory.equals("crustal abundances")) {
+            System.out.print(playCard.getCrustalAbundances());
+        } else if (currentCategory.equals("economic value")) {
+            System.out.print(playCard.getEconomicValue());
+        }
     }
 }
