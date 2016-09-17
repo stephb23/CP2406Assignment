@@ -68,19 +68,26 @@ public class AIPlayer extends Player {
             chosenCard = null;
         }
 
+        System.out.println("I made it here and the card is" + chosenCard);
+
         if (chosenCard == null) {
             chosenCard = getTrumpCard();
+            System.out.println("I chose a trump card");
         }
 
         if (chosenCard == null) {
+            System.out.println("I am passing");
             pass();
         }
         return chosenCard;
     }
 
     public Card playFirstCard(String currentCategory) {
+        System.out.println(getHandSize());
         Card chosenCard = getStartingCard(currentCategory);
-        removeCard(locationOf(chosenCard.getCardName()));
+        if (chosenCard != null) {
+            removeCard(locationOf(chosenCard.getCardName()));
+        }
         return chosenCard;
     }
 

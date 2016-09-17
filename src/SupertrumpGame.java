@@ -1,7 +1,6 @@
 import cards.Card;
 import cards.PlayCard;
 import decks.Deck;
-import decks.DeckBuilder;
 import decks.XMLDeckBuilder;
 
 import java.util.ArrayList;
@@ -16,11 +15,14 @@ public class SupertrumpGame {
     private boolean finished, roundFinished;
     private String currentCategory;
     private Card currentCard;
+    private int[] winOrder;
+    private int playersFinishedCounter = 0;
 
     public SupertrumpGame() {
         numberOfPlayers = 4;
         numberOfAIPlayers = numberOfPlayers - numberOfHumanPlayers;
         currentPlayer = numberOfHumanPlayers + (int)(Math.random() * numberOfPlayers);
+        winOrder = new int[4];
     }
 
     public SupertrumpGame(int numberOfAIPlayers) {
@@ -28,6 +30,7 @@ public class SupertrumpGame {
         this.numberOfAIPlayers = numberOfAIPlayers;
         currentPlayer = numberOfHumanPlayers + (int)(Math.random() * numberOfPlayers);
         currentCard = new PlayCard();
+        winOrder = new int[numberOfPlayers];
     }
 
     public void createDeck() {
@@ -97,5 +100,18 @@ public class SupertrumpGame {
         if (currentPlayer >= numberOfPlayers) {
             currentPlayer = 0;
         }
+    }
+
+    public void addWinner(int index) {
+        winOrder[playersFinishedCounter] = index;
+        ++playersFinishedCounter;
+
+        if (playersFinishedCounter == numberOfAIPlayers) {
+            finished = true;
+        }
+    }
+
+    public int getWinner(int index) {
+        return winOrder[index];
     }
 }

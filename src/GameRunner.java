@@ -60,16 +60,19 @@ public class GameRunner {
             game.setRoundFinished(false);
         }
 
-        System.out.println("The winning player is " + allPlayers.get(game.getCurrentPlayer()).getName());
+        System.out.println("The winners are: " );
+        for (int i = 0; i < 5; ++i) {
+            System.out.println(allPlayers.get(game.getWinner(i)));
+        }
 
         // The following code will only run if the player chooses to play a game while menuHandler() is running
         System.out.println("YAY PLAY A GAME");
 
     }
 
-    public static void playRound(int startingPlayer) {
+    private static void playRound(int startingPlayer) {
         Card tempCard;
-        if (startingPlayer == 0) {
+        if (startingPlayer == 0 && !allPlayers.get(0).isFinished() && !game.isFinished()) {
             System.out.println("You go first, " + playerName);
             HumanPlayer player = (HumanPlayer) allPlayers.get(0);
             player.viewAllCards();
@@ -95,13 +98,16 @@ public class GameRunner {
             }
 
             if (player.getHandSize() == 0) {
-                game.setFinished(true);
-                return;
+                player.finish();
+                game.addWinner(game.getCurrentPlayer());
+                if (game.isFinished()) {
+                    return;
+                }
             }
 
             game.nextTurn();
 
-        } else {
+        } else if (!allPlayers.get(startingPlayer).isFinished() && !game.isFinished()){
             AIPlayer player = (AIPlayer) allPlayers.get(startingPlayer);
             System.out.println(player.getName() + " goes first");
             game.setCurrentCategory(player.chooseCategory());
@@ -110,6 +116,22 @@ public class GameRunner {
                 game.setCurrentCard(tempCard);
             } else {
                 System.out.println(player.getName() + " has passed.");
+            }
+
+            if (player.getHandSize() == 0) {
+                player.finish();
+                game.addWinner(game.getCurrentPlayer());
+                if (game.isFinished()) {
+                    return;
+                }
+            }
+
+            if (player.getHandSize() == 0) {
+                player.finish();
+                game.addWinner(game.getCurrentPlayer());
+                if (game.isFinished()) {
+                    return;
+                }
             }
 
             game.nextTurn();
@@ -123,7 +145,7 @@ public class GameRunner {
 
         while (!game.isFinished() && !game.isRoundFinished()) {
             Player player = allPlayers.get(game.getCurrentPlayer());
-            if (!player.getPassed()) {
+            if (!player.getInactive() && !player.isFinished()) {
                 if (game.getCurrentPlayer() == 0) {
                     HumanPlayer humanPlayer = (HumanPlayer) player;
                     System.out.print("Your turn! ");
@@ -162,8 +184,11 @@ public class GameRunner {
                             game.setCurrentCard(humanPlayer.playCard(cardIndex));
 
                             if (humanPlayer.getHandSize() == 0) {
-                                game.setFinished(true);
-                                return;
+                                humanPlayer.finish();
+                                game.addWinner(game.getCurrentPlayer());
+                                if (game.isFinished()) {
+                                    return;
+                                }
                             }
 
                             if (game.getCurrentCard().getType().equals("trump")) {
@@ -183,7 +208,16 @@ public class GameRunner {
                         }
                     }
 
+                    if (humanPlayer.getHandSize() == 0) {
+                        humanPlayer.finish();
+                        game.addWinner(game.getCurrentPlayer());
+                        if (game.isFinished()) {
+                            return;
+                        }
+                    }
+
                     game.nextTurn();
+
                 } else {
                     AIPlayer aiPlayer = (AIPlayer) player;
                     System.out.println(player.getName() + " chose: ");
@@ -193,10 +227,17 @@ public class GameRunner {
                         tempCard = aiPlayer.playCard(game.getCurrentCard(), game.getCurrentCategory());
                     }
 
+                    if (aiPlayer.getHandSize() == 0) {
+                        aiPlayer.finish();
+                        game.addWinner(game.getCurrentPlayer());
+                        if (game.isFinished()) {
+                            return;
+                        }
+                    }
+
                     if (tempCard != null) {
                         game.setCurrentCard(tempCard);
                     } else {
-                        aiPlayer.pass();
                         if (game.getDeckSize() == 0) {
                             aiPlayer.pickUpCard(game.dealSingleCard());
                         }
@@ -218,28 +259,41 @@ public class GameRunner {
                             game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                         }
                     } else {
+                        if (player.getHandSize() == 0) {
+                            player.finish();
+                            game.addWinner(game.getCurrentPlayer());
+                            if (game.isFinished()) {
+                                return;
+                            }
+                        }
+
                         game.nextTurn();
                     }
 
                     System.out.println(game.getCurrentCard().toString());
-
-                    if (aiPlayer.getHandSize() == 0) {
-                        game.setFinished(true);
+                }
+            } else {
+                if (player.getHandSize() == 0) {
+                    player.finish();
+                    game.addWinner(game.getCurrentPlayer());
+                    if (game.isFinished()) {
+                        return;
                     }
                 }
+                game.nextTurn();
             }
 
             int playersPassed = 0;
 
             for (int i = 0; i < allPlayers.size(); ++i) {
-                if (allPlayers.get(i).getPassed()) {
+                if (allPlayers.get(i).getInactive()) {
                     ++playersPassed;
                 }
             }
 
             if (playersPassed == numberOfPlayers - 1) {
                 for (int i = 1; i < allPlayers.size(); ++i) {
-                    if (!allPlayers.get(i).getPassed()){
+                    if (!allPlayers.get(i).getInactive()){
                         System.out.println(allPlayers.get(i).getName() + " wins this round!");
                         game.setCurrentPlayer(i);
                     }
