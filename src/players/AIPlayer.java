@@ -11,10 +11,6 @@ public class AIPlayer extends Player {
         super(name);
     }
 
-    public void playCard(Card currentCard) {
-
-    }
-
     public Card playCard(Card currentCard, String currentCategory) {
         Card chosenCard = new Card();
         PlayCard currentPlayCard;
@@ -68,6 +64,7 @@ public class AIPlayer extends Player {
             chosenCard = null;
         }
 
+        System.out.println("Category is" + currentCategory);
         System.out.println("I made it here and the card is" + chosenCard);
 
         if (chosenCard == null) {
@@ -87,6 +84,9 @@ public class AIPlayer extends Player {
         Card chosenCard = getStartingCard(currentCategory);
         if (chosenCard != null) {
             removeCard(locationOf(chosenCard.getCardName()));
+        } else if (getHandSize() == 1) {
+            chosenCard = getCardAt(0);
+            removeCard(0);
         }
         return chosenCard;
     }
@@ -157,7 +157,7 @@ public class AIPlayer extends Player {
                 chosenCategory = "economic value";
                 break;
             default:
-                chosenCategory = null;
+                chosenCategory = "hardness";
                 break;
         }
 

@@ -102,4 +102,14 @@ public class InputReader {
         }
         return playChoice;
     }
+
+    public String getLine() {
+        String line;
+        Scanner input = new Scanner(System.in);
+
+        line = input.nextLine();
+
+        return line;
+
+    }
 }

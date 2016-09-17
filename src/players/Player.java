@@ -85,7 +85,7 @@ public class Player {
 
     public void finish() {
         finished = true;
-        inactive = false;
+        inactive = true;
     }
 
     public boolean isFinished(){
