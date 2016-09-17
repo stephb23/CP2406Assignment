@@ -92,7 +92,9 @@ public class GameRunner {
                 }
 
                 while (game.getCurrentCard().equals("trump")) {
-                    System.out.print("You played a trump card! Now choose another card to play: ");
+                    System.out.println("You played a trump card! Your hand is now: ");
+                    player.viewAllCards();
+                    System.out.print("Enter the card number you'd like to play: ");
                     game.setCurrentCard(player.playCard(inputReader.getCardNumber(player.getHandSize())));
 
                     if (player.getHandSize() == 0) {
@@ -158,7 +160,8 @@ public class GameRunner {
                     System.out.println("\nYour hand is: ");
                     humanPlayer.viewAllCards();
                     if (!humanPlayer.canPlayCard(game.getCurrentCard(), game.getCurrentCategory())) {
-                        System.out.println("You have no cards that you can play! Press enter to pass.");
+                        System.out.print("You have no cards that you can play! Press enter to pass.");
+                        inputReader.getLine();
                         humanPlayer.pass();
                         if (game.getDeckSize() != 0) {
                             humanPlayer.pickUpCard(game.dealSingleCard());
@@ -177,7 +180,8 @@ public class GameRunner {
                             tempCard = humanPlayer.getCardAt(cardIndex);
 
                             while (!compareCards(tempCard, game.getCurrentCard(), game.getCurrentCategory())){
-                                System.out.println("Error! You must play a card with a HIGHER " + game.getCurrentCategory());
+                                System.out.print("Invalid input! You must play a card with a HIGHER " + game.getCurrentCategory());
+                                System.out.print(" Try again: ");
                                 cardIndex = inputReader.getCardNumber(player.getHandSize());
                                 tempCard = humanPlayer.getCardAt(cardIndex);
                             }
@@ -204,7 +208,9 @@ public class GameRunner {
                                     game.setCurrentCategory(trumpCard.getCardDescription());
                                 }
 
-                                System.out.print("You played a trump card! Now choose another card to play: ");
+                                System.out.println("You played a trump card! Your hand is now: ");
+                                humanPlayer.viewAllCards();
+                                System.out.print("Enter the number of the card you want to play next: ");
                                 game.setCurrentCard(humanPlayer.playCard(inputReader.getCardNumber(player.getHandSize())));
 
                                 if (humanPlayer.getHandSize() == 0) {
@@ -293,7 +299,7 @@ public class GameRunner {
     }
 
     private static boolean compareCards(Card tempCard, Card currentCard, String currentCategory) {
-        if (currentCard.getType().equals("trump")) {
+        if (currentCard.getType().equals("trump") || tempCard.getType().equals("trump")) {
             return true;
         } else {
             PlayCard tempPlayCard = (PlayCard) tempCard;
