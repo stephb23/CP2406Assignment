@@ -7,22 +7,47 @@ import enums.EconomicValue;
 
 /**
  * Created by Stephanie on 8/09/2016.
+ *
+ * This class provides the means to create AIPlayers and provides their "brains" - all AI logic is contained within
+ * the playCard and playFirstCard methods (with the support of some helper methods).
+ *
  */
+
 public class AIPlayer extends Player {
 
     public AIPlayer(String name) {
         super(name);
     }
 
+    // Logic for playing a card that leads out the game or round
+    public Card playFirstCard(String currentCategory) {
+        Card chosenCard = getStartingCard(currentCategory);
+
+        // If the chosen card isn't null, remove it
+        if (chosenCard != null) {
+            removeCard(locationOf(chosenCard.getCardName()));
+        } else if (getHandSize() == 1) {
+            // If there's only one card left, play it to win the game!
+            chosenCard = getCardAt(0);
+            removeCard(0);
+        }
+
+        // Return the chosen card
+        return chosenCard;
+    }
+
+    // Logic for playing a card mid-round
     public Card playCard(Card currentCard, String currentCategory) {
         Card chosenCard = new Card();
         PlayCard currentPlayCard;
 
+        // Check whether the hand contains the round-winning combo, if so return The Geophysicist
         if (locationOf("The Geophysicist") != -1 && locationOf("Magnetite") != -1) {
             chosenCard = getCardAt(locationOf("The Geophysicist"));
             return chosenCard;
         }
 
+        // If the card to beat is a play card, choose the card to beat it with.
         if (currentCard.getType().equals("play")) {
             currentPlayCard = (PlayCard) currentCard;
 
@@ -44,23 +69,35 @@ public class AIPlayer extends Player {
                 chosenCard = getTrumpCard();
             }
         } else if (currentCard.getType().equals("trump")) {
+            // If the card to beat is a trump card, act as if leading out a round.
             chosenCard = getStartingCard(currentCategory);
         }
 
+        // If the chosen card isn't null, remove it from the hand
         if (chosenCard != null) {
             removeCard(locationOf(chosenCard.getCardName()));
         }
 
+        // Return the chosen card
         return chosenCard;
     }
 
-    public Card getStartingCard(String currentCategory) {
+    // Logic for identifying the best starting card.
+    private Card getStartingCard(String currentCategory) {
         Card chosenCard;
+
+        // Create a null card (all values initialized to lowest values)
         PlayCard nullCard = new PlayCard();
 
+        // Find the lowest card in the chosen category
         if (currentCategory.equals("hardness")) {
             chosenCard = chooseBestHardnessCard(nullCard);
         } else if (currentCategory.equals("specific gravity")) {
+            /* If the category is specific gravity, there's a chance that The Geophysicist has been played.
+            If the hand contains Magnetite, play it
+            Won't result in a winning combo every time, but will result in a winning combo if
+            the AIPlayer held and played The Geophysicist.
+            */
             if (locationOf("Magnetite") != -1) {
                 chosenCard = getCardAt(locationOf("Magnetite"));
             } else {
@@ -76,27 +113,21 @@ public class AIPlayer extends Player {
             chosenCard = null;
         }
 
+        // If no suitable play card was found, attempt to find a trump card
         if (chosenCard == null) {
             chosenCard = getTrumpCard();
         }
 
+        // If no trump card was found, pass.
         if (chosenCard == null) {
             pass();
         }
+
+        // Return the chosen card (or null if the player passed).
         return chosenCard;
     }
 
-    public Card playFirstCard(String currentCategory) {
-        Card chosenCard = getStartingCard(currentCategory);
-        if (chosenCard != null) {
-            removeCard(locationOf(chosenCard.getCardName()));
-        } else if (getHandSize() == 1) {
-            chosenCard = getCardAt(0);
-            removeCard(0);
-        }
-        return chosenCard;
-    }
-
+    // Choose the category that is most beneficial to the player
     public String chooseCategory() {
         String chosenCategory;
 
@@ -114,6 +145,7 @@ public class AIPlayer extends Player {
 
         int playCardCounter = 0;
 
+        // Sum the hardness, specific gravity, etc of each card held and count the number of play cards held
         for (int i = 0; i < getHandSize(); ++i) {
             Card card = getPlayerHand().get(i);
             if (card.getType().equals("play")) {
@@ -127,18 +159,22 @@ public class AIPlayer extends Player {
             }
         }
 
+        // Find an average hardness, specific gravity, etc. as a percentage
         double hardnessPercentage = (hardnessTotal/playCardCounter)/maxHardness * 100;
         double specificGravityPercentage = (specificGravityTotal/playCardCounter)/maxSpecificGravity * 100;
         double cleavagePercentage = (cleavageTotal/playCardCounter)/maxCleavage * 100;
         double crustalAbundancePercentage = (crustalAbundanceTotal/playCardCounter)/maxCrustalAbundance * 100;
         double economicValuePercentage = (economicValueTotal/playCardCounter)/maxEconomicValue * 100;
 
+        // Gather all calculated percentages
         double[] allPercentages = {hardnessPercentage, specificGravityPercentage, cleavagePercentage,
                 crustalAbundancePercentage, economicValuePercentage};
 
+        // Arbitrarily set the maximum to being the first percentage
         double currentMax = hardnessPercentage;
         int indexOfMax = 0;
 
+        // Iterate through the percentages array to find the maximum average
         for (int i = 1; i < allPercentages.length; ++i) {
             if (allPercentages[i] > currentMax) {
                 currentMax = allPercentages[i];
@@ -146,6 +182,7 @@ public class AIPlayer extends Player {
             }
         }
 
+        // Relate the maximum percentage to a String category choice
         switch (indexOfMax) {
             case 0:
                 chosenCategory = "hardness";
@@ -167,15 +204,18 @@ public class AIPlayer extends Player {
                 break;
         }
 
+        // Return the chosen category
         return chosenCategory;
     }
 
+    // Choose the 'best' hardness card
     private Card chooseBestHardnessCard(PlayCard currentCard) {
         PlayCard playCard;
         double currentCardHardness = currentCard.getHardnessAsDouble();
         double bestHardness = 10;
         int indexOfBestHardness = -1;
 
+        // Find the card with the lowest hardness that is still greater than the card to beat
         for (int i = 0; i < getHandSize(); ++i) {
             if (getCardAt(i).getType().equals("play")) {
                 playCard = (PlayCard) getCardAt(i);
@@ -186,21 +226,25 @@ public class AIPlayer extends Player {
             }
         }
 
+        // If no card is found, let play card equal null; otherwise create a play card based on the index of the maximum
         if (indexOfBestHardness == -1) {
             playCard = null;
         } else {
             playCard = (PlayCard) getPlayerHand().get(indexOfBestHardness);
         }
 
+        // Return the selected PlayCard
         return playCard;
     }
 
+    // Choose the card with the 'best' specific gravity
     private Card chooseBestSpecificGravityCard(PlayCard currentCard) {
         PlayCard playCard;
         double currentCardSpecificGravity = currentCard.getSpecificGravityAsDouble();
         double bestSpecificGravity = 19.3;
         int indexOfBestSpecificGravity = -1;
 
+        // Find the card with the lowest specific gravity that is greater than that of the card to beat
         for (int i = 0; i < getHandSize(); ++i) {
             if (getCardAt(i).getType().equals("play")) {
                 playCard = (PlayCard) getCardAt(i);
@@ -211,6 +255,7 @@ public class AIPlayer extends Player {
             }
         }
 
+        // If no such card is found, return null; otherwise return the card.
         if (indexOfBestSpecificGravity == -1) {
             playCard = null;
         } else {
@@ -220,12 +265,14 @@ public class AIPlayer extends Player {
         return playCard;
     }
 
+    // Choose the 'best' card for cleavage category
     private Card chooseBestCleavageCard(PlayCard currentCard) {
         PlayCard playCard;
         double currentCardCleavage = currentCard.getCleavageAsInt();
         int bestCleavage = Cleavage.PERFECT6.ordinal();
         int indexOfBestCleavage = -1;
 
+        // Find the card with the lowest cleavage that is greater than the card to beat
         for (int i = 0; i < getHandSize(); ++i) {
             if (getCardAt(i).getType().equals("play")) {
                 playCard = (PlayCard) getCardAt(i);
@@ -236,6 +283,7 @@ public class AIPlayer extends Player {
             }
         }
 
+        // If no such card is found, return null; else return the card chosen.
         if (indexOfBestCleavage == -1) {
             playCard = null;
         } else {
@@ -245,12 +293,14 @@ public class AIPlayer extends Player {
         return playCard;
     }
 
+    // Choose the card with the 'best' crustal abundances.
     private Card chooseBestCrustalAbundancesCard(PlayCard currentCard) {
         PlayCard playCard;
         int currentCardHardness = currentCard.getCrustalAbundancesAsInt();
         int bestCrustalAbundances = CrustalAbundance.VERY_HIGH.ordinal();
         int indexOfBestCrustalAbundances = -1;
 
+        // Find the card with the lowest crustal abundances that is still greater than the current card to beat.
         for (int i = 0; i < getHandSize(); ++i) {
             if (getCardAt(i).getType().equals("play")) {
                 playCard = (PlayCard) getCardAt(i);
@@ -261,6 +311,7 @@ public class AIPlayer extends Player {
             }
         }
 
+        // If no such card is found, return null; otherwise return the chosen card.
         if (indexOfBestCrustalAbundances == -1) {
             playCard = null;
         } else {
@@ -270,12 +321,14 @@ public class AIPlayer extends Player {
         return playCard;
     }
 
+    // Choose the 'best' card for the economic value trump suit
     private Card chooseBestEconomicValueCard(PlayCard currentCard) {
         PlayCard playCard;
         double currentCardEconomicValue = currentCard.getEconomicValueAsInt();
         int bestEconomicValue = EconomicValue.I_AM_RICH.ordinal();
         int indexOfBestEconomicValue = -1;
 
+        // Find the card with the lowest economic value that is greater than the economic value of the card to beat.
         for (int i = 0; i < getHandSize(); ++i) {
             if (getCardAt(i).getType().equals("play")) {
                 playCard = (PlayCard) getCardAt(i);
@@ -286,6 +339,7 @@ public class AIPlayer extends Player {
             }
         }
 
+        // If no such card is found, return null.. otherwise return the card.
         if (indexOfBestEconomicValue == -1) {
             playCard = null;
         } else {
