@@ -15,8 +15,8 @@ public class TrumpCard extends Card {
 
     public TrumpCard(String cardName, String cardDescription) {
         super(cardName);
-        setType(TYPE_STRING);
         this.cardDescription = cardDescription;
+        setType(TYPE_STRING);
     }
 
     public TrumpCard(String imageFile, String imageName, String cardName, String cardDescription) {

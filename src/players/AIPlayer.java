@@ -15,6 +15,11 @@ public class AIPlayer extends Player {
         Card chosenCard = new Card();
         PlayCard currentPlayCard;
 
+        if (locationOf("The Geophysicist") != -1 && locationOf("Magnetite") != -1) {
+            chosenCard = getCardAt(locationOf("The Geophysicist"));
+            return chosenCard;
+        }
+
         if (currentCard.getType().equals("play")) {
             currentPlayCard = (PlayCard) currentCard;
 
@@ -53,7 +58,11 @@ public class AIPlayer extends Player {
         if (currentCategory.equals("hardness")) {
             chosenCard = chooseBestHardnessCard(nullCard);
         } else if (currentCategory.equals("specific gravity")) {
-            chosenCard = chooseBestSpecificGravityCard(nullCard);
+            if (locationOf("Magnetite") != -1) {
+                chosenCard = getCardAt(locationOf("Magnetite"));
+            } else {
+                chosenCard = chooseBestSpecificGravityCard(nullCard);
+            }
         } else if (currentCategory.equals("cleavage")) {
             chosenCard = chooseBestCleavageCard(nullCard);
         } else if (currentCategory.equals("crustal abundances")) {
@@ -64,23 +73,17 @@ public class AIPlayer extends Player {
             chosenCard = null;
         }
 
-        System.out.println("Category is" + currentCategory);
-        System.out.println("I made it here and the card is" + chosenCard);
-
         if (chosenCard == null) {
             chosenCard = getTrumpCard();
-            System.out.println("I chose a trump card");
         }
 
         if (chosenCard == null) {
-            System.out.println("I am passing");
             pass();
         }
         return chosenCard;
     }
 
     public Card playFirstCard(String currentCategory) {
-        System.out.println(getHandSize());
         Card chosenCard = getStartingCard(currentCategory);
         if (chosenCard != null) {
             removeCard(locationOf(chosenCard.getCardName()));
@@ -273,7 +276,7 @@ public class AIPlayer extends Player {
         for (int i = 0; i < getHandSize(); ++i) {
             if (getCardAt(i).getType().equals("play")) {
                 playCard = (PlayCard) getCardAt(i);
-                if (playCard.getHardnessAsDouble() > currentCardEconomicValue && playCard.getHardnessAsDouble() < bestEconomicValue) {
+                if (playCard.getEconomicValueAsInt() > currentCardEconomicValue && playCard.getEconomicValueAsInt() < bestEconomicValue) {
                     bestEconomicValue = playCard.getEconomicValueAsInt();
                     indexOfBestEconomicValue = i;
                 }
@@ -300,21 +303,6 @@ public class AIPlayer extends Player {
         }
 
         return null;
-    }
-
-    // for debugging ONLY
-    // TODO: DELETE THIS
-    public void viewAllCards() {
-        System.out.println("You have the following cards in your hand");
-        for (int i = 1; i <= getHandSize(); ++i) {
-            System.out.print(i + ".\t");
-            Card card = getCardAt(i -1);
-            if (card.getType().equals("play")) {
-                System.out.println(((PlayCard) card).toShortString());
-            } else if (card.getType().equals("trump")) {
-                System.out.println(((TrumpCard) card).toShortString());
-            }
-        }
     }
 
 }

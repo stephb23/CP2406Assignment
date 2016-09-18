@@ -22,6 +22,11 @@ public class PlayCard extends Card {
 
     public PlayCard(String cardName) {
         super(cardName);
+        this.hardness = "0";
+        this.specificGravity = "0";
+        this.cleavage = "none";
+        this.crustalAbundances = "ultratrace";
+        this.economicValue = "low";
         setType(TYPE_STRING);
     }
 

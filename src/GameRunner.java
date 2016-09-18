@@ -46,6 +46,9 @@ public class GameRunner {
             player.setPlayerHand(game.dealHand());
         }
 
+        allPlayers.get(1).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
+        allPlayers.get(1).pickUpCard(new PlayCard("Magnetite"));
+
         // Choose first player
         game.selectDealer(numberOfPlayers);
         System.out.println(allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
@@ -61,13 +64,9 @@ public class GameRunner {
         }
 
         System.out.println("The winners are: " );
-        for (int i = 0; i < 5; ++i) {
-            System.out.println(allPlayers.get(game.getWinner(i)));
+        for (int i = 0; i < allPlayers.size() - 1; ++i) {
+            System.out.println(i + ". " + allPlayers.get(game.getWinner(i)).getName());
         }
-
-        // The following code will only run if the player chooses to play a game while menuHandler() is running
-        System.out.println("YAY PLAY A GAME");
-
     }
 
     private static void playRound(int startingPlayer) {
@@ -79,23 +78,42 @@ public class GameRunner {
             System.out.print("Enter the number of the card you wish to play: ");
             game.setCurrentCard(player.playCard(inputReader.getCardNumber(player.getHandSize())));
 
+            System.out.println(game.getCurrentCard().getType());
             if (game.getCurrentCard().getType().equals("trump")) {
 
-                TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
-                if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
-                    System.out.print("Choose a trump category: ");
-                    game.setCurrentCategory(inputReader.getCategory());
-                } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
-                    game.setCurrentCategory("crustal abundances");
-                } else {
-                    game.setCurrentCategory(trumpCard.getCardDescription());
-                }
+                System.out.println("Entering here");
 
-                while (game.getCurrentCard().equals("trump")) {
+                while (game.getCurrentCard().getType().equals("trump")) {
+                    System.out.println("HI HERE I AM");
+                    boolean checkForWinningCombo = false;
+
+                    TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                    if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                        System.out.print("Choose a trump category: ");
+                        game.setCurrentCategory(inputReader.getCategory());
+                    } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
+                        game.setCurrentCategory("crustal abundances");
+                    } else if (trumpCard.getCardName().equals("The Geophysicist")){
+                        System.out.println("the card was played");
+                        checkForWinningCombo = true;
+                        game.setCurrentCategory(trumpCard.getCardDescription());
+                    } else {
+                        game.setCurrentCategory(trumpCard.getCardDescription());
+                    }
+
                     System.out.println("You played a trump card! Your hand is now: ");
                     player.viewAllCards();
                     System.out.print("Enter the card number you'd like to play: ");
                     game.setCurrentCard(player.playCard(inputReader.getCardNumber(player.getHandSize())));
+
+                    if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
+                        System.out.println(player.getName() + " played the round-winning combo! YAY!");
+                        if (player.getHandSize() == 0) {
+                            player.finish();
+                            game.addWinner(game.getCurrentPlayer());
+                        }
+                        return;
+                    }
 
                     if (player.getHandSize() == 0) {
                         player.finish();
@@ -130,6 +148,8 @@ public class GameRunner {
             tempCard = player.playFirstCard(game.getCurrentCategory());
             game.setCurrentCard(tempCard);
 
+            System.out.println(game.getCurrentCard());
+
             if (player.getHandSize() == 0) {
                 player.finish();
                 game.addWinner(game.getCurrentPlayer());
@@ -138,12 +158,47 @@ public class GameRunner {
                 }
             }
 
-            System.out.println(player.getHandSize());
+            boolean checkForWinningCombo;
+
+            while (game.getCurrentCard().getType().equals("trump")) {
+                System.out.println(player.getName() + "played a trump card! Playing again...");
+                game.setCurrentCard(player.playFirstCard(game.getCurrentCategory()));
+
+                checkForWinningCombo = false;
+                TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                    game.setCurrentCategory(player.chooseCategory());
+                } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
+                    game.setCurrentCategory("crustal abundances");
+                } else if (trumpCard.getCardName().equals("The Geophysicist")){
+                    checkForWinningCombo = true;
+                    game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                } else {
+                    game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                }
+
+                game.setCurrentCard(player.playFirstCard(game.getCurrentCategory()));
+
+                if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
+                    System.out.println(player.getName() + " played the round-winning combo!");
+                    if (player.getHandSize() == 0) {
+                        player.finish();
+                        game.addWinner(game.getCurrentPlayer());
+                    }
+                    return;
+                }
+
+                if (player.getHandSize() == 0) {
+                    player.finish();
+                    game.addWinner(game.getCurrentPlayer());
+                    if (game.isFinished()) {
+                        return;
+                    }
+                }
+            }
+
 
             game.nextTurn();
-
-            System.out.println(game.getCurrentCard());
-
         }
 
         while (!game.isRoundFinished()) {
@@ -198,29 +253,45 @@ public class GameRunner {
 
 
                             if (game.getCurrentCard().getType().equals("trump")) {
-                                TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
-                                if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
-                                    System.out.print("Choose a trump category: ");
-                                    game.setCurrentCategory(inputReader.getCategory());
-                                } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
-                                    game.setCurrentCategory("crustal abundances");
-                                } else {
-                                    game.setCurrentCategory(trumpCard.getCardDescription());
-                                }
+                                boolean checkForWinningCombo;
+                                while(game.getCurrentCard().getType().equals("trump")) {
+                                    checkForWinningCombo = false;
+                                    TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                                    if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                                        System.out.print("Choose a trump category: ");
+                                        game.setCurrentCategory(inputReader.getCategory());
+                                    } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
+                                        game.setCurrentCategory("crustal abundances");
+                                    } else if (trumpCard.getCardName().equals("The Geophysicist")) {
+                                        System.out.println("the card was played");
+                                        checkForWinningCombo = true;
+                                        game.setCurrentCategory(trumpCard.getCardDescription());
+                                    } else {
+                                        game.setCurrentCategory(trumpCard.getCardDescription());
+                                    }
 
-                                System.out.println("You played a trump card! Your hand is now: ");
-                                humanPlayer.viewAllCards();
-                                System.out.print("Enter the number of the card you want to play next: ");
-                                game.setCurrentCard(humanPlayer.playCard(inputReader.getCardNumber(player.getHandSize())));
+                                    System.out.println("You played a trump card! Your hand is now: ");
+                                    humanPlayer.viewAllCards();
+                                    System.out.print("Enter the number of the card you want to play next: ");
+                                    game.setCurrentCard(humanPlayer.playCard(inputReader.getCardNumber(player.getHandSize())));
 
-                                if (humanPlayer.getHandSize() == 0) {
-                                    humanPlayer.finish();
-                                    game.addWinner(game.getCurrentPlayer());
-                                    if (game.isFinished()) {
+                                    if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
+                                        System.out.println(player.getName() + " played the round-winning combo! YAY!");
+                                        if (player.getHandSize() == 0) {
+                                            player.finish();
+                                            game.addWinner(game.getCurrentPlayer());
+                                        }
                                         return;
                                     }
-                                }
 
+                                    if (humanPlayer.getHandSize() == 0) {
+                                        humanPlayer.finish();
+                                        game.addWinner(game.getCurrentPlayer());
+                                        if (game.isFinished()) {
+                                            return;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -259,13 +330,32 @@ public class GameRunner {
                             allPlayers.get(i).activate();
                         }
 
-                        TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
-                        if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
-                            game.setCurrentCategory(aiPlayer.chooseCategory());
-                        } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
-                            game.setCurrentCategory("crustal abundances");
-                        } else {
-                            game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                        boolean checkForWinningCombo;
+
+                        while (game.getCurrentCard().getType().equals("trump")) {
+                            checkForWinningCombo = false;
+                            TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                            if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                                game.setCurrentCategory(aiPlayer.chooseCategory());
+                            } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
+                                game.setCurrentCategory("crustal abundances");
+                            } else if (trumpCard.getCardName().equals("The Geophysicist")){
+                                checkForWinningCombo = true;
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            } else {
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            }
+
+                            game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
+
+                            if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
+                                System.out.println(aiPlayer.getName() + " played the round-winning combo!");
+                                if (player.getHandSize() == 0) {
+                                    player.finish();
+                                    game.addWinner(game.getCurrentPlayer());
+                                }
+                                return;
+                            }
                         }
                     } else {
                         game.nextTurn();
@@ -374,5 +464,4 @@ public class GameRunner {
             allPlayers.add(new AIPlayer("AI Jocasta"));
         }
     }
-
 }
