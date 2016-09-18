@@ -1,16 +1,27 @@
 package cards;
 
+import enums.Cleavage;
+import enums.CrustalAbundance;
+import enums.EconomicValue;
+
 import java.util.ArrayList;
 
 /**
  * Created by Stephanie on 2/09/2016.
+ *
+ * This class is used to create the "play" type cards for the Supertrump Game.
+ * It provides means to get a card's value in any category, either as a string or as a comparable numeric
+ * value.
+ *
  */
+
 public class PlayCard extends Card {
     private final String TYPE_STRING = "play";
     private String chemistry, classification, crystalSystem;
     private ArrayList<String> occurrences = new ArrayList<>();
     private String hardness, specificGravity, cleavage, crustalAbundances, economicValue;
 
+    // Default constructor - sets minimum values for each category.
     public PlayCard() {
         this.hardness = "0";
         this.specificGravity = "0";
@@ -20,6 +31,7 @@ public class PlayCard extends Card {
         setType(TYPE_STRING);
     }
 
+    //  Constructor for card name only, sets everything else to minimum values.
     public PlayCard(String cardName) {
         super(cardName);
         this.hardness = "0";
@@ -30,27 +42,7 @@ public class PlayCard extends Card {
         setType(TYPE_STRING);
     }
 
-    public PlayCard(String imageFile, String imageName, String cardName) {
-        super(imageFile, imageName, cardName);
-        setType(TYPE_STRING);
-    }
-
-    public PlayCard(String cardName, String chemistry, String classification, String crystalSystem,
-                    ArrayList<String> occurrences, String hardness, String specificGravity, String cleavage,
-                    String crustalAbundances, String economicValue) {
-        super(cardName);
-        setType(TYPE_STRING);
-        this.chemistry = chemistry;
-        this.classification = classification;
-        this.crystalSystem = crystalSystem;
-        this.occurrences = occurrences;
-        this.hardness = hardness;
-        this.specificGravity = specificGravity;
-        this.cleavage = cleavage;
-        this.crustalAbundances = crustalAbundances;
-        this.economicValue = economicValue;
-    }
-
+    // Constructor with all PlayCard parameters
     public PlayCard(String imageFile, String imageName, String cardName, String chemistry, String classification,
                     String crystalSystem, ArrayList<String> occurrences, String hardness, String specificGravity,
                     String cleavage, String crystalAbundances, String economicValue) {
@@ -67,48 +59,31 @@ public class PlayCard extends Card {
         this.economicValue = economicValue;
     }
 
-    public void setChemistry(String chemistry) {
-        this.chemistry = chemistry;
-    }
-
+    // Getters for card information - no setters required
     public String getChemistry() {
         return chemistry;
-    }
-
-    public void setClassification(String classification) {
-        this.classification = classification;
     }
 
     public String getClassification() {
         return classification;
     }
 
-    public void setCrystalSystem(String crystalSystem) {
-        this.crystalSystem = crystalSystem;
-    }
-
     public String getCrystalSystem() {
         return crystalSystem;
-    }
-
-    public void setOccurrences(ArrayList<String> occurrences) {
-        this.occurrences = occurrences;
     }
 
     public ArrayList<String> getOccurrences() {
         return occurrences;
     }
 
-    public void setHardness(String hardness) {
-        this.hardness = hardness;
-    }
-
+    // Getters for hardness trump category
     public String getHardness() {
         return hardness;
     }
 
     public Double getHardnessAsDouble() {
         String[] hardnessRange;
+        // Handles different formats that the hardness range was in.
         if (hardness.contains(" - ")) {
             hardnessRange = hardness.split(" - ");
         } else if (hardness.contains("-")) {
@@ -117,20 +92,17 @@ public class PlayCard extends Card {
             hardnessRange = hardness.split(" ");
         }
 
-        double highestHardness = Double.parseDouble(hardnessRange[hardnessRange.length - 1]);
-        return highestHardness;
+        return Double.parseDouble(hardnessRange[hardnessRange.length - 1]);
     }
 
-    public void setSpecificGravity(String specificGravity) {
-        this.specificGravity = specificGravity;
-    }
-
+    // Getters for specific gravity trump category
     public String getSpecificGravity() {
         return specificGravity;
     }
 
     public Double getSpecificGravityAsDouble() {
         String[] specificGravityRange;
+        // Handles different formats that the hardness range was in.
         if (specificGravity.contains(" - ")) {
             specificGravityRange = specificGravity.split(" - ");
         } else if (specificGravity.contains("-")) {
@@ -139,14 +111,10 @@ public class PlayCard extends Card {
             specificGravityRange = specificGravity.split(" ");
         }
 
-        double highestSpecificGravity = Double.parseDouble(specificGravityRange[specificGravityRange.length - 1]);
-        return highestSpecificGravity;
+        return Double.parseDouble(specificGravityRange[specificGravityRange.length - 1]);
     }
 
-    public void setCleavage(String cleavage) {
-        this.cleavage = cleavage;
-    }
-
+    // Getters for cleavage trump category.
     public String getCleavage() {
         return cleavage;
     }
@@ -191,10 +159,7 @@ public class PlayCard extends Card {
         return cleavageRank;
     }
 
-    public void setCrustalAbundances(String crustalAbundances) {
-        this.crustalAbundances = crustalAbundances;
-    }
-
+    // Getters for crustal abundances trump category
     public String getCrustalAbundances(){
         return crustalAbundances;
     }
@@ -219,16 +184,14 @@ public class PlayCard extends Card {
         return crustalAbundancesRank;
     }
 
-    public void setEconomicValue(String economicValue) {
-        this.economicValue = economicValue;
-    }
-
+    // Getters for economic value
     public String getEconomicValue() {
         return economicValue;
     }
 
     public int getEconomicValueAsInt() {
         int economicValueRank;
+
         if (economicValue.equals("trivial")) {
             economicValueRank = EconomicValue.TRIVIAL.ordinal();
         } else if (economicValue.equals("low")) {
@@ -247,21 +210,22 @@ public class PlayCard extends Card {
         return economicValueRank;
     }
 
+    // Overriden toString() method
     @Override
     public String toString() {
         String playCardString = super.toString();
-        playCardString += ",\nChemistry = " + chemistry + ", Classification = " + classification + ", Crystal System = "
-                + crystalSystem + ",\nOccurences = " + occurrences.toString() + ",\nHardness = " + hardness +
-                ", Specific Gravity = " + specificGravity + ", Cleavage = " + cleavage + ",\nCrustal Abundances = " +
+        playCardString += ", Chemistry = " + chemistry + ", Classification = " + classification + ", Crystal System = "
+                + crystalSystem + ", Occurences = " + occurrences.toString() + ",\nHardness = " + hardness +
+                ", Specific Gravity = " + specificGravity + ", Cleavage = " + cleavage + ", Crustal Abundances = " +
                 crustalAbundances + " and Economic Value = " + economicValue;
         return playCardString;
 
     }
 
+    // Shorter string for more concise info
     public String toShortString() {
-        String playCardString = "Name: "  + getCardName() + ", Hardness = " + hardness + ", Specific Gravity = " +
+        return "Name: "  + getCardName() + ", Hardness = " + hardness + ", Specific Gravity = " +
                 specificGravity + ", Cleavage: " + cleavage + ", Crustal Abundances: " + crustalAbundances + " and " +
                 "Economic Value: " + economicValue;
-        return playCardString;
     }
 }

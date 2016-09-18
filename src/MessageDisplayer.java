@@ -18,9 +18,10 @@ public class MessageDisplayer {
 
     public void displayMenu() {
         System.out.println("Here's what you can do: ");
-        System.out.println("1. Start a SupertrumpGame");
+        System.out.println("1. Start a Supertrump Game");
         System.out.println("2. View Instructions");
-        System.out.println("3. About the SupertrumpGame");
+        System.out.println("3. About the Supertrump Game");
+        System.out.println("4. Exit the program");
     }
 
     public void displayInstructions() {

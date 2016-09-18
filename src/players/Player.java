@@ -31,14 +31,6 @@ public class Player {
         playerHand.remove(index);
     }
 
-    public boolean hasFinished() {
-        if (getHandSize() == 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public void pass(){
         this.inactive = true;
     }
@@ -49,16 +41,12 @@ public class Player {
         }
     }
 
-    public boolean getInactive() {
+    public boolean isInactive() {
         return inactive;
     }
 
     public int getHandSize() {
         return playerHand.size();
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getName() {
@@ -75,7 +63,6 @@ public class Player {
                 return i;
             }
         }
-
         return -1;
     }
 

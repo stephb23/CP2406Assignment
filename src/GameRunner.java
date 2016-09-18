@@ -8,73 +8,106 @@ import players.Player;
 
 import java.util.ArrayList;
 
+import static java.lang.System.exit;
+
 /**
  * Created by Stephanie on 6/09/2016.
+ *
+ * This class is the center of game logic, setting up a game, handling the first player's turn, and running
+ * the rest of each round. It determines when a player is finished, when a round is finished, and finally when the
+ * entire game is finished. At this point, it displays the winner/s in order.
+ *
  */
+
 public class GameRunner {
+    // These variables are required by all functions in this file.
     private static String playerName;
     private static ArrayList<Player> allPlayers = new ArrayList<>();
     private static MessageDisplayer messageDisplayer = new MessageDisplayer();
     private static InputReader inputReader = new InputReader();
-    private static int numberOfAIPlayers, numberOfPlayers;
+    private static int numberOfPlayers;
     private static SupertrumpGame game;
 
+    /* The 'main' method primarily deals with game set up, and handles checking whether a game has finished or not after
+    a round has been completed.
+    */
     public static void main(String[] args) {
 
         // Welcome the player & display menu
         messageDisplayer.displayWelcome();
         playerName = inputReader.getUserName();
         messageDisplayer.displayNameConfirmation(playerName);
-        menuHandler();
 
-        // Start the game
-        messageDisplayer.startGame();
-        numberOfAIPlayers = inputReader.getInt(1, 4);
-        numberOfPlayers = numberOfAIPlayers + 1;
-        game = new SupertrumpGame(numberOfAIPlayers);
+        while (menuHandler() != 4) {
+            // Start the game
+            messageDisplayer.startGame();
+            int numberOfAIPlayers = inputReader.getInt(1, 4);
+            numberOfPlayers = numberOfAIPlayers + 1;
+            game = new SupertrumpGame(numberOfAIPlayers);
 
-        // Create the players
-        createPlayers(numberOfPlayers);
-        System.out.println("Players in this game are: ");
-        for (Player player : allPlayers) {
-            System.out.println(player.getName());
-        }
-
-        // Create the deck and deal cards
-        game.createDeck();
-        for (Player player : allPlayers) {
-            player.setPlayerHand(game.dealHand());
-        }
-
-        allPlayers.get(1).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
-        allPlayers.get(1).pickUpCard(new PlayCard("Magnetite"));
-
-        // Choose first player
-        game.selectDealer(numberOfPlayers);
-        System.out.println(allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
-
-        // Play round 1
-        while (!game.isFinished()){
-            System.out.println("\n\nNEW ROUND");
-            playRound(game.getCurrentPlayer());
-            for (int i = 0; i < allPlayers.size(); ++i) {
-                allPlayers.get(i).activate();
+            // Create the players
+            createPlayers(numberOfPlayers);
+            System.out.println("Players in this game are: ");
+            for (Player player : allPlayers) {
+                System.out.println(player.getName());
             }
-            game.setRoundFinished(false);
-        }
 
-        System.out.println("The winners are: " );
-        for (int i = 0; i < allPlayers.size() - 1; ++i) {
-            System.out.println(i + ". " + allPlayers.get(game.getWinner(i)).getName());
+            // Create the deck and deal cards
+            game.createDeck();
+            for (Player player : allPlayers) {
+                player.setPlayerHand(game.dealHand());
+            }
+
+            // Test the Geophysicist + Magnetite combination for the human player
+            //allPlayers.get(0).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
+            //allPlayers.get(0).pickUpCard(new PlayCard("Magnetite"));
+
+            // Test the Geophysicist + Magnetite combination for the first AI player
+            //allPlayers.get(1).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
+            //allPlayers.get(1).pickUpCard(new PlayCard("Magnetite"));
+
+            // Choose first player
+            game.selectDealer(numberOfPlayers);
+            System.out.println(allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
+
+            // While the game isn't finished, play rounds.
+            while (!game.isFinished()) {
+                System.out.println("\n\nNEW ROUND");
+                playRound(game.getCurrentPlayer());
+
+                // After a round has finished, reactivate all players who had passed
+                for (int i = 0; i < allPlayers.size(); ++i) {
+                    allPlayers.get(i).activate();
+                }
+
+                // Reset round finished variable.
+                game.setRoundFinished(false);
+            }
+
+            // When the game is finished, print out the order players finished in (not including the loser).
+            System.out.println("The winners are: ");
+            for (int i = 0; i < allPlayers.size() - 1; ++i) {
+                System.out.println((i+1) + ". " + allPlayers.get(game.getWinner(i)).getName());
+            }
+
+            // Clear allPlayers in case a new game is started.
+            allPlayers.clear();
         }
     }
 
+    // The playRound method handles the game logic for each round.
     private static void playRound(int startingPlayer) {
         Card tempCard;
+
+        // Human player is found at index 0.
         if (startingPlayer == 0 && !allPlayers.get(0).isFinished()) {
+
+            // Indicate to the player that it's their turn and show them their cards.
             System.out.println("You go first, " + playerName);
             HumanPlayer player = (HumanPlayer) allPlayers.get(0);
             player.viewAllCards();
+
+            // Ask for a card number
             System.out.print("Enter the number of the card you wish to play: ");
             game.setCurrentCard(player.playCard(inputReader.getCardNumber(player.getHandSize())));
 
@@ -203,7 +236,7 @@ public class GameRunner {
 
         while (!game.isRoundFinished()) {
             Player player = allPlayers.get(game.getCurrentPlayer());
-            if (!player.getInactive()) {
+            if (!player.isInactive()) {
                 if (game.getCurrentPlayer() == 0) {
                     HumanPlayer humanPlayer = (HumanPlayer) player;
                     System.out.print("Your turn! ");
@@ -370,14 +403,14 @@ public class GameRunner {
             int playersPassed = 0;
 
             for (int i = 0; i < allPlayers.size(); ++i) {
-                if (allPlayers.get(i).getInactive()) {
+                if (allPlayers.get(i).isInactive()) {
                     ++playersPassed;
                 }
             }
 
             if (playersPassed == numberOfPlayers - 1) {
                 for (int i = 1; i < allPlayers.size(); ++i) {
-                    if (!allPlayers.get(i).getInactive()){
+                    if (!allPlayers.get(i).isInactive()){
                         System.out.println(allPlayers.get(i).getName() + " wins this round!");
                         game.setCurrentPlayer(i);
                     }
@@ -420,14 +453,12 @@ public class GameRunner {
         return false;
     }
 
-    public static void menuHandler() {
+    public static int menuHandler() {
         int menuOption;
         messageDisplayer.displayMenu();
         menuOption = inputReader.getMenuChoice();
 
-        if (menuOption == 1) {
-            return;
-        } else if (menuOption == 2) {
+        if (menuOption == 2) {
             messageDisplayer.displayInstructions();
         } else if (menuOption == 3) {
             messageDisplayer.displayAboutGame();
@@ -444,9 +475,11 @@ public class GameRunner {
                 menuHandler();
             } else if (choice == 'e') {
                 System.out.println("Goodbye! See you next time!");
-                System.exit(0);
+                exit(0);
             }
         }
+
+        return menuOption;
     }
 
     public static void createPlayers(int numberOfPlayers) {

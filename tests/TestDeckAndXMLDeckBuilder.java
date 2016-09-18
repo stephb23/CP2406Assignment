@@ -4,7 +4,7 @@ import decks.XMLDeckBuilder;
 /**
  * Created by Stephanie on 6/09/2016.
  */
-public class TestDeckBuilder {
+public class TestDeckAndXMLDeckBuilder {
     public static void main(String[] args) {
         XMLDeckBuilder builder = new XMLDeckBuilder();
         Deck deck = builder.toDeck();

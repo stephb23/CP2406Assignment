@@ -16,11 +16,6 @@ public class TestTrumpCard {
         System.out.println("\nTest 3: constructor with name and description parameters only");
         System.out.println(new TrumpCard("The Magician", "Magic tricks"));
 
-        System.out.println("\nTest new setter by changing description of the first card");
-        testTrumpCard.setCardDescription("This is a card");
-        System.out.println("cards.Card is now: ");
-        System.out.println(testTrumpCard.toString());
-
         System.out.println("\nTesting new getter using the edited card");
         System.out.println("Expected cards.Card Description = This is a card, Actual cards.Card Description = " +
                 testTrumpCard.getCardDescription());

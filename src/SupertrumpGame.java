@@ -63,10 +63,6 @@ public class SupertrumpGame {
         this.currentPlayer = currentPlayer;
     }
 
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
-
     public boolean isFinished() {
         return finished;
     }

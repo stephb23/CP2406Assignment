@@ -25,8 +25,8 @@ public class InputReader {
         System.out.print("Enter the number of your choice: ");
         try {
             menuChoice = input.nextInt();
-            while (menuChoice > 3 || menuChoice < 0) {
-                System.out.print("Invalid input, choice must be between 1-3. Try again: ");
+            while (menuChoice > 4 || menuChoice < 0) {
+                System.out.print("Invalid input, choice must be between 1-4. Try again: ");
                 menuChoice = input.nextInt();
             }
         } catch(Exception e) {

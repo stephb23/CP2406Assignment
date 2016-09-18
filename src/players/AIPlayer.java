@@ -1,6 +1,9 @@
 package players;
 
 import cards.*;
+import enums.Cleavage;
+import enums.CrustalAbundance;
+import enums.EconomicValue;
 
 /**
  * Created by Stephanie on 8/09/2016.

@@ -20,18 +20,6 @@ public class TestPlayCard {
 
         System.out.println("\nTesting setter methods by changing the card to Topaz card from assignment");
         occurences.remove(0);
-        testCard1.setImageFile("Slide25.jpg");
-        testCard1.setImageName("Slide25");
-        testCard1.setCardName("Topaz");
-        testCard1.setChemistry("Al_2 Si O_4 (F, OH)_2");
-        testCard1.setClassification("nesosilicate");
-        testCard1.setCrystalSystem("orthorhombic");
-        testCard1.setOccurrences(occurences);
-        testCard1.setHardness("8");
-        testCard1.setSpecificGravity("3.5 - 3.6");
-        testCard1.setCleavage("1 poor");
-        testCard1.setCrustalAbundances("trace");
-        testCard1.setEconomicValue("moderate");
         System.out.println("cards.Card information now is: ");
         System.out.println(testCard1.toString());
 
@@ -54,14 +42,6 @@ public class TestPlayCard {
 
         System.out.println("\nTest creating card using card name parameter only");
         System.out.println(new PlayCard("Ace"));
-
-        System.out.println("\nTest creating card using card name, image file, and image name");
-        System.out.println(new PlayCard("Deadshot.jpg", "Deadshot", "Ace"));
-
-        System.out.println("\nTest creating card using all parameters besides image name and file");
-        occurences.clear();
-        occurences.add("Air");
-        System.out.println(new PlayCard("Oxygen", "O2", "Gas", "Not-A-Crystal", occurences, "0", "0", "poor", "lots", "not much"));
 
         System.out.println(testCard1.getHardnessAsDouble());
     }

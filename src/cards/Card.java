@@ -2,63 +2,54 @@ package cards;
 
 /**
  * Created by Stephanie on 2/09/2016.
+ *
+ * This class is the base class for all cards and implements methods & variables that are relevant to all other
+ * required cards.
+ *
  */
+
 public class Card {
     private String imageFile, imageName, cardName, type;
 
+    // Default constructor
     public Card() {
-        // let all set to null
+
     }
 
+    // Constructor with card name only
     public Card(String cardName) {
         this.cardName = cardName;
     }
 
+    // Constructor with image file, image name, and card name
     public Card(String imageFile, String imageName, String cardName) {
         this.imageFile = imageFile;
         this.imageName = imageName;
         this.cardName = cardName;
     }
 
-    public void setImageFile(String imageFile) {
-        this.imageFile = imageFile;
-    }
-
+    // Getters for all cards. No public setters provided as Cards should be immutable from the outside.
     public String getImageFile() {
         return imageFile;
-    }
-
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
     }
 
     public String getImageName(){
         return imageName;
     }
 
-    public void setCardName(String cardName) {
-        this.cardName = cardName;
-    }
-
     public String getCardName() {
         return cardName;
-    }
-
-    protected void setType(String type) {
-        this.type = type;
     }
 
     public String getType() {
         return type;
     }
 
+    protected void setType(String type) {this.type = type;}
+
+    // Basic toString() method for the default card
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Card Name = " + cardName);
-        builder.append(", Image Name = " + imageName);
-        builder.append(", Image File = " + imageFile);
-
-        return builder.toString();
+        return ("Card name: " + cardName);
     }
 }
