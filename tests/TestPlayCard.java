@@ -34,7 +34,7 @@ public class TestPlayCard {
         System.out.println("Expected Hardness = 8, Actual Hardness = " + testCard1.getHardness());
         System.out.println("Expected Specific Gravity = 3.5 - 3.6, Actual Specific Gravity = " + testCard1.getSpecificGravity());
         System.out.println("Expected Cleavage = 1 poor, Actual Cleavage = " + testCard1.getCleavage());
-        System.out.println("Expected Crustal Abundances = trace, Actual Crustal Abundances = " + testCard1.getCrustalAbundances());
+        System.out.println("Expected Crustal Abundances = trace, Actual Crustal Abundances = " + testCard1.getCrustalAbundance());
         System.out.println("Expected Economic Value = moderate, Actual Economic Value = " + testCard1.getEconomicValue());
 
         System.out.println("\nTest creating card using default constructor");

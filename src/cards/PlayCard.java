@@ -19,14 +19,14 @@ public class PlayCard extends Card {
     private final String TYPE_STRING = "play";
     private String chemistry, classification, crystalSystem;
     private ArrayList<String> occurrences = new ArrayList<>();
-    private String hardness, specificGravity, cleavage, crustalAbundances, economicValue;
+    private String hardness, specificGravity, cleavage, crustalAbundance, economicValue;
 
     // Default constructor - sets minimum values for each category.
     public PlayCard() {
         this.hardness = "0";
         this.specificGravity = "0";
         this.cleavage = "none";
-        this.crustalAbundances = "ultratrace";
+        this.crustalAbundance = "ultratrace";
         this.economicValue = "low";
         setType(TYPE_STRING);
     }
@@ -37,7 +37,7 @@ public class PlayCard extends Card {
         this.hardness = "0";
         this.specificGravity = "0";
         this.cleavage = "none";
-        this.crustalAbundances = "ultratrace";
+        this.crustalAbundance = "ultratrace";
         this.economicValue = "low";
         setType(TYPE_STRING);
     }
@@ -45,7 +45,7 @@ public class PlayCard extends Card {
     // Constructor with all PlayCard parameters
     public PlayCard(String imageFile, String imageName, String cardName, String chemistry, String classification,
                     String crystalSystem, ArrayList<String> occurrences, String hardness, String specificGravity,
-                    String cleavage, String crystalAbundances, String economicValue) {
+                    String cleavage, String crystalAbundance, String economicValue) {
         super(imageFile, imageName, cardName);
         setType(TYPE_STRING);
         this.chemistry = chemistry;
@@ -55,7 +55,7 @@ public class PlayCard extends Card {
         this.hardness = hardness;
         this.specificGravity = specificGravity;
         this.cleavage = cleavage;
-        this.crustalAbundances = crystalAbundances;
+        this.crustalAbundance = crystalAbundance;
         this.economicValue = economicValue;
     }
 
@@ -159,29 +159,29 @@ public class PlayCard extends Card {
         return cleavageRank;
     }
 
-    // Getters for crustal abundances trump category
-    public String getCrustalAbundances(){
-        return crustalAbundances;
+    // Getters for crustal abundance trump category
+    public String getCrustalAbundance(){
+        return crustalAbundance;
     }
 
-    public int getCrustalAbundancesAsInt() {
-        int crustalAbundancesRank;
-        if (crustalAbundances.equals("ultratrace")) {
-            crustalAbundancesRank = CrustalAbundance.ULTRATRACE.ordinal();
-        } else if (crustalAbundances.equals("trace")) {
-            crustalAbundancesRank = CrustalAbundance.TRACE.ordinal();
-        } else if (crustalAbundances.equals("low")) {
-            crustalAbundancesRank = CrustalAbundance.LOW.ordinal();
-        } else if (crustalAbundances.equals("moderate")) {
-            crustalAbundancesRank = CrustalAbundance.MODERATE.ordinal();
-        } else if (crustalAbundances.equals("high")) {
-            crustalAbundancesRank = CrustalAbundance.HIGH.ordinal();
-        } else if (crustalAbundances.equals("very high")) {
-            crustalAbundancesRank = CrustalAbundance.VERY_HIGH.ordinal();
+    public int getCrustalAbundanceAsInt() {
+        int crustalAbundanceRank;
+        if (crustalAbundance.equals("ultratrace")) {
+            crustalAbundanceRank = CrustalAbundance.ULTRATRACE.ordinal();
+        } else if (crustalAbundance.equals("trace")) {
+            crustalAbundanceRank = CrustalAbundance.TRACE.ordinal();
+        } else if (crustalAbundance.equals("low")) {
+            crustalAbundanceRank = CrustalAbundance.LOW.ordinal();
+        } else if (crustalAbundance.equals("moderate")) {
+            crustalAbundanceRank = CrustalAbundance.MODERATE.ordinal();
+        } else if (crustalAbundance.equals("high")) {
+            crustalAbundanceRank = CrustalAbundance.HIGH.ordinal();
+        } else if (crustalAbundance.equals("very high")) {
+            crustalAbundanceRank = CrustalAbundance.VERY_HIGH.ordinal();
         } else {
-            crustalAbundancesRank = -1;
+            crustalAbundanceRank = -1;
         }
-        return crustalAbundancesRank;
+        return crustalAbundanceRank;
     }
 
     // Getters for economic value
@@ -213,11 +213,11 @@ public class PlayCard extends Card {
     // Overriden toString() method
     @Override
     public String toString() {
-        String playCardString = super.toString();
-        playCardString += ", Chemistry = " + chemistry + ", Classification = " + classification + ", Crystal System = "
+        String playCardString = getCardName() + ", a normal playing card with the following stats: \n";
+        playCardString += "Chemistry = " + chemistry + ", Classification = " + classification + ", Crystal System = "
                 + crystalSystem + ", Occurences = " + occurrences.toString() + ",\nHardness = " + hardness +
-                ", Specific Gravity = " + specificGravity + ", Cleavage = " + cleavage + ", Crustal Abundances = " +
-                crustalAbundances + " and Economic Value = " + economicValue;
+                ", Specific Gravity = " + specificGravity + ", Cleavage = " + cleavage + ", Crustal Abundance = " +
+                crustalAbundance + " and Economic Value = " + economicValue;
         return playCardString;
 
     }
@@ -225,7 +225,7 @@ public class PlayCard extends Card {
     // Shorter string for more concise info
     public String toShortString() {
         return "Name: "  + getCardName() + ", Hardness = " + hardness + ", Specific Gravity = " +
-                specificGravity + ", Cleavage: " + cleavage + ", Crustal Abundances: " + crustalAbundances + " and " +
+                specificGravity + ", Cleavage: " + cleavage + ", Crustal Abundance: " + crustalAbundance + " and " +
                 "Economic Value: " + economicValue;
     }
 }

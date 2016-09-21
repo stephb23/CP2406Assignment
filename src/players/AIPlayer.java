@@ -57,8 +57,8 @@ public class AIPlayer extends Player {
                 chosenCard = chooseBestSpecificGravityCard(currentPlayCard);
             } else if (currentCategory.equals("cleavage")) {
                 chosenCard = chooseBestCleavageCard(currentPlayCard);
-            } else if (currentCategory.equals("crustal abundances")) {
-                chosenCard = chooseBestCrustalAbundancesCard(currentPlayCard);
+            } else if (currentCategory.equals("crustal abundance")) {
+                chosenCard = chooseBestCrustalAbundanceCard(currentPlayCard);
             } else if (currentCategory.equals("economic value")) {
                 chosenCard = chooseBestEconomicValueCard(currentPlayCard);
             } else {
@@ -105,8 +105,8 @@ public class AIPlayer extends Player {
             }
         } else if (currentCategory.equals("cleavage")) {
             chosenCard = chooseBestCleavageCard(nullCard);
-        } else if (currentCategory.equals("crustal abundances")) {
-            chosenCard = chooseBestCrustalAbundancesCard(nullCard);
+        } else if (currentCategory.equals("crustal abundance")) {
+            chosenCard = chooseBestCrustalAbundanceCard(nullCard);
         } else if (currentCategory.equals("economic value")) {
             chosenCard = chooseBestEconomicValueCard(nullCard);
         } else {
@@ -153,7 +153,7 @@ public class AIPlayer extends Player {
                 hardnessTotal += playCard.getHardnessAsDouble();
                 specificGravityTotal += playCard.getSpecificGravityAsDouble();
                 cleavageTotal += playCard.getCleavageAsInt();
-                crustalAbundanceTotal += playCard.getCrustalAbundancesAsInt();
+                crustalAbundanceTotal += playCard.getCrustalAbundanceAsInt();
                 economicValueTotal += playCard.getEconomicValueAsInt();
                 ++playCardCounter;
             }
@@ -194,7 +194,7 @@ public class AIPlayer extends Player {
                 chosenCategory = "cleavage";
                 break;
             case 3:
-                chosenCategory = "crustal abundances";
+                chosenCategory = "crustal abundance";
                 break;
             case 4:
                 chosenCategory = "economic value";
@@ -293,29 +293,29 @@ public class AIPlayer extends Player {
         return playCard;
     }
 
-    // Choose the card with the 'best' crustal abundances.
-    private Card chooseBestCrustalAbundancesCard(PlayCard currentCard) {
+    // Choose the card with the 'best' crustal abundance.
+    private Card chooseBestCrustalAbundanceCard(PlayCard currentCard) {
         PlayCard playCard;
-        int currentCardHardness = currentCard.getCrustalAbundancesAsInt();
-        int bestCrustalAbundances = CrustalAbundance.VERY_HIGH.ordinal();
-        int indexOfBestCrustalAbundances = -1;
+        int currentCardHardness = currentCard.getCrustalAbundanceAsInt();
+        int bestCrustalAbundance = CrustalAbundance.VERY_HIGH.ordinal();
+        int indexOfBestCrustalAbundance = -1;
 
-        // Find the card with the lowest crustal abundances that is still greater than the current card to beat.
+        // Find the card with the lowest crustal abundance that is still greater than the current card to beat.
         for (int i = 0; i < getHandSize(); ++i) {
             if (getCardAt(i).getType().equals("play")) {
                 playCard = (PlayCard) getCardAt(i);
-                if (playCard.getCrustalAbundancesAsInt() > currentCardHardness && playCard.getCrustalAbundancesAsInt() < bestCrustalAbundances) {
-                    bestCrustalAbundances = playCard.getCrustalAbundancesAsInt();
-                    indexOfBestCrustalAbundances = i;
+                if (playCard.getCrustalAbundanceAsInt() > currentCardHardness && playCard.getCrustalAbundanceAsInt() < bestCrustalAbundance) {
+                    bestCrustalAbundance = playCard.getCrustalAbundanceAsInt();
+                    indexOfBestCrustalAbundance = i;
                 }
             }
         }
 
         // If no such card is found, return null; otherwise return the chosen card.
-        if (indexOfBestCrustalAbundances == -1) {
+        if (indexOfBestCrustalAbundance == -1) {
             playCard = null;
         } else {
-            playCard = (PlayCard) getPlayerHand().get(indexOfBestCrustalAbundances);
+            playCard = (PlayCard) getPlayerHand().get(indexOfBestCrustalAbundance);
         }
 
         return playCard;

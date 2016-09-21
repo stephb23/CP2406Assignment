@@ -38,8 +38,8 @@ public class TrumpCard extends Card {
     // Overriden to string method
     @Override
     public String toString() {
-        String trumpString = super.toString();
-        trumpString += ", Card Description = " + cardDescription;
+        String trumpString = getCardName() + ", a trump card that changes the trump suit to: ";
+        trumpString += cardDescription;
         return trumpString;
     }
 

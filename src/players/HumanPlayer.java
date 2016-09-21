@@ -71,8 +71,8 @@ public class HumanPlayer extends Player{
                         if (playCard.getCleavageAsInt() > currentPlayCard.getCleavageAsInt()) {
                             return true;
                         }
-                    } else if (currentCategory.equals("crustal abundances")) {
-                        if (playCard.getCrustalAbundancesAsInt() > currentPlayCard.getCrustalAbundancesAsInt()) {
+                    } else if (currentCategory.equals("crustal abundance")) {
+                        if (playCard.getCrustalAbundanceAsInt() > currentPlayCard.getCrustalAbundanceAsInt()) {
                             return true;
                         }
                     } else if (currentCategory.equals("economic value")) {

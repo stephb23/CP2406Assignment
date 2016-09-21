@@ -1,3 +1,5 @@
+package gameControl;
+
 import jdk.internal.util.xml.impl.Input;
 
 import java.util.Scanner;
@@ -8,10 +10,12 @@ import java.util.stream.Collector;
  * Created by Stephanie on 8/09/2016.
  */
 public class InputReader {
-    public InputReader() {
 
+    // Default constructor
+    public InputReader() {
     }
 
+    // Gets a user name for the human player
     public String getUserName(){
         Scanner input = new Scanner(System.in);
         System.out.print("Please enter the name you would like to be called: ");
@@ -19,6 +23,7 @@ public class InputReader {
         return userName;
     }
 
+    // Gets a menu choice from the human player
     public int getMenuChoice() {
         int menuChoice;
         Scanner input = new Scanner(System.in);
@@ -36,6 +41,7 @@ public class InputReader {
         return menuChoice;
     }
 
+    // Gets a character input from the human player
     public char getChar() {
         Scanner input = new Scanner(System.in);
         String possibleCharacter = input.next();
@@ -50,6 +56,7 @@ public class InputReader {
         return character;
     }
 
+    // Gets an integer input from the human player
     public int getInt(int min, int max) {
         int integer;
         Scanner input = new Scanner(System.in);
@@ -67,6 +74,7 @@ public class InputReader {
         return integer;
     }
 
+    // Gets a card number from the human player
     public int getCardNumber(int handSize) {
         int chosenCardNumber;
 
@@ -75,6 +83,7 @@ public class InputReader {
         return chosenCardNumber - 1;
     }
 
+    // Gets a category choice from the user
     public String getCategory() {
         String chosenCategory;
         Scanner input = new Scanner(System.in);
@@ -82,27 +91,29 @@ public class InputReader {
         chosenCategory = input.nextLine().toLowerCase();
 
         while (!chosenCategory.equals("hardness") && !chosenCategory.equals("specific gravity") && !chosenCategory.equals("cleavage")
-                && !chosenCategory.equals("crustal abundances") && !chosenCategory.equals("economic value")) {
-            System.out.print("Invalid category! Type hardness, specific gravity, cleavage, crustal abundances, or economic value: ");
+                && !chosenCategory.equals("crustal abundance") && !chosenCategory.equals("economic value")) {
+            System.out.print("Invalid category! Type hardness, specific gravity, cleavage, crustal abundance, or economic value: ");
             chosenCategory = input.nextLine().toLowerCase();
         }
 
         return chosenCategory;
     }
 
-    public String passOrPlay() {
+    // Gets the user's choice between "pass" or "play"
+    public String passPlayQuit() {
         String playChoice;
         Scanner input = new Scanner(System.in);
 
         playChoice = input.nextLine().toLowerCase();
 
-        while (!playChoice.equals("play") && !playChoice.equals("pass")) {
-            System.out.print("Invalid choice! Please type 'pass' or 'play': ");
+        while (!playChoice.equals("play") && !playChoice.equals("pass") && !playChoice.equals("quit")) {
+            System.out.print("Invalid choice! Please type 'pass', 'play' or 'quit': ");
             playChoice = input.nextLine().toLowerCase();
         }
         return playChoice;
     }
 
+    // Gets a line of input from the user
     public String getLine() {
         String line;
         Scanner input = new Scanner(System.in);
