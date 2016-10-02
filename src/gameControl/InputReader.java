@@ -30,12 +30,12 @@ public class InputReader {
         System.out.print("Enter the number of your choice: ");
         try {
             menuChoice = input.nextInt();
-            while (menuChoice > 4 || menuChoice < 0) {
+            while (menuChoice > 4 || menuChoice < 1) {
                 System.out.print("Invalid input, choice must be between 1-4. Try again: ");
                 menuChoice = input.nextInt();
             }
         } catch(Exception e) {
-            System.out.println("You must enter an integer! Try again. ");
+            System.out.print("You must enter an integer! Try again: ");
             menuChoice = getMenuChoice();
         }
         return menuChoice;
@@ -47,7 +47,7 @@ public class InputReader {
         String possibleCharacter = input.next();
 
         while (possibleCharacter.length() != 1) {
-            System.out.println("Error! That's a word, not a character! Try again: ");
+            System.out.print("Error! That's a word, not a character! Try again: ");
             possibleCharacter = input.next();
         }
 

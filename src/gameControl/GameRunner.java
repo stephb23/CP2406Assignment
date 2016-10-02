@@ -54,11 +54,21 @@ public class GameRunner {
                 System.out.println(player.getName());
             }
 
-            // Create the deck and deal cards
+            // Create the deck
             game.createDeck();
+
+            // Confirm that the deck has been created.
+            messageDisplayer.displayDeckSize(game.getDeckSize());
+            System.out.println("\nDealing cards...");
+
+            // Deal cards and show size of each player's hand
             for (Player player : allPlayers) {
                 player.setPlayerHand(game.dealHand());
+                messageDisplayer.displayPlayerHandSize(player.getName(), player.getHandSize());
             }
+
+            // Show the number of cards left in the deck.
+            messageDisplayer.displayDeckSize(game.getDeckSize());
 
             // Test the Geophysicist + Magnetite combination for the human player
             //allPlayers.get(0).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
@@ -66,7 +76,7 @@ public class GameRunner {
 
             // Test the Geophysicist + Magnetite combination for the first AI player
             //allPlayers.get(1).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
-            //allPlayers.get(1).pickUpCard(new PlayCard("Magnetite"));
+            //allPlayers.get(1).pickUpCard(new PlayCard("Magnetite", "5.5-6", "5.2", "none", "moderate", "very high"));
 
             // Choose first player
             game.selectDealer(numberOfPlayers);
@@ -140,9 +150,9 @@ public class GameRunner {
                     } else if (trumpCard.getCardName().equals("The Geophysicist")){
                         // First card in the round winning combo - set a flag that identifies that it has been played
                         checkForWinningCombo = true;
-                        game.setCurrentCategory(trumpCard.getCardDescription());
+                        game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                     } else {
-                        game.setCurrentCategory(trumpCard.getCardDescription());
+                        game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                     }
 
                     // Display hand again and ask for a card number
@@ -182,15 +192,17 @@ public class GameRunner {
             // Cast the player to an AI player & display their name
             AIPlayer player = (AIPlayer) allPlayers.get(startingPlayer);
             messageDisplayer.displayStartingPlayerName(player.getName());
-            messageDisplayer.displayCardChoiceMessage(player.getName());
+
 
             // Get the AI player to choose a category
             game.setCurrentCategory(player.chooseCategory());
+            messageDisplayer.displayAICategoryChoice(player.getName(), game.getCurrentCategory());
 
             // Get the AI player to play the first card of the round
             game.setCurrentCard(player.playFirstCard(game.getCurrentCategory()));
 
             // Display the current card
+            messageDisplayer.displayCardChoiceMessage(player.getName());
             System.out.println(game.getCurrentCard());
 
             // Check whether the player has finished and determine whether the game has finished too.
@@ -203,6 +215,13 @@ public class GameRunner {
 
             // Actions to perform while the card to beat is a trump card
             while (game.getCurrentCard().getType().equals("trump")) {
+                // Check whether game and/or player have finished
+                if (isPlayerFinished()) {
+                    if (game.isFinished()) {
+                        return;
+                    }
+                    break;
+                }
 
                 // Display a message showing that the player has played a trump
                 messageDisplayer.displayTrumpCardPlayedMessage(game.getCurrentCategory(), player.getName());
@@ -348,14 +367,12 @@ public class GameRunner {
                                         if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
                                             messageDisplayer.displayChooseCategory();
                                             game.setCurrentCategory(inputReader.getCategory());
-                                        } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
-                                            game.setCurrentCategory("crustal abundance");
                                         } else if (trumpCard.getCardName().equals("The Geophysicist")) {
                                             // Set a flag to identify that the geophysicist has been played
                                             checkForWinningCombo = true;
-                                            game.setCurrentCategory(trumpCard.getCardDescription());
+                                            game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                                         } else {
-                                            game.setCurrentCategory(trumpCard.getCardDescription());
+                                            game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                                         }
 
                                         // Prompt the user to choose their next card
@@ -445,8 +462,6 @@ public class GameRunner {
                             if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
                                 game.setCurrentCategory(aiPlayer.chooseCategory());
                                 messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
-                            } else if (trumpCard.getCardDescription().equals("Crustal abundance")) {
-                                game.setCurrentCategory("crustal abundance");
                             } else if (trumpCard.getCardName().equals("The Geophysicist")){
                                 // Flag that the first part of the round-winning combo has been played
                                 checkForWinningCombo = true;
@@ -581,10 +596,10 @@ public class GameRunner {
 
         // Display option to return to main menu or exit the game
         if (menuOption == 2 || menuOption == 3) {
-            System.out.println("Type 'r' to return to the menu or 'e' to exit.");
+            System.out.print("Type 'r' to return to the menu or 'e' to exit:");
             char choice = inputReader.getChar();
             while (choice != 'r' && choice != 'e') {
-                System.out.println("Invalid input! Type 'r' to return to menu or 'e' to exit: ");
+                System.out.print("Invalid input! Type 'r' to return to menu or 'e' to exit: ");
                 choice = inputReader.getChar();
             }
             if (choice == 'r') {
@@ -593,6 +608,8 @@ public class GameRunner {
                 System.out.println("Goodbye! See you next time!");
                 exit(0);
             }
+        } else if (menuOption == 4) {
+            System.out.println("See you next time, " + playerName);
         }
 
         // Return the menu option

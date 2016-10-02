@@ -106,7 +106,7 @@ public class MessageDisplayer {
 
     // Display trump card played message
     public void displayTrumpCardPlayedMessage(String currentCategory) {
-        System.out.println("You played a trump card! The trump category is now " + currentCategory);
+        System.out.println("\nYou played a trump card! The trump category is now " + currentCategory);
     }
 
     // Overridden trump card played message for use with AI players
@@ -126,11 +126,11 @@ public class MessageDisplayer {
 
     // Display winning combo message
     public void displayWinningComboPlayedMessage() {
-        System.out.println("You played The Geophysicist + Magnetite cards and have won the round!");
+        System.out.println("\nYou played The Geophysicist + Magnetite cards and have won the round!");
     }
 
     public void displayWinningComboPlayedMessage(String currentPlayer) {
-        System.out.println(currentPlayer + " played The Geophysicist + Magnetite and has won the round!");
+        System.out.println("\n" + currentPlayer + " played The Geophysicist + Magnetite and has won the round!");
     }
 
     // Display "your turn" message
@@ -190,6 +190,14 @@ public class MessageDisplayer {
     }
 
     public void displayCardChoiceMessage(String name) {
-        System.out.println(name + "chose the following card: ");
+        System.out.println(name + " chose the following card: ");
+    }
+
+    public void displayDeckSize(int deckSize) {
+        System.out.println("\nThe deck has " + deckSize + " cards remaining");
+    }
+
+    public void displayPlayerHandSize(String name, int handSize) {
+        System.out.println(name + " has " + handSize + " cards in their hand.");
     }
 }

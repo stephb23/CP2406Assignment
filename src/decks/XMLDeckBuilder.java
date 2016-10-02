@@ -82,6 +82,7 @@ public class XMLDeckBuilder implements DeckBuilder {
                         }
 
                         // Extract all other parameters from the XML file
+
                         fileName = allValues.item(PlayCardField.FILENAME.ordinal()).getTextContent();
                         imageName = allValues.item(PlayCardField.IMAGE_NAME.ordinal()).getTextContent();
                         cardTitle = allValues.item(PlayCardField.CARD_TITLE.ordinal()).getTextContent();
