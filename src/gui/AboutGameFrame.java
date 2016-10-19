@@ -9,9 +9,9 @@ import java.awt.event.ActionListener;
  * Created by Stephanie on 19/10/2016.
  */
 
-public class InstructionsFrame extends JFrame implements ActionListener {
+public class AboutGameFrame extends JFrame implements ActionListener {
     JPanel titlePanel = new JPanel();
-    JPanel instructionsPanel = new InstructionsPanel();
+    JPanel aboutGamePanel = new AboutGamePanel();
     JPanel backPanel = new JPanel();
 
     BorderLayout layout = new BorderLayout();
@@ -26,20 +26,19 @@ public class InstructionsFrame extends JFrame implements ActionListener {
 
     MenuFrame parentFrame = null;
 
-    public InstructionsFrame(MenuFrame parentFrame) {
+    public AboutGameFrame(MenuFrame parentFrame) {
         this.parentFrame = parentFrame;
 
         setLayout(layout);
-        setTitle("Supertrump Minerals - Instructions");
-        setResizable(false);
-        setSize(900, 600);
+        setTitle("About Supertrump Minerals");
+        setSize(1050, 600);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         titlePanel.setBackground(background);
-        instructionsPanel.setBackground(background);
+        aboutGamePanel.setBackground(background);
         backPanel.setBackground(background);
 
         title.setFont(titleFont);
@@ -49,11 +48,11 @@ public class InstructionsFrame extends JFrame implements ActionListener {
         backButton.setPreferredSize(buttonSize);
         titlePanel.add(title);
 
-        instructionsPanel.add(instructions);
+        aboutGamePanel.add(instructions);
         backPanel.add(backButton);
 
         add(titlePanel, BorderLayout.NORTH);
-        add(instructionsPanel, BorderLayout.CENTER);
+        add(aboutGamePanel, BorderLayout.CENTER);
         add(backPanel, BorderLayout.SOUTH);
 
         backButton.addActionListener(this);

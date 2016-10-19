@@ -62,6 +62,7 @@ public class MenuFrame extends JFrame implements ActionListener {
         add(aboutGamePanel);
 
         instructionsButton.addActionListener(this);
+        aboutGameButton.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -69,6 +70,10 @@ public class MenuFrame extends JFrame implements ActionListener {
         if (source == instructionsButton) {
             InstructionsFrame instructionsFrame = new InstructionsFrame(this);
             instructionsFrame.setVisible(true);
+            this.setVisible(false);
+        } else if (source == aboutGameButton) {
+            AboutGameFrame aboutGameFrame = new AboutGameFrame(this);
+            aboutGameFrame.setVisible(true);
             this.setVisible(false);
         }
     }
