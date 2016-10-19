@@ -215,13 +215,6 @@ public class GameRunner {
 
             // Actions to perform while the card to beat is a trump card
             while (game.getCurrentCard().getType().equals("trump")) {
-                // Check whether game and/or player have finished
-                if (isPlayerFinished()) {
-                    if (game.isFinished()) {
-                        return;
-                    }
-                    break;
-                }
 
                 // Display a message showing that the player has played a trump
                 messageDisplayer.displayTrumpCardPlayedMessage(game.getCurrentCategory(), player.getName());
