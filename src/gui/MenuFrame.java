@@ -2,11 +2,13 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by Stephanie on 19/10/2016.
  */
-public class MenuFrame extends JFrame {
+public class MenuFrame extends JFrame implements ActionListener {
     JPanel titlePanel = new JPanel();
     JPanel newGamePanel = new JPanel();
     JPanel instructionsPanel = new JPanel();
@@ -58,6 +60,17 @@ public class MenuFrame extends JFrame {
         add(newGamePanel);
         add(instructionsPanel);
         add(aboutGamePanel);
+
+        instructionsButton.addActionListener(this);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if (source == instructionsButton) {
+            InstructionsFrame instructionsFrame = new InstructionsFrame(this);
+            instructionsFrame.setVisible(true);
+            this.setVisible(false);
+        }
     }
 
     public static void main(String[] args) {
