@@ -1,5 +1,7 @@
 package gui;
 
+import gameControl.GUIGameRunner;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,7 +10,7 @@ import java.awt.event.ActionListener;
 /**
  * Created by Stephanie on 19/10/2016.
  */
-public class MenuFrame extends JFrame implements ActionListener {
+public class MenuFrame extends JFrame {
     JPanel titlePanel = new JPanel();
     JPanel newGamePanel = new JPanel();
     JPanel instructionsPanel = new JPanel();
@@ -61,25 +63,11 @@ public class MenuFrame extends JFrame implements ActionListener {
         add(instructionsPanel);
         add(aboutGamePanel);
 
-        instructionsButton.addActionListener(this);
-        aboutGameButton.addActionListener(this);
+        newGameButton.addActionListener(GUIGameRunner.startGameListener);
+        instructionsButton.addActionListener(GUIGameRunner.instructionsListener);
+        aboutGameButton.addActionListener(GUIGameRunner.aboutGameListener);
     }
 
-    public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
-        if (source == instructionsButton) {
-            InstructionsFrame instructionsFrame = new InstructionsFrame(this);
-            instructionsFrame.setVisible(true);
-            this.setVisible(false);
-        } else if (source == aboutGameButton) {
-            AboutGameFrame aboutGameFrame = new AboutGameFrame(this);
-            aboutGameFrame.setVisible(true);
-            this.setVisible(false);
-        }
-    }
 
-    public static void main(String[] args) {
-        MenuFrame frame = new MenuFrame();
-        frame.setVisible(true);
-    }
+
 }

@@ -1,5 +1,7 @@
 package gui;
 
+import gameControl.GUIGameRunner;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,7 +11,7 @@ import java.awt.event.ActionListener;
  * Created by Stephanie on 19/10/2016.
  */
 
-public class AboutGameFrame extends JFrame implements ActionListener {
+public class AboutGameFrame extends JFrame {
     JPanel titlePanel = new JPanel();
     JPanel aboutGamePanel = new AboutGamePanel();
     JPanel backPanel = new JPanel();
@@ -24,10 +26,7 @@ public class AboutGameFrame extends JFrame implements ActionListener {
     Color background = new Color(28, 103, 116);
     Dimension buttonSize = new Dimension(300, 50);
 
-    MenuFrame parentFrame = null;
-
-    public AboutGameFrame(MenuFrame parentFrame) {
-        this.parentFrame = parentFrame;
+    public AboutGameFrame() {
 
         setLayout(layout);
         setTitle("About Supertrump Minerals");
@@ -55,11 +54,6 @@ public class AboutGameFrame extends JFrame implements ActionListener {
         add(aboutGamePanel, BorderLayout.CENTER);
         add(backPanel, BorderLayout.SOUTH);
 
-        backButton.addActionListener(this);
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        parentFrame.setVisible(true);
-        this.dispose();
+        backButton.addActionListener(GUIGameRunner.backToMenuListener);
     }
 }
