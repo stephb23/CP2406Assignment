@@ -4,6 +4,8 @@ import cards.Card;
 import cards.PlayCard;
 import cards.TrumpCard;
 
+import java.util.ArrayList;
+
 /**
  * Created by Stephanie on 6/09/2016.
  *
@@ -31,6 +33,16 @@ public class HumanPlayer extends Player{
                 System.out.println(((TrumpCard) card).toShortString());
             }
         }
+    }
+
+    // Get all cards
+    public ArrayList<Card> getAllCards() {
+        ArrayList<Card> allCards = new ArrayList<>();
+        for (int i = 0; i < getHandSize(); ++i) {
+            Card card = getCardAt(i);
+            allCards.add(card);
+        }
+        return allCards;
     }
 
     // Play a card by getting the card, removing it from the hand, and returning it to the game controller.

@@ -2,6 +2,8 @@ package gameControl;
 
 import game.SupertrumpGame;
 import gui.*;
+import players.AIPlayer;
+import players.HumanPlayer;
 import players.Player;
 
 import java.awt.event.ActionEvent;
@@ -73,6 +75,50 @@ public class GUIGameRunner {
             System.out.println("Number of players is " + numberOfPlayers);
 
             game = new SupertrumpGame(numberOfAIPlayers);
+
+            // Create the players
+            createPlayers(numberOfPlayers);
+            System.out.println("\nPlayers in this game are: ");
+            for (Player player : allPlayers) {
+                System.out.println(player.getName());
+            }
+
+            // Create the deck
+            game.createDeck();
+
+            // Confirm that the deck has been created.
+            System.out.println("\nDealing cards...");
+
+            // Deal cards and show size of each player's hand
+            for (Player player : allPlayers) {
+                player.setPlayerHand(game.dealHand());
+            }
+
+            // Choose first player
+            game.selectDealer(numberOfPlayers);
+            System.out.println("\n"+allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
+
+            gameFrame.prepareGamePanel();
+            HumanPlayer player = (HumanPlayer) allPlayers.get(0);
+            gameFrame.drawPlayerHand(player.getAllCards());
         }
     };
+
+    // Create the human and AI players for the game
+    // Naturally all AIs are from Iron Man comics or movies
+    private static void createPlayers(int numberOfPlayers) {
+        allPlayers.add(new HumanPlayer(playerName));
+        allPlayers.add(new AIPlayer("AI Jarvis"));
+        if (numberOfPlayers >= 3) {
+            allPlayers.add(new AIPlayer("AI Plato"));
+        }
+
+        if (numberOfPlayers >= 4) {
+            allPlayers.add(new AIPlayer("AI Virgil"));
+        }
+
+        if (numberOfPlayers == 5) {
+            allPlayers.add(new AIPlayer("AI Jocasta"));
+        }
+    }
 }

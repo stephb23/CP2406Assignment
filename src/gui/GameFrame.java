@@ -1,7 +1,10 @@
 package gui;
 
+import cards.Card;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Created by Stephanie on 19/10/2016.
@@ -15,11 +18,12 @@ public class GameFrame extends JFrame {
     JPanel setUpTitlePanel = new JPanel();
 
     GameSetupPanel gameSetupPanel = new GameSetupPanel();
+    GamePanel gamePanel = null;
 
     public GameFrame() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Set Up a Game");
-        setResizable(false);
+        setResizable(true);
         setSize(500, 300);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
@@ -38,5 +42,18 @@ public class GameFrame extends JFrame {
     public int getNumberOfPlayers() {
         numberOfPlayers = gameSetupPanel.getNumberOfPlayers();
         return numberOfPlayers;
+    }
+
+    public void prepareGamePanel() {
+        gamePanel = new GamePanel();
+        gameSetupPanel.setVisible(false);
+        add(gamePanel);
+        gamePanel.setVisible(true);
+    }
+
+    public void drawPlayerHand(ArrayList<Card> playerHand) {
+        gamePanel.drawCardPanel(playerHand);
+        validate();
+        repaint();
     }
 }
