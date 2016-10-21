@@ -30,6 +30,7 @@ public class GUIGameRunner {
     private static AboutGameFrame aboutGameFrame;
     private static GameFrame gameFrame;
     private static MessageDisplayer messageDisplayer;
+    private static boolean firstPlayerFlag = true;
 
     public static void main(String[] args) {
         menuFrame = new MenuFrame();
@@ -116,6 +117,7 @@ public class GUIGameRunner {
 
 
                     if (game.getCurrentPlayer() != 0) {
+                        firstPlayerFlag = false;
                         // Cast the player to an AI player & display their name
                         AIPlayer aiPlayer = (AIPlayer) allPlayers.get(game.getCurrentPlayer());
                         messageDisplayer.displayStartingPlayerName(aiPlayer.getName());
@@ -200,7 +202,6 @@ public class GUIGameRunner {
     };
 
     private static void performAILogic(Player player) {
-        System.out.println("HERE");
         // AI PLAYER LOGIC
 
         // Create the AI player
@@ -221,11 +222,6 @@ public class GUIGameRunner {
             game.setCurrentCard(tempCard);
             System.out.println(game.getCurrentCard().getCardName());
             gameFrame.updateCurrentCard(game.getCurrentCard());
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    gameFrame.updateCurrentCard(game.getCurrentCard());
-                }
-            });
             messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
         } else {
             // The player must pass if they return null. Pick up a card if the deck isn't empty.
@@ -283,14 +279,9 @@ public class GUIGameRunner {
 
 
                 // Delay for a second and display the current card.
-                delay(1000);
                 messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
                 gameFrame.updateCurrentCard(game.getCurrentCard());
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        gameFrame.updateCurrentCard(game.getCurrentCard());
-                    }
-                });
+                delay(1000);
 
                 // Check whether the winning combination of Geophysicist + Magnetite has been played
                 if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
@@ -317,62 +308,92 @@ public class GUIGameRunner {
 
         @Override
         public void mouseClicked(MouseEvent mouseEvent) {
-            JLabel label = (JLabel) mouseEvent.getSource();
-            String cardName = label.getName();
-            HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
-            Card tempCard;
+            new Thread() {
+                @Override
+                public void run() {
+                    JLabel label = (JLabel) mouseEvent.getSource();
+                    String cardName = label.getName();
+                    HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
+                    Card tempCard;
 
-            int cardIndex = humanPlayer.getIndexOf(cardName);
-            tempCard = humanPlayer.getCardAt(cardIndex);
+                    int cardIndex = humanPlayer.getIndexOf(cardName);
+                    tempCard = humanPlayer.getCardAt(cardIndex);
 
-            // Check that the card that the player wants to play will beat the current card
-            if (!compareCards(tempCard, game.getCurrentCard(), game.getCurrentCategory())) {
-                System.out.println("Nope try again"); //TODO: ERROR PANEL
-                return;
-            }
-
-            // When the player has chosen a valid card, allow it to be played.
-            game.setCurrentCard(tempCard);
-            gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
-            gameFrame.drawPlayerHand(humanPlayer.getAllCards());
-
-            // If the player and game have finished, return to main
-            if (isPlayerFinished() && game.isFinished()) {
-                return;
-            }
-
-            // If the card played by the human is a trump card, assign the correct category.
-            if (game.getCurrentCard().getType().equals("trump")) {
-                // Activate all currently inactive players.
-                for (Player p : allPlayers) {
-                    p.activate();
-                }
-
-                while (game.getCurrentCard().getType().equals("trump")) {
-                    // If the player and game have both finished, return to main
-                    if (isPlayerFinished()) {
-                        if (game.isFinished()) {
+                    if (firstPlayerFlag) {
+                        firstPlayerFlag = false;
+                        game.setCurrentCard(tempCard);
+                        game.setCurrentCategory("hardness"); //TODO FIX THIS;
+                        gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
+                        gameFrame.drawPlayerHand(humanPlayer.getAllCards());
+                        if (tempCard.getType().equals("trump")) {
                             return;
+                        } else {
+                            game.nextTurn();
+                            for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                                if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                                    performAILogic(allPlayers.get(i));
+                                }
+                            }
                         }
-                        break;
                     }
 
-                    // Change the trump category accordingly
-                    TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
-                    if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
-                        messageDisplayer.displayChooseCategory();
-                        game.setCurrentCategory("hardness"); // TODO pop-up window for this
-                    } else if (trumpCard.getCardName().equals("The Geophysicist")) {
-                        game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
-                    } else {
-                        game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                    // Check that the card that the player wants to play will beat the current card
+                    if (!compareCards(tempCard, game.getCurrentCard(), game.getCurrentCategory())) {
+                        System.out.println("Nope try again"); //TODO: ERROR PANEL
+                        return;
+                    }
+
+                    // When the player has chosen a valid card, allow it to be played.
+                    game.setCurrentCard(tempCard);
+                    gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
+                    gameFrame.drawPlayerHand(humanPlayer.getAllCards());
+                    delay(1000);
+
+                    // If the player and game have finished, return to main
+                    if (isPlayerFinished() && game.isFinished()) {
+                        return;
+                    }
+
+                    // If the card played by the human is a trump card, assign the correct category.
+                    if (game.getCurrentCard().getType().equals("trump")) {
+                        // Activate all currently inactive players.
+                        for (Player p : allPlayers) {
+                            p.activate();
+                        }
+
+                        if (game.getCurrentCard().getType().equals("trump")) {
+                            // If the player and game have both finished, return to main
+                            if (isPlayerFinished()) {
+                                if (game.isFinished()) {
+                                    return;
+                                }
+                            }
+
+                            // Change the trump category accordingly
+                            TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                            if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                                messageDisplayer.displayChooseCategory();
+                                game.setCurrentCategory("hardness"); // TODO pop-up window for this
+                            } else if (trumpCard.getCardName().equals("The Geophysicist")) {
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            } else {
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            }
+
+                            if (!isPlayerFinished()) {
+                                return;
+                            }
+                        }
                     }
 
                     game.nextTurn();
-                    return;
+                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                        if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                            performAILogic(allPlayers.get(i));
+                        }
+                    }
                 }
-            }
-
+            }.start();
         }
 
         @Override
