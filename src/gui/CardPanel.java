@@ -1,6 +1,7 @@
 package gui;
 
 import cards.Card;
+import gameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by Stephanie on 20/10/2016.
  */
-public class CardPanel extends JPanel implements MouseListener {
+public class CardPanel extends JPanel {
     ImageIcon image = new ImageIcon();
     ImageIcon cardImage = new ImageIcon();
     ArrayList<JLabel> allCardImages = new ArrayList<>();
@@ -19,8 +20,7 @@ public class CardPanel extends JPanel implements MouseListener {
 
     public CardPanel() {
         setLayout(cardLayout);
-        setPreferredSize(new Dimension(800, 800));
-        setVisible(true);
+        setPreferredSize(new Dimension(1000, 400));
     }
 
     public void populate(ArrayList<Card> cards) {
@@ -30,9 +30,13 @@ public class CardPanel extends JPanel implements MouseListener {
             locationString += card.getImageFile();
             System.out.println(locationString);
             image = new ImageIcon(locationString);
-            Image scaledImage = image.getImage().getScaledInstance(300, 420 ,Image.SCALE_DEFAULT);
+            Image scaledImage = image.getImage().getScaledInstance(240, 300 ,Image.SCALE_DEFAULT);
             cardImage = new ImageIcon(scaledImage);
-            this.add(new JLabel(cardImage));
+            JLabel label = new JLabel(cardImage);
+            label.setText(card.getCardName());
+            label.addMouseListener(GUIGameRunner.cardListener);
+            allCardImages.add(label);
+            add(label);
         }
 
     }
@@ -45,27 +49,5 @@ public class CardPanel extends JPanel implements MouseListener {
         frame.setVisible(true);
     }
 
-    @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
 
-    }
-
-    @Override
-    public void mousePressed(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent mouseEvent) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent mouseEvent) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent mouseEvent) {
-
-    }
 }

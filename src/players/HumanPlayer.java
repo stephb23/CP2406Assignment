@@ -52,6 +52,17 @@ public class HumanPlayer extends Player{
         return card;
     }
 
+    public int getIndexOf(String cardName) {
+        Card card = null;
+        for (int i = 0; i < getHandSize(); ++i) {
+            card = getCardAt(i);
+            if (card.getCardName().equals(cardName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     // This method checks whether the player has any cards that can be played
     public boolean canPlayCard(Card currentCard, String currentCategory) {
 
