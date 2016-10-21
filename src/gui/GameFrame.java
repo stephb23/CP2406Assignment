@@ -46,13 +46,19 @@ public class GameFrame extends JFrame {
 
     public void prepareGamePanel() {
         gamePanel = new GamePanel();
-        gameSetupPanel.setVisible(false);
+        remove(gameSetupPanel);
         add(gamePanel);
         gamePanel.setVisible(true);
     }
 
     public void drawPlayerHand(ArrayList<Card> playerHand) {
         gamePanel.drawCardPanel(playerHand);
+        validate();
+        repaint();
+    }
+
+    public void updateCurrentCard(Card currentCard) {
+        gamePanel.updateCurrentCard(currentCard);
         validate();
         repaint();
     }

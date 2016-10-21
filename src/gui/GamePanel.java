@@ -10,13 +10,21 @@ import java.util.ArrayList;
  */
 public class GamePanel extends JPanel {
     CardPanel cardPanel = new CardPanel();
+    CurrentCardPanel currentCardPanel = new CurrentCardPanel();
 
     public GamePanel () {
+        add(currentCardPanel);
         add(cardPanel);
     }
 
     public void drawCardPanel(ArrayList<Card> cards){
         cardPanel.populate(cards);
+        validate();
+        repaint();
+    }
+
+    public void updateCurrentCard(Card currentCard) {
+        currentCardPanel.update(currentCard);
         validate();
         repaint();
     }

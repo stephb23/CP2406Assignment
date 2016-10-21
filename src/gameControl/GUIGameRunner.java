@@ -75,6 +75,9 @@ public class GUIGameRunner {
     public static ActionListener gameSetupListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
+
+            gameFrame.prepareGamePanel();
+
             playerName = gameFrame.getPlayerName();
             numberOfAIPlayers = gameFrame.getNumberOfPlayers();
             numberOfPlayers = numberOfAIPlayers + 1;
@@ -102,13 +105,13 @@ public class GUIGameRunner {
                 player.setPlayerHand(game.dealHand());
             }
 
+            HumanPlayer player = (HumanPlayer) allPlayers.get(0);
+            gameFrame.drawPlayerHand(player.getAllCards());
+
             // Choose first player
             game.selectDealer(numberOfPlayers);
             System.out.println("\n"+allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
 
-            gameFrame.prepareGamePanel();
-            HumanPlayer player = (HumanPlayer) allPlayers.get(0);
-            gameFrame.drawPlayerHand(player.getAllCards());
 
             if (game.getCurrentPlayer() != 0) {
                     // Cast the player to an AI player & display their name
@@ -126,6 +129,7 @@ public class GUIGameRunner {
                     // Display the current card
                     messageDisplayer.displayCardChoiceMessage(aiPlayer.getName());
                     System.out.println(game.getCurrentCard());
+                    gameFrame.updateCurrentCard(game.getCurrentCard());
 
                     // Check whether the player has finished and determine whether the game has finished too.
                     if (isPlayerFinished() && game.isFinished()) {
@@ -178,9 +182,11 @@ public class GUIGameRunner {
                     // Move on to the next player's game
                     game.nextTurn();
 
-                for (int i = game.getCurrentPlayer() + 1; i < numberOfPlayers; ++i){
-                    if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
-                        performAILogic(allPlayers.get(i));
+                if (game.getCurrentPlayer() != 0) {
+                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                        if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                            performAILogic(allPlayers.get(i));
+                        }
                     }
                 }
             }
@@ -188,6 +194,7 @@ public class GUIGameRunner {
     };
 
     private static void performAILogic(Player player) {
+        System.out.println("HERE");
         // AI PLAYER LOGIC
 
         // Create the AI player
@@ -206,6 +213,8 @@ public class GUIGameRunner {
         if (tempCard != null) {
             // Set the current card if not null.
             game.setCurrentCard(tempCard);
+            System.out.println(game.getCurrentCard().getCardName());
+            gameFrame.updateCurrentCard(game.getCurrentCard());
             messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
         } else {
             // The player must pass if they return null. Pick up a card if the deck isn't empty.
@@ -265,6 +274,7 @@ public class GUIGameRunner {
                 // Delay for a second and display the current card.
                 delay(1000);
                 messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
+                gameFrame.updateCurrentCard(game.getCurrentCard());
 
                 // Check whether the winning combination of Geophysicist + Magnetite has been played
                 if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {

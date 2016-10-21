@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class CardPanel extends JPanel {
     ImageIcon image = new ImageIcon();
+    Image scaledImage;
     ImageIcon cardImage = new ImageIcon();
     ArrayList<JLabel> allCardImages = new ArrayList<>();
     GridLayout cardLayout = new GridLayout (1, 0);
@@ -30,7 +31,7 @@ public class CardPanel extends JPanel {
             locationString += card.getImageFile();
             System.out.println(locationString);
             image = new ImageIcon(locationString);
-            Image scaledImage = image.getImage().getScaledInstance(240, 300 ,Image.SCALE_DEFAULT);
+            scaledImage = image.getImage().getScaledInstance(240, 300 ,Image.SCALE_DEFAULT);
             cardImage = new ImageIcon(scaledImage);
             JLabel label = new JLabel(cardImage);
             label.setText(card.getCardName());
