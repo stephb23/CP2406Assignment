@@ -25,6 +25,7 @@ public class CardPanel extends JPanel {
     }
 
     public void populate(ArrayList<Card> cards) {
+        removeAll();
         String locationString;
         for (Card card : cards) {
             locationString = "src\\gui\\images\\";
@@ -34,12 +35,11 @@ public class CardPanel extends JPanel {
             scaledImage = image.getImage().getScaledInstance(240, 300 ,Image.SCALE_DEFAULT);
             cardImage = new ImageIcon(scaledImage);
             JLabel label = new JLabel(cardImage);
-            label.setText(card.getCardName());
+            label.setName(card.getCardName());
             label.addMouseListener(GUIGameRunner.cardListener);
             allCardImages.add(label);
             add(label);
         }
-
     }
 
     public static void main(String[] args) {

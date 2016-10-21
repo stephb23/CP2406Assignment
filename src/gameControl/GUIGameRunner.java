@@ -318,10 +318,60 @@ public class GUIGameRunner {
         @Override
         public void mouseClicked(MouseEvent mouseEvent) {
             JLabel label = (JLabel) mouseEvent.getSource();
-            String cardName = label.getText();
-            HumanPlayer player = (HumanPlayer) allPlayers.get(0);
-            System.out.println(player.getIndexOf(cardName));
+            String cardName = label.getName();
+            HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
+            Card tempCard;
 
+            int cardIndex = humanPlayer.getIndexOf(cardName);
+            tempCard = humanPlayer.getCardAt(cardIndex);
+
+            // Check that the card that the player wants to play will beat the current card
+            if (!compareCards(tempCard, game.getCurrentCard(), game.getCurrentCategory())) {
+                System.out.println("Nope try again"); //TODO: ERROR PANEL
+                return;
+            }
+
+            // When the player has chosen a valid card, allow it to be played.
+            game.setCurrentCard(tempCard);
+            gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
+            gameFrame.drawPlayerHand(humanPlayer.getAllCards());
+
+            // If the player and game have finished, return to main
+            if (isPlayerFinished() && game.isFinished()) {
+                return;
+            }
+
+            // If the card played by the human is a trump card, assign the correct category.
+            if (game.getCurrentCard().getType().equals("trump")) {
+                // Activate all currently inactive players.
+                for (Player p : allPlayers) {
+                    p.activate();
+                }
+
+                while (game.getCurrentCard().getType().equals("trump")) {
+                    // If the player and game have both finished, return to main
+                    if (isPlayerFinished()) {
+                        if (game.isFinished()) {
+                            return;
+                        }
+                        break;
+                    }
+
+                    // Change the trump category accordingly
+                    TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                    if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                        messageDisplayer.displayChooseCategory();
+                        game.setCurrentCategory("hardness"); // TODO pop-up window for this
+                    } else if (trumpCard.getCardName().equals("The Geophysicist")) {
+                        game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                    } else {
+                        game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                    }
+
+                    game.nextTurn();
+                    return;
+                }
+            }
 
         }
 
@@ -382,5 +432,49 @@ public class GUIGameRunner {
         } catch (InterruptedException e) {
             for (int i = 0; i < 1000000; i++);
         }
+    }
+
+    // Compare two cards to identify whether the first beats the second in the given current category
+    private static boolean compareCards(Card tempCard, Card currentCard, String currentCategory) {
+        // If either of the cards are trump cards, then the temporary card can be played
+        if (currentCard.getType().equals("trump") || tempCard.getType().equals("trump")) {
+            return true;
+        } else {
+            PlayCard tempPlayCard = (PlayCard) tempCard;
+            PlayCard currentPlayCard = (PlayCard) currentCard;
+
+            // Work out which category is being compared and make the comparison
+            // In any case, if the temporary card is greater tha the current card, return true as it can be played.
+            switch (currentCategory) {
+                case "hardness":
+                    if (tempPlayCard.getHardnessAsDouble() > currentPlayCard.getHardnessAsDouble()) {
+                        return true;
+                    }
+                    break;
+                case "specific gravity":
+                    if (tempPlayCard.getSpecificGravityAsDouble() > currentPlayCard.getSpecificGravityAsDouble()) {
+                        return true;
+                    }
+                    break;
+                case "cleavage":
+                    if (tempPlayCard.getCleavageAsInt() > currentPlayCard.getCleavageAsInt()) {
+                        return true;
+                    }
+                    break;
+                case "crustal abundance":
+                    if (tempPlayCard.getCrustalAbundanceAsInt() > currentPlayCard.getCrustalAbundanceAsInt()) {
+                        return true;
+                    }
+                    break;
+                case "economic value":
+                    if (tempPlayCard.getEconomicValueAsInt() > currentPlayCard.getEconomicValueAsInt()) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+
+        // If the code reaches here then the temporary card will NOT beat the current card, return false.
+        return false;
     }
 }
