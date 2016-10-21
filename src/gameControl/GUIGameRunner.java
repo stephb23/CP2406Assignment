@@ -29,12 +29,15 @@ public class GUIGameRunner {
     private static InstructionsFrame instructionsFrame;
     private static AboutGameFrame aboutGameFrame;
     private static GameFrame gameFrame;
+    private static CategoryDialog categoryDialog;
     private static MessageDisplayer messageDisplayer;
     private static boolean firstPlayerFlag = true;
 
     public static void main(String[] args) {
         menuFrame = new MenuFrame();
         menuFrame.setVisible(true);
+        categoryDialog = new CategoryDialog();
+        categoryDialog.setVisible(false);
         messageDisplayer = new MessageDisplayer();
     }
 
@@ -70,6 +73,41 @@ public class GUIGameRunner {
             } else if (aboutGameFrame.isVisible()) {
                 aboutGameFrame.dispose();
             }
+        }
+    };
+
+    public static ActionListener passListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            firstPlayerFlag = false;
+            HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
+            humanPlayer.pass();
+            game.nextTurn();
+            gameFrame.setEnabled(false);
+            for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                    performAILogic(allPlayers.get(i));
+                }
+            }
+            gameFrame.setEnabled(true);
+        }
+    };
+
+    public static ActionListener quitListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            game = null;
+            allPlayers.clear();
+            gameFrame.dispose();
+            menuFrame.setVisible(true);
+        }
+    };
+
+    public static ActionListener categoryListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            game.setCurrentCategory(categoryDialog.getCategory());
+            categoryDialog.setVisible(false);
         }
     };
 
@@ -115,8 +153,9 @@ public class GUIGameRunner {
                     game.selectDealer(numberOfPlayers);
                     System.out.println("\n" + allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
 
-
-                    if (game.getCurrentPlayer() != 0) {
+                    if (game.getCurrentPlayer() == 0) {
+                        categoryDialog.setVisible(true);
+                    } else if (game.getCurrentPlayer() != 0) {
                         firstPlayerFlag = false;
                         // Cast the player to an AI player & display their name
                         AIPlayer aiPlayer = (AIPlayer) allPlayers.get(game.getCurrentPlayer());
@@ -322,7 +361,6 @@ public class GUIGameRunner {
                     if (firstPlayerFlag) {
                         firstPlayerFlag = false;
                         game.setCurrentCard(tempCard);
-                        game.setCurrentCategory("hardness"); //TODO FIX THIS;
                         gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
                         gameFrame.drawPlayerHand(humanPlayer.getAllCards());
                         if (tempCard.getType().equals("trump")) {
@@ -373,7 +411,7 @@ public class GUIGameRunner {
                             TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
                             if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
                                 messageDisplayer.displayChooseCategory();
-                                game.setCurrentCategory("hardness"); // TODO pop-up window for this
+                                categoryDialog.setVisible(true);
                             } else if (trumpCard.getCardName().equals("The Geophysicist")) {
                                 game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                             } else {
