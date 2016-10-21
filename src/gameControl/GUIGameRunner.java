@@ -75,121 +75,127 @@ public class GUIGameRunner {
     public static ActionListener gameSetupListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
+            new Thread() {
+                public void run() {
 
-            gameFrame.prepareGamePanel();
+                    gameFrame.prepareGamePanel();
 
-            playerName = gameFrame.getPlayerName();
-            numberOfAIPlayers = gameFrame.getNumberOfPlayers();
-            numberOfPlayers = numberOfAIPlayers + 1;
+                    playerName = gameFrame.getPlayerName();
+                    numberOfAIPlayers = gameFrame.getNumberOfPlayers();
+                    numberOfPlayers = numberOfAIPlayers + 1;
 
-            System.out.println("Name is " + playerName);
-            System.out.println("Number of players is " + numberOfPlayers);
+                    System.out.println("Name is " + playerName);
+                    System.out.println("Number of players is " + numberOfPlayers);
 
-            game = new SupertrumpGame(numberOfAIPlayers);
+                    game = new SupertrumpGame(numberOfAIPlayers);
 
-            // Create the players
-            createPlayers(numberOfPlayers);
-            System.out.println("\nPlayers in this game are: ");
-            for (Player player : allPlayers) {
-                System.out.println(player.getName());
-            }
-
-            // Create the deck
-            game.createDeck();
-
-            // Confirm that the deck has been created.
-            System.out.println("\nDealing cards...");
-
-            // Deal cards and show size of each player's hand
-            for (Player player : allPlayers) {
-                player.setPlayerHand(game.dealHand());
-            }
-
-            HumanPlayer player = (HumanPlayer) allPlayers.get(0);
-            gameFrame.drawPlayerHand(player.getAllCards());
-
-            // Choose first player
-            game.selectDealer(numberOfPlayers);
-            System.out.println("\n"+allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
-
-
-            if (game.getCurrentPlayer() != 0) {
-                    // Cast the player to an AI player & display their name
-                    AIPlayer aiPlayer = (AIPlayer) allPlayers.get(game.getCurrentPlayer());
-                    messageDisplayer.displayStartingPlayerName(aiPlayer.getName());
-
-
-                    // Get the AI player to choose a category
-                    game.setCurrentCategory(aiPlayer.chooseCategory());
-                    messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
-
-                    // Get the AI player to play the first card of the round
-                    game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
-
-                    // Display the current card
-                    messageDisplayer.displayCardChoiceMessage(aiPlayer.getName());
-                    System.out.println(game.getCurrentCard());
-                    gameFrame.updateCurrentCard(game.getCurrentCard());
-
-                    // Check whether the player has finished and determine whether the game has finished too.
-                    if (isPlayerFinished() && game.isFinished()) {
-                        return;
+                    // Create the players
+                    createPlayers(numberOfPlayers);
+                    System.out.println("\nPlayers in this game are: ");
+                    for (Player player : allPlayers) {
+                        System.out.println(player.getName());
                     }
 
-                    // Flag for the Geologist + Magnetite combo
-                    boolean checkForWinningCombo;
+                    // Create the deck
+                    game.createDeck();
 
-                    // Actions to perform while the card to beat is a trump card
-                    while (game.getCurrentCard().getType().equals("trump")) {
+                    // Confirm that the deck has been created.
+                    System.out.println("\nDealing cards...");
 
-                        // Display a message showing that the player has played a trump
-                        messageDisplayer.displayTrumpCardPlayedMessage(game.getCurrentCategory(), aiPlayer.getName());
+                    // Deal cards and show size of each player's hand
+                    for (Player player : allPlayers) {
+                        player.setPlayerHand(game.dealHand());
+                    }
 
-                        // Default value for this flag is false
-                        checkForWinningCombo = false;
+                    HumanPlayer player = (HumanPlayer) allPlayers.get(0);
+                    gameFrame.drawPlayerHand(player.getAllCards());
 
-                        // Determine which category the trump card is setting the game to
-                        TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
-                        if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
-                            game.setCurrentCategory(aiPlayer.chooseCategory());
-                        }  else if (trumpCard.getCardName().equals("The Geophysicist")){
-                            // Set the winning combo flag to true
-                            checkForWinningCombo = true;
-                            game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
-                        } else {
-                            game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
-                        }
+                    // Choose first player
+                    game.selectDealer(numberOfPlayers);
+                    System.out.println("\n" + allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
 
-                        // Get the AI player to play another card
+
+                    if (game.getCurrentPlayer() != 0) {
+                        // Cast the player to an AI player & display their name
+                        AIPlayer aiPlayer = (AIPlayer) allPlayers.get(game.getCurrentPlayer());
+                        messageDisplayer.displayStartingPlayerName(aiPlayer.getName());
+
+
+                        // Get the AI player to choose a category
+                        game.setCurrentCategory(aiPlayer.chooseCategory());
+                        messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
+
+                        // Get the AI player to play the first card of the round
                         game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
 
-                        // If the new card is the Magnetite card, and the winning combo flag is true, then the player has won
-                        // the round!
-                        if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
-                            isPlayerFinished();
+                        // Display the current card
+                        messageDisplayer.displayCardChoiceMessage(aiPlayer.getName());
+                        System.out.println(game.getCurrentCard());
+                        gameFrame.updateCurrentCard(game.getCurrentCard());
+
+                        delay(1000);
+
+                        // Check whether the player has finished and determine whether the game has finished too.
+                        if (isPlayerFinished() && game.isFinished()) {
                             return;
                         }
 
-                        // If the player and game have both finished, return to main
-                        if (isPlayerFinished()) {
-                            if (game.isFinished()) {
+                        // Flag for the Geologist + Magnetite combo
+                        boolean checkForWinningCombo;
+
+                        // Actions to perform while the card to beat is a trump card
+                        while (game.getCurrentCard().getType().equals("trump")) {
+
+                            // Display a message showing that the player has played a trump
+                            messageDisplayer.displayTrumpCardPlayedMessage(game.getCurrentCategory(), aiPlayer.getName());
+
+                            // Default value for this flag is false
+                            checkForWinningCombo = false;
+
+                            // Determine which category the trump card is setting the game to
+                            TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                            if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                                game.setCurrentCategory(aiPlayer.chooseCategory());
+                            } else if (trumpCard.getCardName().equals("The Geophysicist")) {
+                                // Set the winning combo flag to true
+                                checkForWinningCombo = true;
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            } else {
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            }
+
+                            // Get the AI player to play another card
+                            game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
+
+                            // If the new card is the Magnetite card, and the winning combo flag is true, then the player has won
+                            // the round!
+                            if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
+                                isPlayerFinished();
                                 return;
                             }
-                            break;
+
+                            // If the player and game have both finished, return to main
+                            if (isPlayerFinished()) {
+                                if (game.isFinished()) {
+                                    return;
+                                }
+                                break;
+                            }
                         }
-                    }
 
-                    // Move on to the next player's game
-                    game.nextTurn();
+                        // Move on to the next player's game
+                        game.nextTurn();
 
-                if (game.getCurrentPlayer() != 0) {
-                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                        if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
-                            performAILogic(allPlayers.get(i));
+                        if (game.getCurrentPlayer() != 0) {
+                                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                                        if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                                            performAILogic(allPlayers.get(i));
+                                        }
+                                    }
                         }
                     }
                 }
-            }
+            }.start();
         }
     };
 
@@ -215,6 +221,11 @@ public class GUIGameRunner {
             game.setCurrentCard(tempCard);
             System.out.println(game.getCurrentCard().getCardName());
             gameFrame.updateCurrentCard(game.getCurrentCard());
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    gameFrame.updateCurrentCard(game.getCurrentCard());
+                }
+            });
             messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
         } else {
             // The player must pass if they return null. Pick up a card if the deck isn't empty.
@@ -275,6 +286,11 @@ public class GUIGameRunner {
                 delay(1000);
                 messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
                 gameFrame.updateCurrentCard(game.getCurrentCard());
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        gameFrame.updateCurrentCard(game.getCurrentCard());
+                    }
+                });
 
                 // Check whether the winning combination of Geophysicist + Magnetite has been played
                 if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
@@ -305,6 +321,8 @@ public class GUIGameRunner {
             String cardName = label.getText();
             HumanPlayer player = (HumanPlayer) allPlayers.get(0);
             System.out.println(player.getIndexOf(cardName));
+
+
         }
 
         @Override

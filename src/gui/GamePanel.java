@@ -19,13 +19,9 @@ public class GamePanel extends JPanel {
 
     public void drawCardPanel(ArrayList<Card> cards){
         cardPanel.populate(cards);
-        validate();
-        repaint();
     }
 
     public void updateCurrentCard(Card currentCard) {
         currentCardPanel.update(currentCard);
-        validate();
-        repaint();
     }
 }

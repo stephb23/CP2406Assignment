@@ -24,6 +24,7 @@ public class CurrentCardPanel extends JPanel {
     public void update(Card currentCard) {
         locationString = "src\\gui\\images\\";
         locationString += currentCard.getImageFile();
+        System.out.println(locationString);
         image = new ImageIcon(locationString);
         scaledImage = image.getImage().getScaledInstance(240, 300 ,Image.SCALE_DEFAULT);
         cardImage = new ImageIcon(scaledImage);

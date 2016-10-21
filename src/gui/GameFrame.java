@@ -47,8 +47,11 @@ public class GameFrame extends JFrame {
     public void prepareGamePanel() {
         gamePanel = new GamePanel();
         remove(gameSetupPanel);
+        setVisible(false);
+        setVisible(true);
         add(gamePanel);
-        gamePanel.setVisible(true);
+        validate();
+        repaint();
     }
 
     public void drawPlayerHand(ArrayList<Card> playerHand) {
@@ -59,7 +62,9 @@ public class GameFrame extends JFrame {
 
     public void updateCurrentCard(Card currentCard) {
         gamePanel.updateCurrentCard(currentCard);
-        validate();
+        super.revalidate();
+        super.repaint();
+        revalidate();
         repaint();
     }
 }
