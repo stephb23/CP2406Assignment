@@ -76,20 +76,47 @@ public class GUIGameRunner {
         }
     };
 
-    public static ActionListener passListener = new ActionListener() {
+    public static MouseListener passListener = new MouseListener() {
         @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            firstPlayerFlag = false;
-            HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
-            humanPlayer.pass();
-            game.nextTurn();
-            gameFrame.setEnabled(false);
-            for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
-                    performAILogic(allPlayers.get(i));
+        public void  mouseClicked(MouseEvent mouseEvent) {
+            new Thread() {
+                @Override
+                public void run() {
+                    firstPlayerFlag = false;
+                    HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
+                    humanPlayer.pass();
+                    humanPlayer.pickUpCard(game.dealSingleCard());
+                    gameFrame.drawPlayerHand(humanPlayer.getAllCards());
+                    game.nextTurn();
+                    gameFrame.setEnabled(false);
+                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                        if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                            performAILogic(allPlayers.get(i));
+                        }
+                    }
+                    gameFrame.setEnabled(true);
                 }
-            }
-            gameFrame.setEnabled(true);
+            }.start();
+        }
+
+        @Override
+        public void mousePressed(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent mouseEvent) {
+
         }
     };
 

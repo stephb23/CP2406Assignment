@@ -67,4 +67,16 @@ public class GameFrame extends JFrame {
         revalidate();
         repaint();
     }
+
+    public void clearDeckPanel() {
+        gamePanel.clearDeckPanel();
+    }
+
+    public void disablePanel() {
+        gamePanel.setEnabled(false);
+    }
+
+    public void enablePanel() {
+        gamePanel.setEnabled(true);
+    }
 }

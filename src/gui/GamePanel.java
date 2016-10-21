@@ -11,12 +11,12 @@ import java.util.ArrayList;
 public class GamePanel extends JPanel {
     CardPanel cardPanel = new CardPanel();
     CurrentCardPanel currentCardPanel = new CurrentCardPanel();
-    PassQuitPanel passQuitPanel = new PassQuitPanel();
+    DeckPanel deckPanel = new DeckPanel();
 
     public GamePanel () {
+        add(deckPanel);
         add(currentCardPanel);
         add(cardPanel);
-        add(passQuitPanel);
     }
 
     public void drawCardPanel(ArrayList<Card> cards){
@@ -25,5 +25,9 @@ public class GamePanel extends JPanel {
 
     public void updateCurrentCard(Card currentCard) {
         currentCardPanel.update(currentCard);
+    }
+
+    public void clearDeckPanel() {
+        deckPanel.clear();
     }
 }
