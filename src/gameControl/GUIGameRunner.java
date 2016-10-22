@@ -85,10 +85,23 @@ public class GUIGameRunner {
             new Thread() {
                 @Override
                 public void run() {
+
                     firstPlayerFlag = false;
                     HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
                     humanPlayer.pass();
-                    humanPlayer.pickUpCard(game.dealSingleCard());
+                    if (game.getDeckSize() != 0) {
+                        humanPlayer.pickUpCard(game.dealSingleCard());
+                    }
+
+                    if (isRoundFinished() || game.isFinished()) {
+                        System.out.println("ROUND OVER BABY");
+                        endOfRoundDialog.setRoundOverMessage("ROUND OVER BABY");
+                        endOfRoundDialog.revalidate();
+                        endOfRoundDialog.repaint();
+                        endOfRoundDialog.setVisible(true);
+                        return;
+                    }
+
                     gameFrame.drawPlayerHand(humanPlayer.getAllCards());
                     game.nextTurn();
                     boolean trumpPlayed = false;
@@ -110,7 +123,7 @@ public class GUIGameRunner {
                                     System.out.println(handSize - allPlayers.get(i).getHandSize());
                                 }
 
-                            } else if (game.isRoundFinished()) {
+                            } else if (game.isRoundFinished() || game.isFinished()) {
                                 return;
                             }
                         }
@@ -282,7 +295,7 @@ public class GUIGameRunner {
                                     for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
                                         if (!allPlayers.get(i).isInactive() && !game.isRoundFinished() && !game.isFinished()) {
                                             performAILogic(allPlayers.get(i));
-                                        } else if (game.isRoundFinished()) {
+                                        } else if (game.isRoundFinished() || game.isFinished()) {
                                             gameFrame.enablePanel();
                                             return;
                                         }
@@ -361,7 +374,9 @@ public class GUIGameRunner {
                     }
 
                     // Get the AI player to play another card
-                    game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
+                    if (!aiPlayer.isFinished()) {
+                        game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
+                    }
 
                     // If the new card is the Magnetite card, and the winning combo flag is true, then the player has won
                     // the round!
@@ -386,7 +401,7 @@ public class GUIGameRunner {
                     for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
                         if (!allPlayers.get(i).isInactive() && !game.isRoundFinished() && !game.isFinished()) {
                             performAILogic(allPlayers.get(i));
-                        } else if (game.isRoundFinished()) {
+                        } else if (game.isRoundFinished() || game.isFinished()) {
                             gameFrame.enablePanel();
                             return;
                         }
@@ -441,9 +456,9 @@ public class GUIGameRunner {
             return;
         }
 
-        System.out.println("I didnt' return");
         // If the player has finished and the game has finished, return to main.
         if (isPlayerFinished() && game.isFinished()) {
+            System.out.println("FINISHED");
             return;
         }
 
@@ -521,6 +536,11 @@ public class GUIGameRunner {
             new Thread() {
                 @Override
                 public void run() {
+
+                    if (game.isFinished()) {
+                        System.out.println("you're done bro");
+                        return;
+                    }
                     JLabel label = (JLabel) mouseEvent.getSource();
                     String cardName = label.getName();
                     HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
@@ -543,6 +563,11 @@ public class GUIGameRunner {
                             return;
                         }
 
+                        if (game.isFinished()) {
+                            System.out.println("GAME OVER");
+                            return;
+                        }
+
                         if (tempCard.getType().equals("trump")) {
                             return;
                         } else {
@@ -551,7 +576,7 @@ public class GUIGameRunner {
                                 if (!allPlayers.get(i).isInactive() && !game.isRoundFinished() && !game.isFinished()) {
                                     performAILogic(allPlayers.get(i));
                                     System.out.println("here");
-                                } else if (game.isRoundFinished()) {
+                                } else if (game.isRoundFinished() || game.isFinished()) {
                                     return;
                                 }
                             }
@@ -613,7 +638,7 @@ public class GUIGameRunner {
                         if (!allPlayers.get(game.getCurrentPlayer()).isInactive() && !game.isRoundFinished() &&  !game.isFinished()) {
                             performAILogic(allPlayers.get(game.getCurrentPlayer()));
                             System.out.println("here");
-                        } else if (game.isRoundFinished()) {
+                        } else if (game.isRoundFinished() || game.isFinished()) {
                             return;
                         }
                     }
@@ -662,6 +687,10 @@ public class GUIGameRunner {
     private static boolean isPlayerFinished() {
         Player player = allPlayers.get(game.getCurrentPlayer());
         // Check whether the player has any cards left in their hand; if not they are finished
+        if (player.isFinished()) {
+            return true;
+        }
+
         if (player.getHandSize() == 0) {
             player.finish();
             game.addWinner(game.getCurrentPlayer()); // add the player to the win list
@@ -741,6 +770,9 @@ public class GUIGameRunner {
                     messageDisplayer.displayRoundWinner(allPlayers.get(i).getName());
                     game.setCurrentPlayer(i);
                     System.out.println(i);
+                    if (i == 0) {
+                        firstPlayerFlag = true;
+                    }
                 }
             }
             game.setRoundFinished(true);
@@ -749,4 +781,5 @@ public class GUIGameRunner {
 
         return false;
     }
+
 }
