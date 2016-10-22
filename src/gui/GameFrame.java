@@ -20,6 +20,8 @@ public class GameFrame extends JFrame {
     GameSetupPanel gameSetupPanel = new GameSetupPanel();
     GamePanel gamePanel = null;
 
+    GridBagLayout layout = new GridBagLayout();
+
     public GameFrame() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Set Up a Game");
@@ -45,8 +47,9 @@ public class GameFrame extends JFrame {
     }
 
     public void prepareGamePanel() {
-        gamePanel = new GamePanel();
         remove(gameSetupPanel);
+
+        gamePanel = new GamePanel();
         setVisible(false);
         setVisible(true);
         add(gamePanel);
