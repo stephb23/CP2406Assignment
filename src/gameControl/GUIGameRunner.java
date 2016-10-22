@@ -91,13 +91,28 @@ public class GUIGameRunner {
                     humanPlayer.pickUpCard(game.dealSingleCard());
                     gameFrame.drawPlayerHand(humanPlayer.getAllCards());
                     game.nextTurn();
-                    gameFrame.setEnabled(false);
-                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                        if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
-                            performAILogic(allPlayers.get(i));
-                            System.out.println("here");
-                        } else if (game.isRoundFinished()) {
-                            return;
+                    boolean trumpPlayed = false;
+                    int handSize;
+
+                    while (!game.isRoundFinished() && !trumpPlayed) {
+                        if (game.getCurrentPlayer() == 0) {
+                            game.nextTurn();
+                        }
+
+                        for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                            if (!allPlayers.get(i).isInactive() && !game.isRoundFinished() && !game.isFinished()) {
+                                handSize = allPlayers.get(i).getHandSize();
+                                performAILogic(allPlayers.get(i));
+                                delay(1000);
+                                if (handSize -  allPlayers.get(i).getHandSize() > 1) {
+                                    System.out.println("TRUMP ALERT");
+                                    trumpPlayed = true;
+                                    System.out.println(handSize - allPlayers.get(i).getHandSize());
+                                }
+
+                            } else if (game.isRoundFinished()) {
+                                return;
+                            }
                         }
                     }
                     gameFrame.setEnabled(true);
@@ -265,9 +280,8 @@ public class GUIGameRunner {
 
                         if (game.getCurrentPlayer() != 0) {
                                     for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                                        if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                                        if (!allPlayers.get(i).isInactive() && !game.isRoundFinished() && !game.isFinished()) {
                                             performAILogic(allPlayers.get(i));
-                                            System.out.println("here");
                                         } else if (game.isRoundFinished()) {
                                             gameFrame.enablePanel();
                                             return;
@@ -370,9 +384,8 @@ public class GUIGameRunner {
 
                 if (game.getCurrentPlayer() != 0) {
                     for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                        if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                        if (!allPlayers.get(i).isInactive() && !game.isRoundFinished() && !game.isFinished()) {
                             performAILogic(allPlayers.get(i));
-                            System.out.println("here");
                         } else if (game.isRoundFinished()) {
                             gameFrame.enablePanel();
                             return;
@@ -535,7 +548,7 @@ public class GUIGameRunner {
                         } else {
                             game.nextTurn();
                             for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                                if (!allPlayers.get(i).isFinished() && !game.isRoundFinished() && !game.isFinished()) {
+                                if (!allPlayers.get(i).isInactive() && !game.isRoundFinished() && !game.isFinished()) {
                                     performAILogic(allPlayers.get(i));
                                     System.out.println("here");
                                 } else if (game.isRoundFinished()) {
@@ -597,7 +610,7 @@ public class GUIGameRunner {
 
                     game.nextTurn();
                     for (int i = game.getCurrentPlayer(); i < numberOfPlayers; i++) {
-                        if (!allPlayers.get(game.getCurrentPlayer()).isFinished() && !game.isRoundFinished() &&  !game.isFinished()) {
+                        if (!allPlayers.get(game.getCurrentPlayer()).isInactive() && !game.isRoundFinished() &&  !game.isFinished()) {
                             performAILogic(allPlayers.get(game.getCurrentPlayer()));
                             System.out.println("here");
                         } else if (game.isRoundFinished()) {

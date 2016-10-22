@@ -33,3 +33,4 @@ public class CurrentCardPanel extends JPanel {
         add(label);
     }
 }
+
