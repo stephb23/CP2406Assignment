@@ -317,6 +317,8 @@ public class GUIGameRunner {
                             // the round!
                             if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
                                 isPlayerFinished();
+                                endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
+                                endOfRoundDialog.setVisible(true);
                                 gameFrame.enablePanel();
                                 return;
                             }
@@ -450,6 +452,8 @@ public class GUIGameRunner {
                             // If the new card is the Magnetite card, and the winning combo flag is true, then the player has won
                             // the round!
                             if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
+                                endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
+                                endOfRoundDialog.setVisible(true);
                                 isPlayerFinished();
                                 return;
                             }
@@ -967,6 +971,9 @@ public class GUIGameRunner {
                 // Check whether the winning combination of Geophysicist + Magnetite has been played
                 if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
                     messageDisplayer.displayWinningComboPlayedMessage(aiPlayer.getName());
+                    System.out.println("round finished");
+                    endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
+                    endOfRoundDialog.setVisible(true);
                     isPlayerFinished();
                     return;
                 }
