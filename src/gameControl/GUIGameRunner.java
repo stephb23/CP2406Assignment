@@ -132,7 +132,9 @@ public class GUIGameRunner {
                                 handSize = allPlayers.get(i).getHandSize();
                                 gameFrame.drawActiveAIPlayer(i);
                                 performAILogic(allPlayers.get(i));
-                                gameFrame.drawInactiveAIPlayer(i);
+                                if (!allPlayers.get(i).isInactive()) {
+                                    gameFrame.drawInactiveAIPlayer(i);
+                                }
                                 delay(1000);
                                 if (handSize -  allPlayers.get(i).getHandSize() > 1) {
                                     System.out.println("TRUMP ALERT");
@@ -142,9 +144,7 @@ public class GUIGameRunner {
                                 }
 
                             } else if (game.isRoundFinished() || game.isFinished()) {
-                                if (game.isRoundFinished()) {
-                                    gameFrame.updateMessage("Round finished");
-                                } else if (game.isFinished()) {
+                                if (game.isFinished()) {
                                     gameFrame.updateMessage("Game over");
                                     gameOverDialog = new GameOverDialog(getWinners());
                                     gameOverDialog.setVisible(true);
@@ -185,6 +185,7 @@ public class GUIGameRunner {
             game = null;
             allPlayers.clear();
             gameFrame.dispose();
+            firstPlayerFlag = true;
             if (gameOverDialog != null) {
                 gameOverDialog.dispose();
             }
@@ -203,6 +204,7 @@ public class GUIGameRunner {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             game.setCurrentCategory(categoryDialog.getCategory());
+            gameFrame.updateMessage("Category is " + game.getCurrentCategory());
             categoryDialog.setVisible(false);
             gameFrame.enablePanel();
         }
@@ -264,6 +266,7 @@ public class GUIGameRunner {
                         // Get the AI player to choose a category
                         game.setCurrentCategory(aiPlayer.chooseCategory());
                         messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
+                        gameFrame.updateMessage("Category is " + game.getCurrentCategory());
 
                         // Get the AI player to play the first card of the round
                         game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
@@ -305,6 +308,8 @@ public class GUIGameRunner {
                                 game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                             }
 
+                            gameFrame.updateMessage("Category is " + game.getCurrentCategory());
+
                             // Get the AI player to play another card
                             game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
 
@@ -326,7 +331,9 @@ public class GUIGameRunner {
                         }
 
                         // Move on to the next player's game
-                        gameFrame.drawInactiveAIPlayer(game.getCurrentPlayer());
+                        if (!allPlayers.get(game.getCurrentPlayer()).isInactive()) {
+                            gameFrame.drawInactiveAIPlayer(game.getCurrentPlayer());
+                        }
                         game.nextTurn();
 
                         if (game.getCurrentPlayer() != 0) {
@@ -335,7 +342,9 @@ public class GUIGameRunner {
                                                 && !game.isRoundFinished() && !game.isFinished()) {
                                             gameFrame.drawActiveAIPlayer(i);
                                             performAILogic(allPlayers.get(i));
-                                            gameFrame.drawInactiveAIPlayer(i);
+                                            if (!allPlayers.get(i).isInactive()) {
+                                                gameFrame.drawInactiveAIPlayer(i);
+                                            }
                                         } else if (game.isRoundFinished() || game.isFinished()) {
                                             return;
                                         }
@@ -360,9 +369,13 @@ public class GUIGameRunner {
 
                     gameFrame.disablePanel();
 
-                    for (Player player:allPlayers) {
+                    for (int i = 0; i < allPlayers.size(); i++) {
+                        Player player = allPlayers.get(i);
                         player.activate();
                         System.out.println("Player " + player.getName() + " inactive = " + player.isInactive());
+                        if (!player.isInactive() && i != 0) {
+                            gameFrame.drawInactiveAIPlayer(i);
+                        }
                     }
 
 
@@ -382,6 +395,7 @@ public class GUIGameRunner {
                         // Get the AI player to choose a category
                         game.setCurrentCategory(aiPlayer.chooseCategory());
                         messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
+                        gameFrame.updateMessage("Category is " + game.getCurrentCategory());
 
                         // Get the AI player to play the first card of the round
                         game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
@@ -426,6 +440,8 @@ public class GUIGameRunner {
                                 game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                             }
 
+                            gameFrame.updateMessage("Category is " + game.getCurrentCategory());
+
                             // Get the AI player to play another card
                             if (!aiPlayer.isFinished()) {
                                 game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
@@ -448,7 +464,9 @@ public class GUIGameRunner {
                         }
 
                         // Move on to the next player's game
-                        gameFrame.drawInactiveAIPlayer(game.getCurrentPlayer());
+                        if (!allPlayers.get(game.getCurrentPlayer()).isInactive()) {
+                            gameFrame.drawInactiveAIPlayer(game.getCurrentPlayer());
+                        }
                         game.nextTurn();
 
                         if (game.getCurrentPlayer() != 0) {
@@ -457,7 +475,9 @@ public class GUIGameRunner {
                                         && !game.isRoundFinished() && !game.isFinished()) {
                                     gameFrame.drawActiveAIPlayer(i);
                                     performAILogic(allPlayers.get(i));
-                                    gameFrame.drawInactiveAIPlayer(i);
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawInactiveAIPlayer(i);
+                                    }
                                 } else if (game.isRoundFinished() || game.isFinished()) {
                                     gameFrame.disablePanel();
                                     return;
@@ -473,9 +493,13 @@ public class GUIGameRunner {
                                 for (int i = 1; i < numberOfPlayers; i++) {
                                     if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
                                             !game.isRoundFinished() &&  !game.isFinished()) {
-                                        gameFrame.drawActiveAIPlayer(i);
+                                        if (!allPlayers.get(i).isInactive()) {
+                                            gameFrame.drawActiveAIPlayer(i);
+                                        }
                                         performAILogic(allPlayers.get(game.getCurrentPlayer()));
-                                        gameFrame.drawInactiveAIPlayer(i);
+                                        if (!allPlayers.get(i).isInactive()) {
+                                            gameFrame.drawInactiveAIPlayer(i);
+                                        }
                                     } else if (game.isRoundFinished() || game.isFinished()) {
                                         gameFrame.disablePanel();
                                         return;
@@ -534,6 +558,31 @@ public class GUIGameRunner {
 
                         isPlayerFinished(0);
 
+                        if (allPlayers.get(0).isInactive() && !allPlayers.get(0).isFinished()) {
+                            System.out.println("here");
+                            gameFrame.disablePanel();
+                            // Go on without me!!
+                            while (!game.isRoundFinished()) {
+                                for (int i = 1; i < numberOfPlayers; i++) {
+                                    if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
+                                            !game.isRoundFinished() &&  !game.isFinished()) {
+                                        if (!allPlayers.get(i).isInactive()) {
+                                            gameFrame.drawActiveAIPlayer(i);
+                                        }
+                                        performAILogic(allPlayers.get(game.getCurrentPlayer()));
+                                        if (!allPlayers.get(i).isInactive()) {
+                                            gameFrame.drawInactiveAIPlayer(i);
+                                        }
+                                    } else if (game.isRoundFinished() || game.isFinished()) {
+                                        return;
+                                    } else {
+                                        game.nextTurn();
+                                    }
+                                }
+                            }
+                            return;
+                        }
+
                         if (allPlayers.get(0).isFinished()) {
                             System.out.println("here");
                             gameFrame.disablePanel();
@@ -542,9 +591,13 @@ public class GUIGameRunner {
                                 for (int i = 1; i < numberOfPlayers; i++) {
                                     if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
                                             !game.isRoundFinished() &&  !game.isFinished()) {
-                                        gameFrame.drawActiveAIPlayer(i);
+                                        if (!allPlayers.get(i).isInactive()) {
+                                            gameFrame.drawActiveAIPlayer(i);
+                                        }
                                         performAILogic(allPlayers.get(game.getCurrentPlayer()));
-                                        gameFrame.drawInactiveAIPlayer(i);
+                                        if (!allPlayers.get(i).isInactive()) {
+                                            gameFrame.drawInactiveAIPlayer(i);
+                                        }
                                     } else if (game.isRoundFinished() || game.isFinished()) {
                                         return;
                                     } else {
@@ -582,7 +635,9 @@ public class GUIGameRunner {
                                         && !game.isRoundFinished() && !game.isFinished()) {
                                     gameFrame.drawActiveAIPlayer(i);
                                     performAILogic(allPlayers.get(i));
-                                    gameFrame.drawInactiveAIPlayer(i);
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawInactiveAIPlayer(i);
+                                    }
                                 } else if (game.isRoundFinished() || game.isFinished()) {
                                     gameFrame.disablePanel();
                                     return;
@@ -611,6 +666,31 @@ public class GUIGameRunner {
 
                     isPlayerFinished(0);
 
+                    if (allPlayers.get(0).isInactive() && !allPlayers.get(0).isFinished()) {
+                        System.out.println("here");
+                        gameFrame.disablePanel();
+                        // Go on without me!!
+                        while (!game.isRoundFinished()) {
+                            for (int i = 1; i < numberOfPlayers; i++) {
+                                if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
+                                        !game.isRoundFinished() &&  !game.isFinished()) {
+                                    gameFrame.drawActiveAIPlayer(i);
+                                    performAILogic(allPlayers.get(game.getCurrentPlayer()));
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawInactiveAIPlayer(i);
+                                    }
+                                } else if (game.isRoundFinished() || game.isFinished()) {
+                                    return;
+                                } else {
+                                    game.nextTurn();
+                                }
+                            }
+                        }
+                        return;
+                    }
+
+
+
                     if (allPlayers.get(0).isFinished()) {
                         System.out.println("here");
                         gameFrame.disablePanel();
@@ -621,7 +701,9 @@ public class GUIGameRunner {
                                         !game.isRoundFinished() &&  !game.isFinished()) {
                                     gameFrame.drawActiveAIPlayer(i);
                                     performAILogic(allPlayers.get(game.getCurrentPlayer()));
-                                    gameFrame.drawInactiveAIPlayer(i);
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawInactiveAIPlayer(i);
+                                    }
                                 } else if (game.isRoundFinished() || game.isFinished()) {
                                     return;
                                 } else {
@@ -646,8 +728,12 @@ public class GUIGameRunner {
                     // If the card played by the human is a trump card, assign the correct category.
                     if (game.getCurrentCard().getType().equals("trump")) {
                         // Activate all currently inactive players.
-                        for (Player p : allPlayers) {
-                            p.activate();
+                        for (int i = 0; i < allPlayers.size(); i++) {
+                            Player player = allPlayers.get(i);
+                            player.activate();
+                            if (!player.isInactive() && i != 0) {
+                                gameFrame.drawInactiveAIPlayer(i);
+                            }
                         }
 
                         if (game.getCurrentCard().getType().equals("trump")) {
@@ -670,6 +756,8 @@ public class GUIGameRunner {
                                 game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                             }
 
+                            gameFrame.updateMessage("Category is " + game.getCurrentCategory());
+
                             if (!isPlayerFinished()) {
                                 gameFrame.enablePanel();
                                 return;
@@ -687,7 +775,9 @@ public class GUIGameRunner {
                                 !game.isRoundFinished() &&  !game.isFinished()) {
                             gameFrame.drawActiveAIPlayer(i);
                             performAILogic(allPlayers.get(game.getCurrentPlayer()));
-                            gameFrame.drawInactiveAIPlayer(i);
+                            if (!allPlayers.get(i).isInactive()) {
+                                gameFrame.drawInactiveAIPlayer(i);
+                            }
                         } else if (game.isRoundFinished() || game.isFinished()) {
                             gameFrame.disablePanel();
                             return;
@@ -700,6 +790,29 @@ public class GUIGameRunner {
 
                     isPlayerFinished(0);
 
+                    if (allPlayers.get(0).isInactive() && !allPlayers.get(0).isFinished()) {
+                        System.out.println("here");
+                        gameFrame.disablePanel();
+                        // Go on without me!!
+                        while (!game.isRoundFinished()) {
+                            for (int i = 1; i < numberOfPlayers; i++) {
+                                if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
+                                        !game.isRoundFinished() &&  !game.isFinished()) {
+                                    gameFrame.drawActiveAIPlayer(i);
+                                    performAILogic(allPlayers.get(game.getCurrentPlayer()));
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawInactiveAIPlayer(i);
+                                    }
+                                } else if (game.isRoundFinished() || game.isFinished()) {
+                                    return;
+                                } else {
+                                    game.nextTurn();
+                                }
+                            }
+                        }
+                        return;
+                    }
+
                     if (allPlayers.get(0).isFinished()) {
                         gameFrame.disablePanel();
                         // Go on without me!!
@@ -709,7 +822,9 @@ public class GUIGameRunner {
                                         !game.isRoundFinished() &&  !game.isFinished()) {
                                     gameFrame.drawActiveAIPlayer(i);
                                     performAILogic(allPlayers.get(game.getCurrentPlayer()));
-                                    gameFrame.drawInactiveAIPlayer(i);
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawInactiveAIPlayer(i);
+                                    }
                                 } else if (game.isRoundFinished() || game.isFinished()) {
                                     gameFrame.disablePanel();
                                     return;
@@ -767,19 +882,20 @@ public class GUIGameRunner {
             game.setCurrentCard(tempCard);
             System.out.println(game.getCurrentCard().getCardName());
             gameFrame.updateCurrentCard(game.getCurrentCard());
-            messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
+            delay(1000);
+            gameFrame.enablePanel();messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
         } else {
             // The player must pass if they return null. Pick up a card if the deck isn't empty.
             if (game.getDeckSize() != 0) {
                 aiPlayer.pickUpCard(game.dealSingleCard());
             }
             aiPlayer.pass();
+            gameFrame.drawOutAIPlayer(game.getCurrentPlayer(), "P");
             messageDisplayer.displayAIPassMessage(aiPlayer.getName());
         }
 
         if (isPlayerFinished()) {
             game.nextTurn();
-            return;
         }
 
         if (game.isFinished()) {
@@ -790,23 +906,9 @@ public class GUIGameRunner {
         }
 
         if (isRoundFinished()) {
-            new Thread() {
-                @Override
-                public void run() {
-                    System.out.println("round finished");
-                    endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
-                    endOfRoundDialog.setVisible(true);
-                }
-            }.start();
-            return;
-        }
-
-        // If the player has finished and the game has finished, return to main.
-        if (isPlayerFinished() && game.isFinished()) {
-            gameOverDialog = new GameOverDialog(getWinners());
-            gameOverDialog.setVisible(true);
-            gameFrame.disablePanel();
-            System.out.println("FINISHED");
+            System.out.println("round finished");
+            endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
+            endOfRoundDialog.setVisible(true);
             return;
         }
 
@@ -814,8 +916,12 @@ public class GUIGameRunner {
         // another card.
         if (game.getCurrentCard().getType().equals("trump")) {
             // Activate all currently inactive players.
-            for (Player p : allPlayers) {
+            for (int i = 0; i < allPlayers.size(); i++) {
+                Player p = allPlayers.get(i);
                 p.activate();
+                if (!p.isInactive() && i != 0) {
+                    gameFrame.drawInactiveAIPlayer(i);
+                }
             }
 
             // Flag for checking if the Geophysicist + Magnetite combination play occurs
@@ -846,6 +952,8 @@ public class GUIGameRunner {
                 } else {
                     game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
                 }
+
+                gameFrame.updateMessage("Category is " + game.getCurrentCategory());
 
                 // Use play first card logic to get the AI player to pick another card to play
                 game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
@@ -905,6 +1013,7 @@ public class GUIGameRunner {
 
         if (player.getHandSize() == 0) {
             player.finish();
+            gameFrame.drawOutAIPlayer(game.getCurrentPlayer(), "F");
             game.addWinner(game.getCurrentPlayer()); // add the player to the win list
             System.out.println(player.getName() + " finished");
             return true;
@@ -921,6 +1030,9 @@ public class GUIGameRunner {
 
         if (player.getHandSize() == 0) {
             player.finish();
+            if (playerNumber != 0) {
+                gameFrame.drawOutAIPlayer(playerNumber, "F");
+            }
             game.addWinner(game.getCurrentPlayer()); // add the player to the win list
             System.out.println(player.getName() + " finished");
             return true;

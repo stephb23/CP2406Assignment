@@ -21,8 +21,9 @@ public class EndOfRoundDialog extends JDialog {
 
     public EndOfRoundDialog(String playerName) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setTitle("Round over!");
         setLayout(layout);
-        setSize(new Dimension(300, 100));
+        setSize(new Dimension(300, 200));
         setAlwaysOnTop(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);

@@ -24,6 +24,7 @@ public class CategoryDialog extends JDialog {
     public CategoryDialog() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLayout(gridLayout);
+        setTitle("Pick a category");
         setSize(300, 200);
         setAlwaysOnTop(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

@@ -12,11 +12,13 @@ public class AIPlayerPanel extends JPanel {
     String string = "";
     int rightOrLeft;
     Dimension dim;
+    String playerName;
 
     Color backgroundColour = new Color(28, 103, 116);
 
-    public AIPlayerPanel(int rightOrLeft) {
+    public AIPlayerPanel(int rightOrLeft, String playerName) {
         this.rightOrLeft = rightOrLeft;
+        this.playerName = playerName;
         dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setPreferredSize(new Dimension(dim.width/4, dim.height/4));
     }
@@ -31,13 +33,17 @@ public class AIPlayerPanel extends JPanel {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 24));
             g.drawString(string, 20, 50);
+            g.setFont(new Font("Arial", Font.PLAIN, 16));
+            g.drawString(playerName, 55, 50);
         } else {
             g.setColor(color);
             g.drawRect(dim.width/4 - 115, 0, 50, 100);
             g.fillRect(dim.width/4 - 115, 0, 50, 100);
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 24));
-            g.drawString(string, 180, 150);
+            g.drawString(string, dim.width/4 - 100, 50);
+            g.setFont(new Font("Arial", Font.PLAIN, 16));
+            g.drawString(playerName, dim.width/4 - 180, 50);
         }
     }
 
@@ -47,9 +53,9 @@ public class AIPlayerPanel extends JPanel {
         repaint();
     }
 
-    public void setInactive() {
+    public void setInactive(String string) {
         color = Color.DARK_GRAY;
-        string = "F";
+        this.string = string;
         repaint();
     }
 
@@ -65,18 +71,9 @@ public class AIPlayerPanel extends JPanel {
         repaint();
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(new Dimension(500, 500));
-        AIPlayerPanel panel = new AIPlayerPanel(0);
-        frame.add(panel);
-        frame.setVisible(true);
-        for (int i = 0; i < 1000000000; i++);
-        panel.setPlaying();
-        for (int i = 0; i < 1000000000; i++);
-        panel.setInactive();
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+        repaint();
     }
-
 
 }

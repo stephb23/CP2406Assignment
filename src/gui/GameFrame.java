@@ -3,6 +3,7 @@ package gui;
 import cards.Card;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -13,12 +14,14 @@ public class GameFrame extends JFrame {
     int numberOfPlayers;
     String playerName;
 
-    Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 24);
+    Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 48);
     JLabel setUpTitle = new JLabel("Set Up a Game");
     JPanel setUpTitlePanel = new JPanel();
 
     GameSetupPanel gameSetupPanel = new GameSetupPanel();
     GamePanel gamePanel = null;
+
+    JPanel setUpPanel;
 
     Color background = new Color(28, 103, 116);
 
@@ -26,7 +29,6 @@ public class GameFrame extends JFrame {
 
     public GameFrame() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setBackground(background);
         setTitle("Set Up a Game");
         setResizable(true);
         setSize(700, 300);
@@ -38,9 +40,14 @@ public class GameFrame extends JFrame {
         setUpTitlePanel.setBackground(background);
         setUpTitlePanel.add(setUpTitle);
 
-        add(setUpTitlePanel);
-        add(gameSetupPanel);
-        isVisible();
+        setUpPanel = new JPanel();
+        setUpPanel.setLayout(new FlowLayout());
+        setUpPanel.setBackground(background);
+        setUpPanel.add(setUpTitlePanel);
+        setUpPanel.add(gameSetupPanel);
+
+        add(setUpPanel);
+        setVisible(true);
     }
 
     public String getPlayerName() {
@@ -54,9 +61,9 @@ public class GameFrame extends JFrame {
     }
 
     public void prepareGamePanel() {
-        remove(gameSetupPanel);
-        remove(setUpTitlePanel);
+        remove(setUpPanel);
 
+        setTitle("GAME TIME!");
         gamePanel = new GamePanel();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(dim.width, dim.height);
@@ -83,6 +90,10 @@ public class GameFrame extends JFrame {
 
     public void drawInactiveAIPlayer(int player) {
         gamePanel.drawInactiveAIPlayer(player);
+    }
+
+    public void drawOutAIPlayer(int player, String string) {
+       gamePanel.drawOutAIPlayer(player, string);
     }
 
     public void updateCurrentCard(Card currentCard) {

@@ -47,10 +47,10 @@ public class GamePanel extends JPanel {
         add(messagePanel, constraints);
 
         // JPanel setup
-        aiPlayers[0] = new AIPlayerPanel(0);
-        aiPlayers[1] = new AIPlayerPanel(1);
-        aiPlayers[2] = new AIPlayerPanel(0);
-        aiPlayers[3] = new AIPlayerPanel(1);
+        aiPlayers[0] = new AIPlayerPanel(0, "Jarvis");
+        aiPlayers[1] = new AIPlayerPanel(1, "Plato");
+        aiPlayers[2] = new AIPlayerPanel(0, "Virgil");
+        aiPlayers[3] = new AIPlayerPanel(1, "Jocasta");
         for (int i = 0; i < aiPlayers.length; i++) {
             aiPlayers[i].setBackground(background);
         }
@@ -111,12 +111,19 @@ public class GamePanel extends JPanel {
     public void drawAIPlayers(int numberOfAIPlayers) {
         if (numberOfAIPlayers == 2) {
             aiPlayers[2].setNotInGame();
+            aiPlayers[2].setPlayerName("");
             aiPlayers[3].setNotInGame();
+            aiPlayers[3].setPlayerName("");
         } else if (numberOfAIPlayers == 3) {
             aiPlayers[3].setNotInGame();
+            aiPlayers[3].setPlayerName("");
         }
 
         repaint();
+    }
+
+    public void drawOutAIPlayer(int player, String string) {
+        aiPlayers[player-1].setInactive(string);
     }
 
     public void drawActiveAIPlayer(int player) {
@@ -125,6 +132,10 @@ public class GamePanel extends JPanel {
     }
 
     public void drawInactiveAIPlayer(int player) {
+        if (player == 0) {
+            return;
+        }
+
         aiPlayers[player-1].setNotPlaying();
         repaint();
     }

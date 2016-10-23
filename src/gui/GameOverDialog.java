@@ -22,6 +22,7 @@ public class GameOverDialog extends JDialog {
 
     public GameOverDialog(String[] winners) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setTitle("Game Over");
         setLayout(layout);
         setAlwaysOnTop(true);
         setSize(300, 300);
