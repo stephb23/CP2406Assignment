@@ -21,6 +21,7 @@ public class GamePanel extends JPanel {
     AIPlayerPanel[] aiPlayers = new AIPlayerPanel[4];
 
     Color background = new Color(28, 103, 116);
+    Font font = new Font("Arial", Font.PLAIN, 24);
 
 
     public GamePanel () {
@@ -39,6 +40,8 @@ public class GamePanel extends JPanel {
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.gridwidth = 4;
+        message.setFont(font);
+        message.setForeground(Color.WHITE);
         messagePanel.add(message);
         messagePanel.setBackground(background);
         add(messagePanel, constraints);
@@ -123,6 +126,11 @@ public class GamePanel extends JPanel {
 
     public void drawInactiveAIPlayer(int player) {
         aiPlayers[player-1].setNotPlaying();
+        repaint();
+    }
+
+    public void updateMessage(String string) {
+        message.setText(string);
         repaint();
     }
 }

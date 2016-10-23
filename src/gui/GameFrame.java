@@ -87,6 +87,10 @@ public class GameFrame extends JFrame {
         repaint();
     }
 
+    public void updateMessage(String string) {
+        gamePanel.updateMessage(string);
+    }
+
     public void clearDeckPanel() {
         gamePanel.clearDeckPanel();
     }

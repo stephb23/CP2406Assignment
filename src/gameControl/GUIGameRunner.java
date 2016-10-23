@@ -83,6 +83,14 @@ public class GUIGameRunner {
             new Thread() {
                 @Override
                 public void run() {
+                    if (!gameFrame.isPanelEnabled()) {
+                        return;
+                    }
+
+                    if (game.isFinished()){
+                        return;
+                    }
+
                     gameFrame.disablePanel();
                     firstPlayerFlag = false;
                     HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
@@ -91,15 +99,22 @@ public class GUIGameRunner {
                         humanPlayer.pickUpCard(game.dealSingleCard());
                     }
 
-                    if (isRoundFinished() || game.isFinished()) {
+                    gameFrame.drawPlayerHand(humanPlayer.getAllCards());
+                    game.nextTurn();
+
+                    if (game.isFinished()) {
+                        GameOverDialog gameOverDialog = new GameOverDialog();
+                        gameOverDialog.setVisible(true);
+                        return;
+                    }
+
+                    if (isRoundFinished()) {
                         System.out.println("ROUND OVER BABY");
                         endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
                         endOfRoundDialog.setVisible(true);
                         return;
                     }
 
-                    gameFrame.drawPlayerHand(humanPlayer.getAllCards());
-                    game.nextTurn();
                     boolean trumpPlayed = false;
                     int handSize;
 
@@ -120,9 +135,17 @@ public class GUIGameRunner {
                                     System.out.println("TRUMP ALERT");
                                     trumpPlayed = true;
                                     System.out.println(handSize - allPlayers.get(i).getHandSize());
+                                    gameFrame.setEnabled(true);
                                 }
 
                             } else if (game.isRoundFinished() || game.isFinished()) {
+                                if (game.isRoundFinished()) {
+                                    gameFrame.updateMessage("Round finished");
+                                } else if (game.isFinished()) {
+                                    gameFrame.updateMessage("Game over");
+                                    GameOverDialog gameOver = new GameOverDialog();
+                                    gameOver.setVisible(true);
+                                }
                                 return;
                             }
                         }
@@ -217,6 +240,7 @@ public class GUIGameRunner {
                     if (game.getCurrentPlayer() == 0) {
                         categoryDialog.setVisible(true);
                     } else if (game.getCurrentPlayer() != 0) {
+                        gameFrame.drawActiveAIPlayer(game.getCurrentPlayer());
                         gameFrame.disablePanel();
                         firstPlayerFlag = false;
                         // Cast the player to an AI player & display their name
@@ -289,6 +313,7 @@ public class GUIGameRunner {
                         }
 
                         // Move on to the next player's game
+                        gameFrame.drawInactiveAIPlayer(game.getCurrentPlayer());
                         game.nextTurn();
 
                         if (game.getCurrentPlayer() != 0) {
@@ -314,108 +339,397 @@ public class GUIGameRunner {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             game.setRoundFinished(false);
-            endOfRoundDialog.dispose();
+            new Thread() {
+                @Override
+                public void run() {
 
-            for (Player player:allPlayers) {
-                player.activate();
-            }
+                    endOfRoundDialog.dispose();
 
-            if (game.getCurrentPlayer() == 0) {
-                categoryDialog.setVisible(true);
-                gameFrame.enablePanel();
-                game.setCurrentCard(new PlayCard());
-            } else if (game.getCurrentPlayer() != 0) {
-                gameFrame.disablePanel();
-                firstPlayerFlag = false;
-                // Cast the player to an AI player & display their name
-                AIPlayer aiPlayer = (AIPlayer) allPlayers.get(game.getCurrentPlayer());
-                messageDisplayer.displayStartingPlayerName(aiPlayer.getName());
+                    gameFrame.disablePanel();
+
+                    for (Player player:allPlayers) {
+                        player.activate();
+                        System.out.println("Player " + player.getName() + " inactive = " + player.isInactive());
+                    }
 
 
-                // Get the AI player to choose a category
-                game.setCurrentCategory(aiPlayer.chooseCategory());
-                messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
+                    if (game.getCurrentPlayer() == 0) {
+                        categoryDialog.setVisible(true);
+                        gameFrame.enablePanel();
+                        game.setCurrentCard(new PlayCard());
+                    } else if (game.getCurrentPlayer() != 0) {
+                        gameFrame.disablePanel();
+                        gameFrame.drawActiveAIPlayer(game.getCurrentPlayer());
+                        firstPlayerFlag = false;
+                        // Cast the player to an AI player & display their name
+                        AIPlayer aiPlayer = (AIPlayer) allPlayers.get(game.getCurrentPlayer());
+                        messageDisplayer.displayStartingPlayerName(aiPlayer.getName());
 
-                // Get the AI player to play the first card of the round
-                game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
 
-                // Display the current card
-                messageDisplayer.displayCardChoiceMessage(aiPlayer.getName());
-                System.out.println(game.getCurrentCard());
-                gameFrame.updateCurrentCard(game.getCurrentCard());
-
-                delay(1000);
-
-                // Check whether the player has finished and determine whether the game has finished too.
-                if (isPlayerFinished() && game.isFinished()) {
-                    System.out.println("GAME OVER");
-                    return;
-                }
-
-                // Flag for the Geologist + Magnetite combo
-                boolean checkForWinningCombo;
-
-                // Actions to perform while the card to beat is a trump card
-                if (game.getCurrentCard().getType().equals("trump")) {
-
-                    // Display a message showing that the player has played a trump
-                    messageDisplayer.displayTrumpCardPlayedMessage(game.getCurrentCategory(), aiPlayer.getName());
-
-                    // Default value for this flag is false
-                    checkForWinningCombo = false;
-
-                    // Determine which category the trump card is setting the game to
-                    TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
-                    if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                        // Get the AI player to choose a category
                         game.setCurrentCategory(aiPlayer.chooseCategory());
-                    } else if (trumpCard.getCardName().equals("The Geophysicist")) {
-                        // Set the winning combo flag to true
-                        checkForWinningCombo = true;
-                        game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
-                    } else {
-                        game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
-                    }
+                        messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
 
-                    // Get the AI player to play another card
-                    if (!aiPlayer.isFinished()) {
+                        // Get the AI player to play the first card of the round
                         game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
-                    }
 
-                    // If the new card is the Magnetite card, and the winning combo flag is true, then the player has won
-                    // the round!
-                    if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
-                        isPlayerFinished();
-                        return;
-                    }
+                        // Display the current card
+                        messageDisplayer.displayCardChoiceMessage(aiPlayer.getName());
+                        System.out.println(game.getCurrentCard());
+                        gameFrame.updateCurrentCard(game.getCurrentCard());
 
-                    // If the player and game have both finished, return to main
-                    if (isPlayerFinished()) {
-                        if (game.isFinished()) {
+                        delay(1000);
+
+                        // Check whether the player has finished and determine whether the game has finished too.
+                        if (isPlayerFinished() && game.isFinished()) {
+                            System.out.println("GAME OVER");
+                            GameOverDialog gameOverDialog = new GameOverDialog();
+                            gameOverDialog.setVisible(true);
+                            gameFrame.disablePanel();
                             return;
                         }
+
+                        // Flag for the Geologist + Magnetite combo
+                        boolean checkForWinningCombo;
+
+                        // Actions to perform while the card to beat is a trump card
+                        if (game.getCurrentCard().getType().equals("trump")) {
+
+                            // Display a message showing that the player has played a trump
+                            messageDisplayer.displayTrumpCardPlayedMessage(game.getCurrentCategory(), aiPlayer.getName());
+
+                            // Default value for this flag is false
+                            checkForWinningCombo = false;
+
+                            // Determine which category the trump card is setting the game to
+                            TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                            if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                                game.setCurrentCategory(aiPlayer.chooseCategory());
+                            } else if (trumpCard.getCardName().equals("The Geophysicist")) {
+                                // Set the winning combo flag to true
+                                checkForWinningCombo = true;
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            } else {
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            }
+
+                            // Get the AI player to play another card
+                            if (!aiPlayer.isFinished()) {
+                                game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
+                            }
+
+                            // If the new card is the Magnetite card, and the winning combo flag is true, then the player has won
+                            // the round!
+                            if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
+                                isPlayerFinished();
+                                return;
+                            }
+
+                            // If the player and game have both finished, return to main
+                            if (isPlayerFinished()) {
+                                if (game.isFinished()) {
+                                    return;
+                                }
+                                gameFrame.enablePanel();
+                            }
+                        }
+
+                        // Move on to the next player's game
+                        gameFrame.drawInactiveAIPlayer(game.getCurrentPlayer());
+                        game.nextTurn();
+
+                        if (game.getCurrentPlayer() != 0) {
+                            for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                                if (game.getCurrentPlayer() != 0 && !allPlayers.get(i).isInactive()
+                                        && !game.isRoundFinished() && !game.isFinished()) {
+                                    gameFrame.drawActiveAIPlayer(i);
+                                    performAILogic(allPlayers.get(i));
+                                    gameFrame.drawInactiveAIPlayer(i);
+                                } else if (game.isRoundFinished() || game.isFinished()) {
+                                    gameFrame.disablePanel();
+                                    return;
+                                }
+                            }
+                        }
+
+                        if (allPlayers.get(0).isFinished()) {
+                            System.out.println("here");
+                            gameFrame.disablePanel();
+                            // Go on without me!!
+                            while (!game.isFinished()) {
+                                for (int i = 1; i < numberOfPlayers; i++) {
+                                    if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
+                                            !game.isRoundFinished() &&  !game.isFinished()) {
+                                        gameFrame.drawActiveAIPlayer(i);
+                                        performAILogic(allPlayers.get(game.getCurrentPlayer()));
+                                        gameFrame.drawInactiveAIPlayer(i);
+                                    } else if (game.isRoundFinished() || game.isFinished()) {
+                                        gameFrame.disablePanel();
+                                        return;
+                                    } else {
+                                        game.nextTurn();
+                                    }
+                                }
+                            }
+
+                            GameOverDialog gameOverDialog = new GameOverDialog();
+                            gameOverDialog.setVisible(true);
+                            return;
+                        }
+
                         gameFrame.enablePanel();
                     }
                 }
+            }.start();
 
-                // Move on to the next player's game
-                game.nextTurn();
+        }
+    };
 
-                if (game.getCurrentPlayer() != 0) {
-                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                        if (game.getCurrentPlayer() != 0 && !allPlayers.get(i).isInactive()
-                                && !game.isRoundFinished() && !game.isFinished()) {
-                            gameFrame.drawActiveAIPlayer(i);
-                            performAILogic(allPlayers.get(i));
-                            gameFrame.drawInactiveAIPlayer(i);
-                        } else if (game.isRoundFinished() || game.isFinished()) {
+    public static MouseListener cardListener = new MouseListener() {
+
+        @Override
+        public void mouseClicked(MouseEvent mouseEvent) {
+            new Thread() {
+                @Override
+                public void run() {
+                    if (!gameFrame.isPanelEnabled()) {
+                        return;
+                    }
+
+                    gameFrame.disablePanel();
+
+                    if (game.isFinished()) {
+                        gameFrame.disablePanel();
+                        GameOverDialog gameOverDialog = new GameOverDialog();
+                        gameOverDialog.setVisible(true);
+                        return;
+                    }
+
+                    JLabel label = (JLabel) mouseEvent.getSource();
+                    String cardName = label.getName();
+                    HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
+                    Card tempCard;
+
+                    int cardIndex = humanPlayer.getIndexOf(cardName);
+                    tempCard = humanPlayer.getCardAt(cardIndex);
+
+                    if (firstPlayerFlag) {
+                        firstPlayerFlag = false;
+                        game.setCurrentCard(tempCard);
+                        gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
+                        gameFrame.drawPlayerHand(humanPlayer.getAllCards());
+
+                        isPlayerFinished(0);
+
+                        if (allPlayers.get(0).isFinished()) {
+                            System.out.println("here");
+                            gameFrame.disablePanel();
+                            // Go on without me!!
+                            while (!game.isFinished()) {
+                                for (int i = 1; i < numberOfPlayers; i++) {
+                                    if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
+                                            !game.isRoundFinished() &&  !game.isFinished()) {
+                                        gameFrame.drawActiveAIPlayer(i);
+                                        performAILogic(allPlayers.get(game.getCurrentPlayer()));
+                                        gameFrame.drawInactiveAIPlayer(i);
+                                    } else if (game.isRoundFinished() || game.isFinished()) {
+                                        return;
+                                    } else {
+                                        game.nextTurn();
+                                    }
+                                }
+                            }
+
+                            GameOverDialog gameOverDialog = new GameOverDialog();
+                            gameOverDialog.setVisible(true);
+                            return;
+                        }
+
+                        if (game.isFinished()) {
+                            gameFrame.updateMessage("Game finished");
+                            GameOverDialog gameOverDialog = new GameOverDialog();
+                            gameOverDialog.setVisible(true);
+                            gameFrame.disablePanel();
+                            return;
+                        }
+
+                        if (isRoundFinished()) {
+                            endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
+                            endOfRoundDialog.setVisible(true);
+                            return;
+                        }
+
+                        if (tempCard.getType().equals("trump")) {
+                            gameFrame.enablePanel();
+                            return;
+                        } else {
+                            game.nextTurn();
+                            for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                                if (game.getCurrentPlayer() != 0 && !allPlayers.get(i).isInactive()
+                                        && !game.isRoundFinished() && !game.isFinished()) {
+                                    gameFrame.drawActiveAIPlayer(i);
+                                    performAILogic(allPlayers.get(i));
+                                    gameFrame.drawInactiveAIPlayer(i);
+                                } else if (game.isRoundFinished() || game.isFinished()) {
+                                    gameFrame.disablePanel();
+                                    return;
+                                } else {
+                                    game.nextTurn();
+                                }
+                            }
                             gameFrame.enablePanel();
                             return;
                         }
                     }
-                }
-            }
 
-            gameFrame.enablePanel();
+                    // Check that the card that the player wants to play will beat the current card
+                    if (!compareCards(tempCard, game.getCurrentCard(), game.getCurrentCategory())) {
+                        System.out.println("Nope try again"); //TODO: ERROR PANEL
+                        gameFrame.enablePanel();
+                        return;
+                    }
+                    System.out.println("I am here");
+
+                    // When the player has chosen a valid card, allow it to be played.
+                    game.setCurrentCard(tempCard);
+                    gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
+                    gameFrame.drawPlayerHand(humanPlayer.getAllCards());
+                    delay(1000);
+
+                    isPlayerFinished(0);
+
+                    if (allPlayers.get(0).isFinished()) {
+                        System.out.println("here");
+                        gameFrame.disablePanel();
+                        // Go on without me!!
+                        while (!game.isFinished()) {
+                            for (int i = 1; i < numberOfPlayers; i++) {
+                                if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
+                                        !game.isRoundFinished() &&  !game.isFinished()) {
+                                    gameFrame.drawActiveAIPlayer(i);
+                                    performAILogic(allPlayers.get(game.getCurrentPlayer()));
+                                    gameFrame.drawInactiveAIPlayer(i);
+                                } else if (game.isRoundFinished() || game.isFinished()) {
+                                    return;
+                                } else {
+                                    game.nextTurn();
+                                }
+                            }
+                        }
+
+                        GameOverDialog gameOverDialog = new GameOverDialog();
+                        gameOverDialog.setVisible(true);
+                        return;
+                    }
+
+                    // If the player and game have finished, return to main
+                    if (isPlayerFinished() && game.isFinished()) {
+                        gameFrame.disablePanel();
+                        return;
+                    }
+
+                    System.out.println("I am here 2");
+
+                    // If the card played by the human is a trump card, assign the correct category.
+                    if (game.getCurrentCard().getType().equals("trump")) {
+                        // Activate all currently inactive players.
+                        for (Player p : allPlayers) {
+                            p.activate();
+                        }
+
+                        if (game.getCurrentCard().getType().equals("trump")) {
+                            // If the player and game have both finished, return to main
+                            if (isPlayerFinished()) {
+                                if (game.isFinished()) {
+                                    gameFrame.disablePanel();
+                                    return;
+                                }
+                            }
+
+                            // Change the trump category accordingly
+                            TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+                            if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
+                                messageDisplayer.displayChooseCategory();
+                                categoryDialog.setVisible(true);
+                            } else if (trumpCard.getCardName().equals("The Geophysicist")) {
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            } else {
+                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
+                            }
+
+                            if (!isPlayerFinished()) {
+                                gameFrame.enablePanel();
+                                return;
+                            }
+                        }
+                        gameFrame.enablePanel();
+                        return;
+                    }
+
+                    System.out.println("I am here 3");
+                    game.nextTurn();
+
+                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; i++) {
+                        if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
+                                !game.isRoundFinished() &&  !game.isFinished()) {
+                            gameFrame.drawActiveAIPlayer(i);
+                            performAILogic(allPlayers.get(game.getCurrentPlayer()));
+                            gameFrame.drawInactiveAIPlayer(i);
+                        } else if (game.isRoundFinished() || game.isFinished()) {
+                            gameFrame.disablePanel();
+                            return;
+                        } else {
+                            game.nextTurn();
+                        }
+                    }
+
+                    gameFrame.enablePanel();
+
+                    isPlayerFinished(0);
+
+                    if (allPlayers.get(0).isFinished()) {
+                        gameFrame.disablePanel();
+                        // Go on without me!!
+                        while (!game.isFinished()) {
+                            for (int i = 1; i < numberOfPlayers; i++) {
+                                if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
+                                        !game.isRoundFinished() &&  !game.isFinished()) {
+                                    gameFrame.drawActiveAIPlayer(i);
+                                    performAILogic(allPlayers.get(game.getCurrentPlayer()));
+                                    gameFrame.drawInactiveAIPlayer(i);
+                                } else if (game.isRoundFinished() || game.isFinished()) {
+                                    gameFrame.disablePanel();
+                                    return;
+                                } else {
+                                    game.nextTurn();
+                                }
+                            }
+                        }
+
+                        GameOverDialog gameOverDialog = new GameOverDialog();
+                        gameOverDialog.setVisible(true);
+                    }
+                }
+            }.start();
+        }
+
+        @Override
+        public void mousePressed(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent mouseEvent) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent mouseEvent) {
+
         }
     };
 
@@ -450,7 +764,19 @@ public class GUIGameRunner {
             messageDisplayer.displayAIPassMessage(aiPlayer.getName());
         }
 
-        if (isRoundFinished() && !game.isFinished()) {
+        if (isPlayerFinished()) {
+            game.nextTurn();
+            return;
+        }
+
+        if (game.isFinished()) {
+            GameOverDialog gameOverDialog = new GameOverDialog();
+            gameOverDialog.setVisible(true);
+            gameFrame.disablePanel();
+            return;
+        }
+
+        if (isRoundFinished()) {
             new Thread() {
                 @Override
                 public void run() {
@@ -464,6 +790,9 @@ public class GUIGameRunner {
 
         // If the player has finished and the game has finished, return to main.
         if (isPlayerFinished() && game.isFinished()) {
+            GameOverDialog gameOverDialog = new GameOverDialog();
+            gameOverDialog.setVisible(true);
+            gameFrame.disablePanel();
             System.out.println("FINISHED");
             return;
         }
@@ -471,7 +800,6 @@ public class GUIGameRunner {
         // If the card played by the AI is a trump card, change the category and allow them to play
         // another card.
         if (game.getCurrentCard().getType().equals("trump")) {
-
             // Activate all currently inactive players.
             for (Player p : allPlayers) {
                 p.activate();
@@ -484,6 +812,7 @@ public class GUIGameRunner {
                 // If the player and game have both finished, return to main
                 if (isPlayerFinished()) {
                     if (game.isFinished()) {
+                        gameFrame.disablePanel();
                         return;
                     }
                     break;
@@ -522,6 +851,7 @@ public class GUIGameRunner {
                 }
 
                 if (isPlayerFinished() && game.isFinished()) {
+                    gameFrame.disablePanel();
                     return;
                 }
             }
@@ -534,160 +864,6 @@ public class GUIGameRunner {
         delay(1000);
 
     }
-
-    public static MouseListener cardListener = new MouseListener() {
-
-        @Override
-        public void mouseClicked(MouseEvent mouseEvent) {
-            new Thread() {
-                @Override
-                public void run() {
-                    if (!gameFrame.isPanelEnabled()) {
-                        return;
-                    }
-
-                    gameFrame.disablePanel();
-
-                    if (game.isFinished()) {
-                        System.out.println("you're done bro");
-                        return;
-                    }
-
-                    JLabel label = (JLabel) mouseEvent.getSource();
-                    String cardName = label.getName();
-                    HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
-                    Card tempCard;
-
-                    int cardIndex = humanPlayer.getIndexOf(cardName);
-                    tempCard = humanPlayer.getCardAt(cardIndex);
-
-                    if (firstPlayerFlag) {
-                        firstPlayerFlag = false;
-                        game.setCurrentCard(tempCard);
-                        gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
-                        gameFrame.drawPlayerHand(humanPlayer.getAllCards());
-
-
-                        if (isRoundFinished() && !game.isFinished()) {
-                            endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
-                            endOfRoundDialog.setVisible(true);
-                            return;
-                        }
-
-                        if (game.isFinished()) {
-                            System.out.println("GAME OVER");
-                            return;
-                        }
-
-                        if (tempCard.getType().equals("trump")) {
-                            gameFrame.enablePanel();
-                            return;
-                        } else {
-                            game.nextTurn();
-                            for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                                if (game.getCurrentPlayer() != 0 && !allPlayers.get(i).isInactive()
-                                        && !game.isRoundFinished() && !game.isFinished()) {
-                                    gameFrame.drawActiveAIPlayer(i);
-                                    performAILogic(allPlayers.get(i));
-                                    gameFrame.drawInactiveAIPlayer(i);
-                                } else if (game.isRoundFinished() || game.isFinished()) {
-                                    return;
-                                }
-                            }
-                            gameFrame.enablePanel();
-                            return;
-                        }
-                    }
-
-                    // Check that the card that the player wants to play will beat the current card
-                    if (!compareCards(tempCard, game.getCurrentCard(), game.getCurrentCategory())) {
-                        System.out.println("Nope try again"); //TODO: ERROR PANEL
-                        gameFrame.enablePanel();
-                        return;
-                    }
-
-                    // When the player has chosen a valid card, allow it to be played.
-                    game.setCurrentCard(tempCard);
-                    gameFrame.updateCurrentCard(humanPlayer.playCard(cardIndex));
-                    gameFrame.drawPlayerHand(humanPlayer.getAllCards());
-                    delay(1000);
-
-                    // If the player and game have finished, return to main
-                    if (isPlayerFinished() && game.isFinished()) {
-                        return;
-                    }
-
-                    // If the card played by the human is a trump card, assign the correct category.
-                    if (game.getCurrentCard().getType().equals("trump")) {
-                        // Activate all currently inactive players.
-                        for (Player p : allPlayers) {
-                            p.activate();
-                        }
-
-                        if (game.getCurrentCard().getType().equals("trump")) {
-                            // If the player and game have both finished, return to main
-                            if (isPlayerFinished()) {
-                                if (game.isFinished()) {
-                                    return;
-                                }
-                            }
-
-                            // Change the trump category accordingly
-                            TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
-                            if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
-                                messageDisplayer.displayChooseCategory();
-                                categoryDialog.setVisible(true);
-                            } else if (trumpCard.getCardName().equals("The Geophysicist")) {
-                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
-                            } else {
-                                game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
-                            }
-
-                            if (!isPlayerFinished()) {
-                                gameFrame.enablePanel();
-                                return;
-                            }
-                        }
-                        gameFrame.enablePanel();
-                        return;
-                    }
-
-                    game.nextTurn();
-                    for (int i = game.getCurrentPlayer(); i < numberOfPlayers; i++) {
-                        if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
-                                !game.isRoundFinished() &&  !game.isFinished()) {
-                            gameFrame.drawActiveAIPlayer(i);
-                            performAILogic(allPlayers.get(game.getCurrentPlayer()));
-                            gameFrame.drawInactiveAIPlayer(i);
-                        } else if (game.isRoundFinished() || game.isFinished()) {
-                            return;
-                        }
-                    }
-
-                    gameFrame.enablePanel();
-                }
-            }.start();
-        }
-
-        @Override
-        public void mousePressed(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent mouseEvent) {
-        }
-
-        @Override
-        public void mouseExited(MouseEvent mouseEvent) {
-
-        }
-    };
 
     // Create the human and AI players for the game
     // Naturally all AIs are from Iron Man comics or movies
@@ -709,6 +885,22 @@ public class GUIGameRunner {
 
     private static boolean isPlayerFinished() {
         Player player = allPlayers.get(game.getCurrentPlayer());
+        // Check whether the player has any cards left in their hand; if not they are finished
+        if (player.isFinished()) {
+            return true;
+        }
+
+        if (player.getHandSize() == 0) {
+            player.finish();
+            game.addWinner(game.getCurrentPlayer()); // add the player to the win list
+            System.out.println(player.getName() + " finished");
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isPlayerFinished(int playerNumber) {
+        Player player = allPlayers.get(playerNumber);
         // Check whether the player has any cards left in their hand; if not they are finished
         if (player.isFinished()) {
             return true;
