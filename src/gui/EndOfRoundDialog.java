@@ -12,23 +12,29 @@ public class EndOfRoundDialog extends JDialog {
     JLabel roundWinner = new JLabel();
     String winMessage;
     Button button = new Button("Next Round");
-    GridLayout layout = new GridLayout();
+    GridLayout layout = new GridLayout(0, 1);
 
     JPanel roundWinnerPanel = new JPanel();
     JPanel buttonPanel = new JPanel();
 
+    Color background = new Color(28, 103, 116);
+
     public EndOfRoundDialog(String playerName) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLayout(layout);
-        setSize(new Dimension(300, 300));
+        setSize(new Dimension(300, 100));
         setAlwaysOnTop(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
         winMessage = playerName + " is the winner of this round!";
         roundWinner.setText(winMessage);
-
+        roundWinner.setFont(new Font("Arial", Font.PLAIN, 16));
+        roundWinner.setForeground(Color.WHITE);
+        roundWinnerPanel.setBackground(background);
         roundWinnerPanel.add(roundWinner);
+
+        buttonPanel.setBackground(background);
         buttonPanel.add(button);
 
         add(roundWinnerPanel);

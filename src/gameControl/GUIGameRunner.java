@@ -16,6 +16,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+import static java.lang.System.exit;
+
 /**
  * Created by Stephanie on 20/10/2016.
  */
@@ -33,6 +35,7 @@ public class GUIGameRunner {
     private static MessageDisplayer messageDisplayer;
     private static boolean firstPlayerFlag = true;
     private static EndOfRoundDialog endOfRoundDialog;
+    private static GameOverDialog gameOverDialog;
 
     public static void main(String[] args) {
         menuFrame = new MenuFrame();
@@ -103,7 +106,7 @@ public class GUIGameRunner {
                     game.nextTurn();
 
                     if (game.isFinished()) {
-                        GameOverDialog gameOverDialog = new GameOverDialog();
+                        gameOverDialog = new GameOverDialog(getWinners());
                         gameOverDialog.setVisible(true);
                         return;
                     }
@@ -143,8 +146,8 @@ public class GUIGameRunner {
                                     gameFrame.updateMessage("Round finished");
                                 } else if (game.isFinished()) {
                                     gameFrame.updateMessage("Game over");
-                                    GameOverDialog gameOver = new GameOverDialog();
-                                    gameOver.setVisible(true);
+                                    gameOverDialog = new GameOverDialog(getWinners());
+                                    gameOverDialog.setVisible(true);
                                 }
                                 return;
                             }
@@ -182,7 +185,17 @@ public class GUIGameRunner {
             game = null;
             allPlayers.clear();
             gameFrame.dispose();
+            if (gameOverDialog != null) {
+                gameOverDialog.dispose();
+            }
             menuFrame.setVisible(true);
+        }
+    };
+
+    public static ActionListener exitListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            exit(0);
         }
     };
 
@@ -383,7 +396,7 @@ public class GUIGameRunner {
                         // Check whether the player has finished and determine whether the game has finished too.
                         if (isPlayerFinished() && game.isFinished()) {
                             System.out.println("GAME OVER");
-                            GameOverDialog gameOverDialog = new GameOverDialog();
+                            gameOverDialog = new GameOverDialog(getWinners());
                             gameOverDialog.setVisible(true);
                             gameFrame.disablePanel();
                             return;
@@ -472,7 +485,7 @@ public class GUIGameRunner {
                                 }
                             }
 
-                            GameOverDialog gameOverDialog = new GameOverDialog();
+                            gameOverDialog = new GameOverDialog(getWinners());
                             gameOverDialog.setVisible(true);
                             return;
                         }
@@ -500,7 +513,7 @@ public class GUIGameRunner {
 
                     if (game.isFinished()) {
                         gameFrame.disablePanel();
-                        GameOverDialog gameOverDialog = new GameOverDialog();
+                        gameOverDialog = new GameOverDialog(getWinners());
                         gameOverDialog.setVisible(true);
                         return;
                     }
@@ -540,14 +553,14 @@ public class GUIGameRunner {
                                 }
                             }
 
-                            GameOverDialog gameOverDialog = new GameOverDialog();
+                            gameOverDialog = new GameOverDialog(getWinners());
                             gameOverDialog.setVisible(true);
                             return;
                         }
 
                         if (game.isFinished()) {
                             gameFrame.updateMessage("Game finished");
-                            GameOverDialog gameOverDialog = new GameOverDialog();
+                            gameOverDialog = new GameOverDialog(getWinners());
                             gameOverDialog.setVisible(true);
                             gameFrame.disablePanel();
                             return;
@@ -617,7 +630,7 @@ public class GUIGameRunner {
                             }
                         }
 
-                        GameOverDialog gameOverDialog = new GameOverDialog();
+                        gameOverDialog = new GameOverDialog(getWinners());
                         gameOverDialog.setVisible(true);
                         return;
                     }
@@ -706,7 +719,7 @@ public class GUIGameRunner {
                             }
                         }
 
-                        GameOverDialog gameOverDialog = new GameOverDialog();
+                        gameOverDialog = new GameOverDialog(getWinners());
                         gameOverDialog.setVisible(true);
                     }
                 }
@@ -770,7 +783,7 @@ public class GUIGameRunner {
         }
 
         if (game.isFinished()) {
-            GameOverDialog gameOverDialog = new GameOverDialog();
+            gameOverDialog = new GameOverDialog(getWinners());
             gameOverDialog.setVisible(true);
             gameFrame.disablePanel();
             return;
@@ -790,7 +803,7 @@ public class GUIGameRunner {
 
         // If the player has finished and the game has finished, return to main.
         if (isPlayerFinished() && game.isFinished()) {
-            GameOverDialog gameOverDialog = new GameOverDialog();
+            gameOverDialog = new GameOverDialog(getWinners());
             gameOverDialog.setVisible(true);
             gameFrame.disablePanel();
             System.out.println("FINISHED");
@@ -996,5 +1009,18 @@ public class GUIGameRunner {
 
         return false;
     }
+
+
+    private static String[] getWinners() {
+        int[] winnerIndices = game.getWinners();
+        String[] winners = new String[winnerIndices.length];
+
+        for (int i = 0; i < winnerIndices.length; ++i) {
+            winners[i] = allPlayers.get(winnerIndices[i]).getName();
+        }
+
+        return winners;
+    }
+
 
 }

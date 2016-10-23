@@ -37,6 +37,7 @@ public class GameSetupPanel extends JPanel {
 
     public GameSetupPanel() {
         setLayout(layout);
+
         nameQueryPanel.setBackground(background);
         nameFieldPanel.setBackground(background);
         playersQueryPanel.setBackground(background);
@@ -51,8 +52,17 @@ public class GameSetupPanel extends JPanel {
 
         nameQueryPanel.add(nameQuery);
         nameFieldPanel.add(nameField);
+
+        playersQuery.setFont(font);
+        playersQuery.setForeground(Color.WHITE);
         playersQueryPanel.add(playersQuery);
+
+        comboBox.setFont(font);
+        comboBox.setPreferredSize(new Dimension(200, 28));
         comboBoxPanel.add(comboBox);
+
+        next.setFont(font);
+        next.setPreferredSize(new Dimension(150, 28));
         nextPanel.add(next);
 
         add(nameQueryPanel);

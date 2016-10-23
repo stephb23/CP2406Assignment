@@ -13,7 +13,7 @@ public class GameFrame extends JFrame {
     int numberOfPlayers;
     String playerName;
 
-    Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 45);
+    Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 24);
     JLabel setUpTitle = new JLabel("Set Up a Game");
     JPanel setUpTitlePanel = new JPanel();
 
@@ -29,12 +29,16 @@ public class GameFrame extends JFrame {
         setBackground(background);
         setTitle("Set Up a Game");
         setResizable(true);
-        setSize(500, 300);
+        setSize(700, 300);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
         setUpTitle.setFont(titleFont);
+        setUpTitle.setForeground(Color.WHITE);
+        setUpTitlePanel.setBackground(background);
+        setUpTitlePanel.add(setUpTitle);
 
+        add(setUpTitlePanel);
         add(gameSetupPanel);
         isVisible();
     }
@@ -51,6 +55,7 @@ public class GameFrame extends JFrame {
 
     public void prepareGamePanel() {
         remove(gameSetupPanel);
+        remove(setUpTitlePanel);
 
         gamePanel = new GamePanel();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -60,6 +65,7 @@ public class GameFrame extends JFrame {
         add(gamePanel);
         setVisible(true);
     }
+
 
     public void drawPlayerHand(ArrayList<Card> playerHand) {
         gamePanel.drawCardPanel(playerHand);

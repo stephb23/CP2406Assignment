@@ -132,4 +132,7 @@ public class SupertrumpGame {
         return winOrder[index];
     }
 
+    // Returns all winners
+    public int[] getWinners() {return winOrder;}
+
 }
