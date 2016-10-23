@@ -36,6 +36,7 @@ public class GUIGameRunner {
     private static boolean firstPlayerFlag = true;
     private static EndOfRoundDialog endOfRoundDialog;
     private static GameOverDialog gameOverDialog;
+    private static boolean humanPlayedGeophysicist = false;
 
     public static void main(String[] args) {
         menuFrame = new MenuFrame();
@@ -245,6 +246,14 @@ public class GUIGameRunner {
                         player.setPlayerHand(game.dealHand());
                     }
 
+                    // Test the Geophysicist + Magnetite combination for the human player
+                    //allPlayers.get(0).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
+                    //allPlayers.get(0).pickUpCard(new PlayCard("Magnetite", "5.5-6", "5.2", "none", "moderate", "very high"));
+
+                    // Test the Geophysicist + Magnetite combination for the first AI player
+                    //allPlayers.get(1).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
+                    //allPlayers.get(1).pickUpCard(new PlayCard("Magnetite", "5.5-6", "5.2", "none", "moderate", "very high"));
+
                     HumanPlayer player = (HumanPlayer) allPlayers.get(0);
                     gameFrame.drawPlayerHand(player.getAllCards());
 
@@ -320,6 +329,7 @@ public class GUIGameRunner {
                                 endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
                                 endOfRoundDialog.setVisible(true);
                                 gameFrame.enablePanel();
+                                game.setRoundFinished(true);
                                 return;
                             }
 
@@ -455,6 +465,7 @@ public class GUIGameRunner {
                                 endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
                                 endOfRoundDialog.setVisible(true);
                                 isPlayerFinished();
+                                game.setRoundFinished(true);
                                 return;
                             }
 
@@ -629,7 +640,20 @@ public class GUIGameRunner {
                             return;
                         }
 
+                        if (tempCard.getCardName().equals("Magnetite") && humanPlayedGeophysicist) {
+                            endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(0).getName() + " played the combo and");
+                            endOfRoundDialog.setVisible(true);
+                            humanPlayedGeophysicist = false;
+                            game.setRoundFinished(true);
+                            return;
+                        } else {
+                            humanPlayedGeophysicist = false;
+                        }
+
                         if (tempCard.getType().equals("trump")) {
+                            if (tempCard.getCardName().equals("The Geophysicist")) {
+                                humanPlayedGeophysicist = true;
+                            }
                             gameFrame.enablePanel();
                             return;
                         } else {
@@ -729,6 +753,17 @@ public class GUIGameRunner {
 
                     System.out.println("I am here 2");
 
+                    if (tempCard.getCardName().equals("Magnetite") && humanPlayedGeophysicist) {
+                        endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(0).getName() + " played the combo and");
+                        endOfRoundDialog.setVisible(true);
+                        humanPlayedGeophysicist = false;
+                        game.setRoundFinished(true);
+                        return;
+                    } else {
+                        humanPlayedGeophysicist = false;
+                    }
+
+
                     // If the card played by the human is a trump card, assign the correct category.
                     if (game.getCurrentCard().getType().equals("trump")) {
                         // Activate all currently inactive players.
@@ -740,7 +775,6 @@ public class GUIGameRunner {
                             }
                         }
 
-                        if (game.getCurrentCard().getType().equals("trump")) {
                             // If the player and game have both finished, return to main
                             if (isPlayerFinished()) {
                                 if (game.isFinished()) {
@@ -751,6 +785,11 @@ public class GUIGameRunner {
 
                             // Change the trump category accordingly
                             TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
+
+                            if (trumpCard.getCardName().equals("The Geophysicist")){
+                                humanPlayedGeophysicist = true;
+                            }
+
                             if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
                                 messageDisplayer.displayChooseCategory();
                                 categoryDialog.setVisible(true);
@@ -766,7 +805,6 @@ public class GUIGameRunner {
                                 gameFrame.enablePanel();
                                 return;
                             }
-                        }
                         gameFrame.enablePanel();
                         return;
                     }
@@ -974,6 +1012,7 @@ public class GUIGameRunner {
                     System.out.println("round finished");
                     endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
                     endOfRoundDialog.setVisible(true);
+                    game.setRoundFinished(true);
                     isPlayerFinished();
                     return;
                 }

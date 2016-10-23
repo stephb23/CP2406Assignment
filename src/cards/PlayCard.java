@@ -42,6 +42,16 @@ public class PlayCard extends Card {
         setType(TYPE_STRING);
     }
 
+    public PlayCard(String cardName, String fileName, String imageName) {
+        super(fileName, imageName, cardName);
+        this.hardness = "0";
+        this.specificGravity = "0";
+        this.cleavage = "none";
+        this.crustalAbundance = "ultratrace";
+        this.economicValue = "low";
+        setType(TYPE_STRING);
+    }
+
     // Constructor for trump category info only
     public PlayCard(String cardName, String hardness, String specificGravity, String cleavage, String crustalAbundance, String economicValue) {
         super(cardName);
