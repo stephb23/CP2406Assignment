@@ -20,10 +20,13 @@ public class GameFrame extends JFrame {
     GameSetupPanel gameSetupPanel = new GameSetupPanel();
     GamePanel gamePanel = null;
 
-    GridBagLayout layout = new GridBagLayout();
+    Color background = new Color(28, 103, 116);
+
+    boolean enabled;
 
     public GameFrame() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setBackground(background);
         setTitle("Set Up a Game");
         setResizable(true);
         setSize(500, 300);
@@ -50,17 +53,30 @@ public class GameFrame extends JFrame {
         remove(gameSetupPanel);
 
         gamePanel = new GamePanel();
-        setVisible(false);
-        setVisible(true);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(dim.width, dim.height);
+        setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        setResizable(false);
         add(gamePanel);
-        validate();
-        repaint();
+        setVisible(true);
     }
 
     public void drawPlayerHand(ArrayList<Card> playerHand) {
         gamePanel.drawCardPanel(playerHand);
         validate();
         repaint();
+    }
+
+    public void drawAIPlayers(int numberOfAIPlayers) {
+        gamePanel.drawAIPlayers(numberOfAIPlayers);
+    }
+
+    public void drawActiveAIPlayer(int player) {
+        gamePanel.drawActiveAIPlayer(player);
+    }
+
+    public void drawInactiveAIPlayer(int player) {
+        gamePanel.drawInactiveAIPlayer(player);
     }
 
     public void updateCurrentCard(Card currentCard) {
@@ -76,10 +92,14 @@ public class GameFrame extends JFrame {
     }
 
     public void disablePanel() {
-        gamePanel.setEnabled(false);
+        enabled = false;
     }
 
     public void enablePanel() {
-        gamePanel.setEnabled(true);
+        enabled = true;
+    }
+
+    public boolean isPanelEnabled() {
+        return enabled;
     }
 }

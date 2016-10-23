@@ -17,7 +17,7 @@ public class DeckPanel extends JPanel {
     String locationString;
 
     public DeckPanel() {
-        setPreferredSize(new Dimension(250, 300));
+        setPreferredSize(new Dimension(240, 300));
         add(label);
         locationString = "src\\gui\\images\\Slide65.jpg";
         image = new ImageIcon(locationString);

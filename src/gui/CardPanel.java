@@ -22,6 +22,8 @@ public class CardPanel extends JPanel {
     public CardPanel() {
         setLayout(cardLayout);
         setPreferredSize(new Dimension(1000, 400));
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(new Dimension(dim.width - 200, 300));
     }
 
     public void populate(ArrayList<Card> cards) {

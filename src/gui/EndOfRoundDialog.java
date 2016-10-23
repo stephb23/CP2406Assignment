@@ -17,11 +17,16 @@ public class EndOfRoundDialog extends JDialog {
     JPanel roundWinnerPanel = new JPanel();
     JPanel buttonPanel = new JPanel();
 
-    public EndOfRoundDialog() {
+    public EndOfRoundDialog(String playerName) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setPreferredSize(new Dimension(300, 300));
+        setLayout(layout);
+        setSize(new Dimension(300, 300));
+        setAlwaysOnTop(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+
+        winMessage = playerName + " is the winner of this round!";
+        roundWinner.setText(winMessage);
 
         roundWinnerPanel.add(roundWinner);
         buttonPanel.add(button);
@@ -30,12 +35,5 @@ public class EndOfRoundDialog extends JDialog {
         add(buttonPanel);
 
         button.addActionListener(GUIGameRunner.newRoundListener);
-    }
-
-    public void setRoundOverMessage(String playerName) {
-        winMessage = playerName + " is the winner of this round!";
-        roundWinner.setText(winMessage);
-        revalidate();
-        repaint();
     }
 }

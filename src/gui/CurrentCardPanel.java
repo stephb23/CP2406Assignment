@@ -17,7 +17,7 @@ public class CurrentCardPanel extends JPanel {
     String locationString;
 
     public CurrentCardPanel() {
-        setPreferredSize(new Dimension(250, 300));
+        setPreferredSize(new Dimension(240, 300));
         add(label);
     }
 
@@ -31,6 +31,7 @@ public class CurrentCardPanel extends JPanel {
         remove(label);
         label = new JLabel(cardImage);
         add(label);
+        repaint();
     }
 }
 
