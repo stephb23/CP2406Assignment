@@ -1,24 +1,27 @@
 package gui;
 
-import gameControl.GUIGameRunner;
+import guiGameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * Created by Stephanie on 23/10/2016.
+ *
+ * This dialog appears when a game has finished, and lists the winners of the game
+ *
  */
 public class GameOverDialog extends JDialog {
-    JLabel title = new JLabel("Game over!");
-    JPanel titlePanel = new JPanel();
-    JPanel[] allWinners;
-    GridLayout layout = new GridLayout(0, 1);
-    Button newGameButton = new Button("Start New Game");
-    JPanel newGamePanel = new JPanel();
-    Button exitButton = new Button("Exit");
-    JPanel exitPanel = new JPanel();
+    private JLabel title = new JLabel("Game over!");
+    private JPanel titlePanel = new JPanel();
+    private JPanel[] allWinners;
+    private GridLayout layout = new GridLayout(0, 1);
+    private Button newGameButton = new Button("Back to Menu");
+    private JPanel newGamePanel = new JPanel();
+    private Button exitButton = new Button("Exit");
+    private JPanel exitPanel = new JPanel();
 
-    Color background = new Color(28, 103, 116);
+    private Color background = new Color(28, 103, 116);
 
     public GameOverDialog(String[] winners) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -26,6 +29,7 @@ public class GameOverDialog extends JDialog {
         setLayout(layout);
         setAlwaysOnTop(true);
         setSize(300, 300);
+        setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 

@@ -8,15 +8,18 @@ import java.util.ArrayList;
 
 /**
  * Created by Stephanie on 20/10/2016.
+ *
+ * This is the panel for gameplay
+ *
  */
 public class GamePanel extends JPanel {
-    CardPanel cardPanel = new CardPanel();
-    CurrentCardPanel currentCardPanel = new CurrentCardPanel();
-    DeckPanel deckPanel = new DeckPanel();
-    GridBagLayout layout = new GridBagLayout();
-    GridBagConstraints constraints = new GridBagConstraints();
-    JPanel messagePanel = new JPanel();
-    JLabel message = new JLabel("Starting Game!");
+    private CardPanel cardPanel = new CardPanel();
+    private CurrentCardPanel currentCardPanel = new CurrentCardPanel();
+    private DeckPanel deckPanel = new DeckPanel();
+    private GridBagLayout layout = new GridBagLayout();
+    private GridBagConstraints constraints = new GridBagConstraints();
+    private JPanel messagePanel = new JPanel();
+    private JLabel message = new JLabel("Starting Game!");
 
     AIPlayerPanel[] aiPlayers = new AIPlayerPanel[4];
 

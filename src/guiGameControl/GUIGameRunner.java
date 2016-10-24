@@ -1,4 +1,4 @@
-package gameControl;
+package guiGameControl;
 
 import cards.Card;
 import cards.PlayCard;
@@ -20,8 +20,14 @@ import static java.lang.System.exit;
 
 /**
  * Created by Stephanie on 20/10/2016.
+ *
+ * This class is the center of all game logic, controlling all action listeners and mouse listeners for every
+ * frame within the GUI. It performs all of the logic when a button is pressed, and updates the GUI when required.
+ *
  */
 public class GUIGameRunner {
+
+    // Variables
     private static String playerName;
     private static ArrayList<Player> allPlayers = new ArrayList<>();
     private static int numberOfAIPlayers;
@@ -32,20 +38,22 @@ public class GUIGameRunner {
     private static AboutGameFrame aboutGameFrame;
     private static GameFrame gameFrame;
     private static CategoryDialog categoryDialog;
-    private static MessageDisplayer messageDisplayer;
     private static boolean firstPlayerFlag = true;
     private static EndOfRoundDialog endOfRoundDialog;
     private static GameOverDialog gameOverDialog;
     private static boolean humanPlayedGeophysicist = false;
 
+    // Set up the main frame and the required dialogs
     public static void main(String[] args) {
         menuFrame = new MenuFrame();
         menuFrame.setVisible(true);
         categoryDialog = new CategoryDialog();
         categoryDialog.setVisible(false);
-        messageDisplayer = new MessageDisplayer();
+        instructionsFrame = new InstructionsFrame();
+        aboutGameFrame = new AboutGameFrame();
     }
 
+    // Set up the game frame
     public static ActionListener startGameListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             gameFrame = new GameFrame();
@@ -54,132 +62,35 @@ public class GUIGameRunner {
         }
     };
 
+    // Set up the instructions frame
     public static ActionListener instructionsListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            instructionsFrame = new InstructionsFrame();
             instructionsFrame.setVisible(true);
             menuFrame.setVisible(false);
         }
     };
 
+    // Set up the about game frame
     public static ActionListener aboutGameListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            aboutGameFrame = new AboutGameFrame();
             aboutGameFrame.setVisible(true);
             menuFrame.setVisible(false);
         }
     };
 
+    // Return back to the main menu from instructions or about game
     public static ActionListener backToMenuListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             menuFrame.setVisible(true);
             if (instructionsFrame.isVisible()) {
-                instructionsFrame.dispose();
+                instructionsFrame.setVisible(false);
             } else if (aboutGameFrame.isVisible()) {
-                aboutGameFrame.dispose();
+                aboutGameFrame.setVisible(false);
             }
         }
     };
 
-    public static MouseListener passListener = new MouseListener() {
-        @Override
-        public void  mouseClicked(MouseEvent mouseEvent) {
-            new Thread() {
-                @Override
-                public void run() {
-                    if (!gameFrame.isPanelEnabled()) {
-                        return;
-                    }
-
-                    if (game.isFinished()){
-                        return;
-                    }
-
-                    gameFrame.disablePanel();
-                    firstPlayerFlag = false;
-                    HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
-                    humanPlayer.pass();
-                    if (game.getDeckSize() != 0) {
-                        humanPlayer.pickUpCard(game.dealSingleCard());
-                    }
-
-                    gameFrame.drawPlayerHand(humanPlayer.getAllCards());
-                    game.nextTurn();
-
-                    if (game.isFinished()) {
-                        gameOverDialog = new GameOverDialog(getWinners());
-                        gameOverDialog.setVisible(true);
-                        return;
-                    }
-
-                    if (isRoundFinished()) {
-                        System.out.println("ROUND OVER BABY");
-                        endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
-                        endOfRoundDialog.setVisible(true);
-                        return;
-                    }
-
-                    boolean trumpPlayed = false;
-                    int handSize;
-
-                    while (!game.isRoundFinished() && !trumpPlayed) {
-                        if (game.getCurrentPlayer() == 0) {
-                            game.nextTurn();
-                        }
-
-                        for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
-                            if (game.getCurrentPlayer() != 0 && !allPlayers.get(i).isInactive()
-                                    && !game.isRoundFinished() && !game.isFinished()) {
-                                handSize = allPlayers.get(i).getHandSize();
-                                gameFrame.drawActiveAIPlayer(i);
-                                performAILogic(allPlayers.get(i));
-                                if (!allPlayers.get(i).isInactive()) {
-                                    gameFrame.drawInactiveAIPlayer(i);
-                                }
-                                delay(1000);
-                                if (handSize -  allPlayers.get(i).getHandSize() > 1) {
-                                    System.out.println("TRUMP ALERT");
-                                    trumpPlayed = true;
-                                    System.out.println(handSize - allPlayers.get(i).getHandSize());
-                                    gameFrame.setEnabled(true);
-                                }
-
-                            } else if (game.isRoundFinished() || game.isFinished()) {
-                                if (game.isFinished()) {
-                                    gameFrame.updateMessage("Game over");
-                                    gameOverDialog = new GameOverDialog(getWinners());
-                                    gameOverDialog.setVisible(true);
-                                }
-                                return;
-                            }
-                        }
-                    }
-                    gameFrame.setEnabled(true);
-                }
-            }.start();
-        }
-
-        @Override
-        public void mousePressed(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent mouseEvent) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent mouseEvent) {
-
-        }
-    };
-
+    // Handles pressing "quit" at the end of the game
     public static ActionListener quitListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -194,6 +105,7 @@ public class GUIGameRunner {
         }
     };
 
+    // Exits the program on button click
     public static ActionListener exitListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -201,6 +113,7 @@ public class GUIGameRunner {
         }
     };
 
+    // Sets the category chosen by the human player in the pop-up menu
     public static ActionListener categoryListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -211,12 +124,15 @@ public class GUIGameRunner {
         }
     };
 
+
+    // Sets up the game
     public static ActionListener gameSetupListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             new Thread() {
                 public void run() {
 
+                    // Prepare the game panel
                     gameFrame.prepareGamePanel();
                     gameFrame.disablePanel();
 
@@ -228,18 +144,11 @@ public class GUIGameRunner {
 
                     // Create the players
                     createPlayers(numberOfPlayers);
-                    System.out.println("\nPlayers in this game are: ");
-                    for (Player player : allPlayers) {
-                        System.out.println(player.getName());
-                    }
 
                     gameFrame.drawAIPlayers(numberOfAIPlayers);
 
                     // Create the deck
                     game.createDeck();
-
-                    // Confirm that the deck has been created.
-                    System.out.println("\nDealing cards...");
 
                     // Deal cards and show size of each player's hand
                     for (Player player : allPlayers) {
@@ -247,8 +156,8 @@ public class GUIGameRunner {
                     }
 
                     // Test the Geophysicist + Magnetite combination for the human player
-                    //allPlayers.get(0).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
-                    //allPlayers.get(0).pickUpCard(new PlayCard("Magnetite", "5.5-6", "5.2", "none", "moderate", "very high"));
+                    //allPlayers.get(0).pickUpCard(new TrumpCard("Slide59.jpg", "Slide59", "The Geophysicist", "Specific gravity"));
+                    //allPlayers.get(0).pickUpCard(new PlayCard("Slide46.jpg", "Slide46", "Magnetite", "5.5-6", "5.2", "none", "moderate", "very high"));
 
                     // Test the Geophysicist + Magnetite combination for the first AI player
                     //allPlayers.get(1).pickUpCard(new TrumpCard("The Geophysicist", "Specific gravity"));
@@ -259,30 +168,26 @@ public class GUIGameRunner {
 
                     // Choose first player
                     game.selectDealer(numberOfPlayers);
-                    System.out.println("\n" + allPlayers.get(game.getCurrentPlayer()).getName() + " will start the game!\n");
 
                     if (game.getCurrentPlayer() == 0) {
                         categoryDialog.setVisible(true);
                     } else if (game.getCurrentPlayer() != 0) {
+                        // Perform beginning AI player logic
                         gameFrame.drawActiveAIPlayer(game.getCurrentPlayer());
                         gameFrame.disablePanel();
                         firstPlayerFlag = false;
                         // Cast the player to an AI player & display their name
                         AIPlayer aiPlayer = (AIPlayer) allPlayers.get(game.getCurrentPlayer());
-                        messageDisplayer.displayStartingPlayerName(aiPlayer.getName());
 
 
                         // Get the AI player to choose a category
                         game.setCurrentCategory(aiPlayer.chooseCategory());
-                        messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
                         gameFrame.updateMessage("Category is " + game.getCurrentCategory());
 
                         // Get the AI player to play the first card of the round
                         game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
 
                         // Display the current card
-                        messageDisplayer.displayCardChoiceMessage(aiPlayer.getName());
-                        System.out.println(game.getCurrentCard());
                         gameFrame.updateCurrentCard(game.getCurrentCard());
 
                         delay(1000);
@@ -298,9 +203,6 @@ public class GUIGameRunner {
 
                         // Actions to perform while the card to beat is a trump card
                         if (game.getCurrentCard().getType().equals("trump")) {
-
-                            // Display a message showing that the player has played a trump
-                            messageDisplayer.displayTrumpCardPlayedMessage(game.getCurrentCategory(), aiPlayer.getName());
 
                             // Default value for this flag is false
                             checkForWinningCombo = false;
@@ -381,47 +283,40 @@ public class GUIGameRunner {
 
                     gameFrame.disablePanel();
 
+                    // Activate all players and update the GUI
                     for (int i = 0; i < allPlayers.size(); i++) {
                         Player player = allPlayers.get(i);
                         player.activate();
-                        System.out.println("Player " + player.getName() + " inactive = " + player.isInactive());
                         if (!player.isInactive() && i != 0) {
                             gameFrame.drawInactiveAIPlayer(i);
                         }
                     }
 
-
                     if (game.getCurrentPlayer() == 0) {
                         categoryDialog.setVisible(true);
                         gameFrame.enablePanel();
-                        game.setCurrentCard(new PlayCard());
+                        game.setCurrentCard(new PlayCard()); // lowest possible card
                     } else if (game.getCurrentPlayer() != 0) {
                         gameFrame.disablePanel();
                         gameFrame.drawActiveAIPlayer(game.getCurrentPlayer());
                         firstPlayerFlag = false;
                         // Cast the player to an AI player & display their name
                         AIPlayer aiPlayer = (AIPlayer) allPlayers.get(game.getCurrentPlayer());
-                        messageDisplayer.displayStartingPlayerName(aiPlayer.getName());
-
 
                         // Get the AI player to choose a category
                         game.setCurrentCategory(aiPlayer.chooseCategory());
-                        messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
                         gameFrame.updateMessage("Category is " + game.getCurrentCategory());
 
                         // Get the AI player to play the first card of the round
                         game.setCurrentCard(aiPlayer.playFirstCard(game.getCurrentCategory()));
 
                         // Display the current card
-                        messageDisplayer.displayCardChoiceMessage(aiPlayer.getName());
-                        System.out.println(game.getCurrentCard());
                         gameFrame.updateCurrentCard(game.getCurrentCard());
 
                         delay(1000);
 
                         // Check whether the player has finished and determine whether the game has finished too.
                         if (isPlayerFinished() && game.isFinished()) {
-                            System.out.println("GAME OVER");
                             gameOverDialog = new GameOverDialog(getWinners());
                             gameOverDialog.setVisible(true);
                             gameFrame.disablePanel();
@@ -433,9 +328,6 @@ public class GUIGameRunner {
 
                         // Actions to perform while the card to beat is a trump card
                         if (game.getCurrentCard().getType().equals("trump")) {
-
-                            // Display a message showing that the player has played a trump
-                            messageDisplayer.displayTrumpCardPlayedMessage(game.getCurrentCategory(), aiPlayer.getName());
 
                             // Default value for this flag is false
                             checkForWinningCombo = false;
@@ -484,6 +376,7 @@ public class GUIGameRunner {
                         }
                         game.nextTurn();
 
+                        // Continue the round until it or the game has finished.
                         if (game.getCurrentPlayer() != 0) {
                             for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
                                 if (game.getCurrentPlayer() != 0 && !allPlayers.get(i).isInactive()
@@ -500,8 +393,8 @@ public class GUIGameRunner {
                             }
                         }
 
+                        // If the human player has finished, keep going without them
                         if (allPlayers.get(0).isFinished()) {
-                            System.out.println("here");
                             gameFrame.disablePanel();
                             // Go on without me!!
                             while (!game.isFinished()) {
@@ -544,12 +437,14 @@ public class GUIGameRunner {
             new Thread() {
                 @Override
                 public void run() {
+                    // Return if game panel is disabled
                     if (!gameFrame.isPanelEnabled()) {
                         return;
                     }
 
                     gameFrame.disablePanel();
 
+                    // Check whether game is finished
                     if (game.isFinished()) {
                         gameFrame.disablePanel();
                         gameOverDialog = new GameOverDialog(getWinners());
@@ -557,11 +452,13 @@ public class GUIGameRunner {
                         return;
                     }
 
+                    // Get card that click was performed on
                     JLabel label = (JLabel) mouseEvent.getSource();
                     String cardName = label.getName();
                     HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
                     Card tempCard;
 
+                    // Set a temporary card for comparison
                     int cardIndex = humanPlayer.getIndexOf(cardName);
                     tempCard = humanPlayer.getCardAt(cardIndex);
 
@@ -573,8 +470,8 @@ public class GUIGameRunner {
 
                         isPlayerFinished(0);
 
+                        // Continue if player is inactive but not finished
                         if (allPlayers.get(0).isInactive() && !allPlayers.get(0).isFinished()) {
-                            System.out.println("here");
                             gameFrame.disablePanel();
                             // Go on without me!!
                             while (!game.isRoundFinished()) {
@@ -598,8 +495,8 @@ public class GUIGameRunner {
                             return;
                         }
 
+                        // Continue until game is over if the player has finished
                         if (allPlayers.get(0).isFinished()) {
-                            System.out.println("here");
                             gameFrame.disablePanel();
                             // Go on without me!!
                             while (!game.isFinished()) {
@@ -626,6 +523,7 @@ public class GUIGameRunner {
                             return;
                         }
 
+                        // Check whether game has finished
                         if (game.isFinished()) {
                             gameFrame.updateMessage("Game finished");
                             gameOverDialog = new GameOverDialog(getWinners());
@@ -634,12 +532,14 @@ public class GUIGameRunner {
                             return;
                         }
 
+                        // Check whether round has finished
                         if (isRoundFinished()) {
                             endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
                             endOfRoundDialog.setVisible(true);
                             return;
                         }
 
+                        // Check for round winning combo
                         if (tempCard.getCardName().equals("Magnetite") && humanPlayedGeophysicist) {
                             endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(0).getName() + " played the combo and");
                             endOfRoundDialog.setVisible(true);
@@ -650,6 +550,7 @@ public class GUIGameRunner {
                             humanPlayedGeophysicist = false;
                         }
 
+                        // Check for trump card
                         if (tempCard.getType().equals("trump")) {
                             if (tempCard.getCardName().equals("The Geophysicist")) {
                                 humanPlayedGeophysicist = true;
@@ -680,11 +581,12 @@ public class GUIGameRunner {
 
                     // Check that the card that the player wants to play will beat the current card
                     if (!compareCards(tempCard, game.getCurrentCard(), game.getCurrentCategory())) {
-                        System.out.println("Nope try again"); //TODO: ERROR PANEL
+                        gameFrame.updateMessage("Invalid choice! Category is " + game.getCurrentCategory());
                         gameFrame.enablePanel();
                         return;
+                    } else {
+                        gameFrame.updateMessage("Category is " + game.getCurrentCategory());
                     }
-                    System.out.println("I am here");
 
                     // When the player has chosen a valid card, allow it to be played.
                     game.setCurrentCard(tempCard);
@@ -694,15 +596,17 @@ public class GUIGameRunner {
 
                     isPlayerFinished(0);
 
+                    // Continue until round is over if human has passed
                     if (allPlayers.get(0).isInactive() && !allPlayers.get(0).isFinished()) {
-                        System.out.println("here");
                         gameFrame.disablePanel();
                         // Go on without me!!
                         while (!game.isRoundFinished()) {
                             for (int i = 1; i < numberOfPlayers; i++) {
                                 if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
                                         !game.isRoundFinished() &&  !game.isFinished()) {
-                                    gameFrame.drawActiveAIPlayer(i);
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawActiveAIPlayer(i);
+                                    }
                                     performAILogic(allPlayers.get(game.getCurrentPlayer()));
                                     if (!allPlayers.get(i).isInactive()) {
                                         gameFrame.drawInactiveAIPlayer(i);
@@ -717,17 +621,17 @@ public class GUIGameRunner {
                         return;
                     }
 
-
-
+                    // Continue until game has finished if human has finished
                     if (allPlayers.get(0).isFinished()) {
-                        System.out.println("here");
                         gameFrame.disablePanel();
                         // Go on without me!!
                         while (!game.isFinished()) {
                             for (int i = 1; i < numberOfPlayers; i++) {
                                 if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
                                         !game.isRoundFinished() &&  !game.isFinished()) {
-                                    gameFrame.drawActiveAIPlayer(i);
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawActiveAIPlayer(i);
+                                    }
                                     performAILogic(allPlayers.get(game.getCurrentPlayer()));
                                     if (!allPlayers.get(i).isInactive()) {
                                         gameFrame.drawInactiveAIPlayer(i);
@@ -751,8 +655,7 @@ public class GUIGameRunner {
                         return;
                     }
 
-                    System.out.println("I am here 2");
-
+                    // Check for winning combo
                     if (tempCard.getCardName().equals("Magnetite") && humanPlayedGeophysicist) {
                         endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(0).getName() + " played the combo and");
                         endOfRoundDialog.setVisible(true);
@@ -791,7 +694,6 @@ public class GUIGameRunner {
                             }
 
                             if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
-                                messageDisplayer.displayChooseCategory();
                                 categoryDialog.setVisible(true);
                             } else if (trumpCard.getCardName().equals("The Geophysicist")) {
                                 game.setCurrentCategory(trumpCard.getCardDescription().toLowerCase());
@@ -809,9 +711,9 @@ public class GUIGameRunner {
                         return;
                     }
 
-                    System.out.println("I am here 3");
                     game.nextTurn();
 
+                    // Finish all player turns
                     for (int i = game.getCurrentPlayer(); i < numberOfPlayers; i++) {
                         if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
                                 !game.isRoundFinished() &&  !game.isFinished()) {
@@ -832,15 +734,17 @@ public class GUIGameRunner {
 
                     isPlayerFinished(0);
 
+                    // Continue the round if human player has passed
                     if (allPlayers.get(0).isInactive() && !allPlayers.get(0).isFinished()) {
-                        System.out.println("here");
                         gameFrame.disablePanel();
                         // Go on without me!!
                         while (!game.isRoundFinished()) {
                             for (int i = 1; i < numberOfPlayers; i++) {
                                 if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
                                         !game.isRoundFinished() &&  !game.isFinished()) {
-                                    gameFrame.drawActiveAIPlayer(i);
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawActiveAIPlayer(i);
+                                    }
                                     performAILogic(allPlayers.get(game.getCurrentPlayer()));
                                     if (!allPlayers.get(i).isInactive()) {
                                         gameFrame.drawInactiveAIPlayer(i);
@@ -855,6 +759,7 @@ public class GUIGameRunner {
                         return;
                     }
 
+                    // Continue until game is finished if human player has finished
                     if (allPlayers.get(0).isFinished()) {
                         gameFrame.disablePanel();
                         // Go on without me!!
@@ -862,7 +767,9 @@ public class GUIGameRunner {
                             for (int i = 1; i < numberOfPlayers; i++) {
                                 if (game.getCurrentPlayer() != 0 && !allPlayers.get(game.getCurrentPlayer()).isInactive() &&
                                         !game.isRoundFinished() &&  !game.isFinished()) {
-                                    gameFrame.drawActiveAIPlayer(i);
+                                    if (!allPlayers.get(i).isInactive()) {
+                                        gameFrame.drawActiveAIPlayer(i);
+                                    }
                                     performAILogic(allPlayers.get(game.getCurrentPlayer()));
                                     if (!allPlayers.get(i).isInactive()) {
                                         gameFrame.drawInactiveAIPlayer(i);
@@ -903,6 +810,115 @@ public class GUIGameRunner {
         }
     };
 
+    // Controls behaviour when the human chooses to pas
+    public static MouseListener passListener = new MouseListener() {
+        @Override
+        public void  mouseClicked(MouseEvent mouseEvent) {
+            // Run in a new thread as this is the only way to update the current card every turn
+            new Thread() {
+                @Override
+                public void run() {
+
+                    // If it isn't the players turn, the panel isn't enabled > return
+                    if (!gameFrame.isPanelEnabled()) {
+                        return;
+                    }
+
+                    // If the game is finished, do nothing
+                    if (game.isFinished()){
+                        return;
+                    }
+
+                    // Disable the panel
+                    gameFrame.disablePanel();
+                    firstPlayerFlag = false;
+
+                    // Perform pass actions and redraw the player's hand
+                    HumanPlayer humanPlayer = (HumanPlayer) allPlayers.get(0);
+                    humanPlayer.pass();
+                    if (game.getDeckSize() != 0) {
+                        humanPlayer.pickUpCard(game.dealSingleCard());
+                    }
+                    gameFrame.drawPlayerHand(humanPlayer.getAllCards());
+                    game.nextTurn();
+
+                    // Check whether round has now finished
+                    if (isRoundFinished()) {
+                        endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
+                        endOfRoundDialog.setVisible(true);
+                        return;
+                    }
+
+                    // Flag for checking whether a trump was played
+                    boolean trumpPlayed = false;
+                    int handSize;
+
+
+                    // Continue allowing AI players to play while the round isn't finished
+                    // or until a trump card is played
+                    while (!game.isRoundFinished() && !trumpPlayed) {
+                        if (game.getCurrentPlayer() == 0) {
+                            game.nextTurn();
+                        }
+
+                        for (int i = game.getCurrentPlayer(); i < numberOfPlayers; ++i) {
+                            if (game.getCurrentPlayer() != 0 && !allPlayers.get(i).isInactive()
+                                    && !game.isRoundFinished() && !game.isFinished()) {
+                                // Update GUI images and perform AI logic
+                                handSize = allPlayers.get(i).getHandSize();
+                                if (!allPlayers.get(i).isInactive()) {
+                                    gameFrame.drawActiveAIPlayer(i);
+                                }
+                                performAILogic(allPlayers.get(i));
+                                if (!allPlayers.get(i).isInactive()) {
+                                    gameFrame.drawInactiveAIPlayer(i);
+                                }
+                                delay(1000);
+
+                                // Check whether a trump card has been played
+                                if (handSize -  allPlayers.get(i).getHandSize() > 1) {
+                                    trumpPlayed = true;
+                                    gameFrame.setEnabled(true);
+                                }
+
+                            } else if (game.isRoundFinished() || game.isFinished()) {
+                                // Check whether the game has finished
+                                if (game.isFinished()) {
+                                    gameFrame.updateMessage("Game over");
+                                    gameOverDialog = new GameOverDialog(getWinners());
+                                    gameOverDialog.setVisible(true);
+                                }
+                                return;
+                            }
+                        }
+                    }
+                    // Enable the frame again for the human
+                    gameFrame.setEnabled(true);
+                }
+            }.start();
+        }
+
+        @Override
+        public void mousePressed(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent mouseEvent) {
+
+        }
+    };
+
     private static void performAILogic(Player player) {
         // AI PLAYER LOGIC
 
@@ -922,10 +938,9 @@ public class GUIGameRunner {
         if (tempCard != null) {
             // Set the current card if not null.
             game.setCurrentCard(tempCard);
-            System.out.println(game.getCurrentCard().getCardName());
             gameFrame.updateCurrentCard(game.getCurrentCard());
             delay(1000);
-            gameFrame.enablePanel();messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
+            gameFrame.enablePanel();
         } else {
             // The player must pass if they return null. Pick up a card if the deck isn't empty.
             if (game.getDeckSize() != 0) {
@@ -933,7 +948,6 @@ public class GUIGameRunner {
             }
             aiPlayer.pass();
             gameFrame.drawOutAIPlayer(game.getCurrentPlayer(), "P");
-            messageDisplayer.displayAIPassMessage(aiPlayer.getName());
         }
 
         if (isPlayerFinished()) {
@@ -948,7 +962,6 @@ public class GUIGameRunner {
         }
 
         if (isRoundFinished()) {
-            System.out.println("round finished");
             endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
             endOfRoundDialog.setVisible(true);
             return;
@@ -986,7 +999,6 @@ public class GUIGameRunner {
                 TrumpCard trumpCard = (TrumpCard) game.getCurrentCard();
                 if (trumpCard.getCardDescription().equals("Change to trumps category of your choice")) {
                     game.setCurrentCategory(aiPlayer.chooseCategory());
-                    messageDisplayer.displayAICategoryChoice(aiPlayer.getName(), game.getCurrentCategory());
                 } else if (trumpCard.getCardName().equals("The Geophysicist")){
                     // Flag that the first part of the round-winning combo has been played
                     checkForWinningCombo = true;
@@ -1002,14 +1014,11 @@ public class GUIGameRunner {
 
 
                 // Delay for a second and display the current card.
-                messageDisplayer.displayCard(game.getCurrentCard().toString(), aiPlayer.getName());
                 gameFrame.updateCurrentCard(game.getCurrentCard());
                 delay(1000);
 
                 // Check whether the winning combination of Geophysicist + Magnetite has been played
                 if (game.getCurrentCard().getCardName().equals("Magnetite") && checkForWinningCombo) {
-                    messageDisplayer.displayWinningComboPlayedMessage(aiPlayer.getName());
-                    System.out.println("round finished");
                     endOfRoundDialog = new EndOfRoundDialog(allPlayers.get(game.getCurrentPlayer()).getName());
                     endOfRoundDialog.setVisible(true);
                     game.setRoundFinished(true);
@@ -1061,7 +1070,6 @@ public class GUIGameRunner {
             player.finish();
             gameFrame.drawOutAIPlayer(game.getCurrentPlayer(), "F");
             game.addWinner(game.getCurrentPlayer()); // add the player to the win list
-            System.out.println(player.getName() + " finished");
             return true;
         }
         return false;
@@ -1080,7 +1088,6 @@ public class GUIGameRunner {
                 gameFrame.drawOutAIPlayer(playerNumber, "F");
             }
             game.addWinner(game.getCurrentPlayer()); // add the player to the win list
-            System.out.println(player.getName() + " finished");
             return true;
         }
         return false;
@@ -1139,7 +1146,7 @@ public class GUIGameRunner {
         return false;
     }
 
-    public static boolean isRoundFinished() {
+    private static boolean isRoundFinished() {
         // Count the number of players that have passed or finished
         int playersPassed = 0;
         for (Player p : allPlayers) {
@@ -1153,9 +1160,7 @@ public class GUIGameRunner {
         if (playersPassed == numberOfPlayers - 1) {
             for (int i = 0; i < allPlayers.size(); ++i) {
                 if (!allPlayers.get(i).isInactive()){
-                    messageDisplayer.displayRoundWinner(allPlayers.get(i).getName());
                     game.setCurrentPlayer(i);
-                    System.out.println(i);
                     if (i == 0) {
                         firstPlayerFlag = true;
                     }

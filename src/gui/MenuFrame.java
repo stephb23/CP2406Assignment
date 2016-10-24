@@ -1,31 +1,32 @@
 package gui;
 
-import gameControl.GUIGameRunner;
+import guiGameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by Stephanie on 19/10/2016.
+ *
+ * This is the main menu frame
+ *
  */
 public class MenuFrame extends JFrame {
-    JPanel titlePanel = new JPanel();
-    JPanel newGamePanel = new JPanel();
-    JPanel instructionsPanel = new JPanel();
-    JPanel aboutGamePanel = new JPanel();
+    private JPanel titlePanel = new JPanel();
+    private JPanel newGamePanel = new JPanel();
+    private JPanel instructionsPanel = new JPanel();
+    private JPanel aboutGamePanel = new JPanel();
 
-    GridLayout layout = new GridLayout(0, 1);
-    Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 45);
-    Font font = new Font("Calibri", Font.PLAIN, 30);
-    JLabel title = new JLabel("Welcome to Supertrump Minerals!");
-    Button newGameButton = new Button("Start a Game");
-    Button instructionsButton = new Button("Instructions");
-    Button aboutGameButton = new Button("About the Game");
+    private GridLayout layout = new GridLayout(0, 1);
+    private Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 45);
+    private Font font = new Font("Calibri", Font.PLAIN, 30);
+    private JLabel title = new JLabel("Welcome to Supertrump Minerals!");
+    private Button newGameButton = new Button("Start a Game");
+    private Button instructionsButton = new Button("Instructions");
+    private Button aboutGameButton = new Button("About the Game");
 
-    Color background = new Color(28, 103, 116);
-    Dimension buttonSize = new Dimension(300, 50);
+    private Color background = new Color(28, 103, 116);
+    private Dimension buttonSize = new Dimension(300, 50);
 
     public MenuFrame() {
         setLayout(layout);

@@ -1,23 +1,24 @@
 package gui;
 
 import cards.Card;
-import gameControl.GUIGameRunner;
+import guiGameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 /**
  * Created by Stephanie on 20/10/2016.
+ *
+ * This panel shows the human player's hand
+ *
  */
 public class CardPanel extends JPanel {
-    ImageIcon image = new ImageIcon();
-    Image scaledImage;
-    ImageIcon cardImage = new ImageIcon();
-    ArrayList<JLabel> allCardImages = new ArrayList<>();
-    GridLayout cardLayout = new GridLayout (1, 0);
+    private ImageIcon image = new ImageIcon();
+    private Image scaledImage;
+    private ImageIcon cardImage = new ImageIcon();
+    private ArrayList<JLabel> allCardImages = new ArrayList<>();
+    private GridLayout cardLayout = new GridLayout (1, 0);
 
     public CardPanel() {
         setLayout(cardLayout);

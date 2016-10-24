@@ -1,30 +1,31 @@
 package gui;
 
-import gameControl.GUIGameRunner;
+import guiGameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by Stephanie on 19/10/2016.
+ *
+ * This frame holds the instructions panel
+ *
  */
 
 public class InstructionsFrame extends JFrame {
-    JPanel titlePanel = new JPanel();
-    JPanel instructionsPanel = new InstructionsPanel();
-    JPanel backPanel = new JPanel();
+    private JPanel titlePanel = new JPanel();
+    private JPanel instructionsPanel = new InstructionsPanel();
+    private JPanel backPanel = new JPanel();
 
-    BorderLayout layout = new BorderLayout();
-    Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 45);
-    Font font = new Font("Calibri", Font.PLAIN, 30);
-    JLabel title = new JLabel("Instructions");
-    JLabel instructions = new JLabel();
-    Button backButton = new Button("Back");
+    private BorderLayout layout = new BorderLayout();
+    private Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 45);
+    private Font font = new Font("Calibri", Font.PLAIN, 30);
+    private JLabel title = new JLabel("Instructions");
+    private JLabel instructions = new JLabel();
+    private Button backButton = new Button("Back");
 
-    Color background = new Color(28, 103, 116);
-    Dimension buttonSize = new Dimension(300, 50);
+    private Color background = new Color(28, 103, 116);
+    private Dimension buttonSize = new Dimension(300, 50);
 
     public InstructionsFrame() {
         setLayout(layout);

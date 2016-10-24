@@ -1,4 +1,4 @@
-package gameControl;
+package cliGameControl;
 
 import cards.Card;
 import cards.PlayCard;

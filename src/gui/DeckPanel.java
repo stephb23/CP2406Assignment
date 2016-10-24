@@ -1,20 +1,22 @@
 package gui;
 
-import cards.Card;
-import gameControl.GUIGameRunner;
+import guiGameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * Created by Stephanie on 22/10/2016.
+ *
+ * This panel shows the deck
+ *
  */
 public class DeckPanel extends JPanel {
-    ImageIcon image = new ImageIcon();
-    Image scaledImage;
-    ImageIcon cardImage = new ImageIcon();
-    JLabel label = new JLabel("");
-    String locationString;
+    private ImageIcon image = new ImageIcon();
+    private Image scaledImage;
+    private ImageIcon cardImage = new ImageIcon();
+    private JLabel label = new JLabel("");
+    private String locationString;
 
     public DeckPanel() {
         setPreferredSize(new Dimension(240, 300));

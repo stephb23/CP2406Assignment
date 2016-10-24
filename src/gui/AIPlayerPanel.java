@@ -5,14 +5,17 @@ import java.awt.*;
 
 /**
  * Created by Stephanie on 23/10/2016.
+ *
+ * This panel draws AI icons
+ *
  */
 public class AIPlayerPanel extends JPanel {
 
-    Color color = Color.LIGHT_GRAY;
+    private Color color = Color.LIGHT_GRAY;
     String string = "";
-    int rightOrLeft;
-    Dimension dim;
-    String playerName;
+    private int rightOrLeft;
+    private Dimension dim;
+    private String playerName;
 
     Color backgroundColour = new Color(28, 103, 116);
 

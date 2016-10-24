@@ -1,23 +1,27 @@
 package gui;
 
-import gameControl.GUIGameRunner;
+import guiGameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * Created by Stephanie on 22/10/2016.
+ *
+ * This dialog indicates the end of a round
+ *
  */
+
 public class EndOfRoundDialog extends JDialog {
-    JLabel roundWinner = new JLabel();
-    String winMessage;
-    Button button = new Button("Next Round");
-    GridLayout layout = new GridLayout(0, 1);
+    private JLabel roundWinner = new JLabel();
+    private String winMessage;
+    private Button button = new Button("Next Round");
+    private GridLayout layout = new GridLayout(0, 1);
 
-    JPanel roundWinnerPanel = new JPanel();
-    JPanel buttonPanel = new JPanel();
+    private JPanel roundWinnerPanel = new JPanel();
+    private JPanel buttonPanel = new JPanel();
 
-    Color background = new Color(28, 103, 116);
+    private Color background = new Color(28, 103, 116);
 
     public EndOfRoundDialog(String playerName) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -25,6 +29,7 @@ public class EndOfRoundDialog extends JDialog {
         setLayout(layout);
         setSize(new Dimension(500, 150));
         setAlwaysOnTop(true);
+        setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 

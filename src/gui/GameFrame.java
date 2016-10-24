@@ -9,28 +9,31 @@ import java.util.ArrayList;
 
 /**
  * Created by Stephanie on 19/10/2016.
+ *
+ * This frame holds the game set up and game play panels, and performs updates where required
+ *
  */
 public class GameFrame extends JFrame {
-    int numberOfPlayers;
-    String playerName;
+    private int numberOfPlayers;
+    private String playerName;
 
-    Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 48);
-    JLabel setUpTitle = new JLabel("Set Up a Game");
-    JPanel setUpTitlePanel = new JPanel();
+    private Font titleFont = new Font("Monotype Corsiva", Font.PLAIN, 48);
+    private JLabel setUpTitle = new JLabel("Set Up a Game");
+    private JPanel setUpTitlePanel = new JPanel();
 
-    GameSetupPanel gameSetupPanel = new GameSetupPanel();
-    GamePanel gamePanel = null;
+    private GameSetupPanel gameSetupPanel = new GameSetupPanel();
+    private GamePanel gamePanel = null;
 
-    JPanel setUpPanel;
+    private JPanel setUpPanel;
 
-    Color background = new Color(28, 103, 116);
+    private Color background = new Color(28, 103, 116);
 
-    boolean enabled;
+    private boolean enabled;
 
     public GameFrame() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Set Up a Game");
-        setResizable(true);
+        setResizable(false);
         setSize(700, 300);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
@@ -68,7 +71,6 @@ public class GameFrame extends JFrame {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(dim.width, dim.height);
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        setResizable(false);
         add(gamePanel);
         setVisible(true);
     }

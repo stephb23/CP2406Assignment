@@ -5,12 +5,17 @@ import java.awt.*;
 
 /**
  * Created by Stephanie on 19/10/2016.
+ *
+ * This panel contains all instructions as labels
+ *
  */
+
+
 public class InstructionsPanel extends JPanel {
 
-    GridLayout layout = new GridLayout(0, 1);
-    JLabel[] instructions = new JLabel[12];
-    Font font = new Font("Arial", Font.PLAIN, 20);
+    private GridLayout layout = new GridLayout(0, 1);
+    private JLabel[] instructions = new JLabel[12];
+    private Font font = new Font("Arial", Font.PLAIN, 20);
 
     InstructionsPanel() {
         setBackground(new Color(28, 103, 116));

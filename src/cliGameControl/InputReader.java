@@ -1,10 +1,6 @@
-package gameControl;
-
-import jdk.internal.util.xml.impl.Input;
+package cliGameControl;
 
 import java.util.Scanner;
-import java.util.concurrent.SynchronousQueue;
-import java.util.stream.Collector;
 
 /**
  * Created by Stephanie on 8/09/2016.

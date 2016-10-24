@@ -5,12 +5,15 @@ import java.awt.*;
 
 /**
  * Created by Stephanie on 19/10/2016.
+ *
+ * This panel holds the About Game information as labels
+ *
  */
 public class AboutGamePanel extends JPanel {
 
-    GridLayout layout = new GridLayout(0, 1);
-    JLabel[] aboutGame = new JLabel[15];
-    Font font = new Font("Arial", Font.PLAIN, 20);
+    private GridLayout layout = new GridLayout(0, 1);
+    private JLabel[] aboutGame = new JLabel[15];
+    private Font font = new Font("Arial", Font.PLAIN, 20);
 
     AboutGamePanel() {
         setBackground(new Color(28, 103, 116));

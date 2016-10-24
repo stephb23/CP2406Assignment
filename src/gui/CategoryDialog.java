@@ -1,12 +1,15 @@
 package gui;
 
-import gameControl.GUIGameRunner;
+import guiGameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * Created by Stephanie on 21/10/2016.
+ *
+ * This is the pop-up dialog that asks the user to choose a category
+ *
  */
 public class CategoryDialog extends JDialog {
     private String[] categoryStrings = {"Hardness", "Specific Gravity", "Cleavage", "Crustal Abundance", "Economic Value"};
@@ -26,6 +29,7 @@ public class CategoryDialog extends JDialog {
         setLayout(gridLayout);
         setTitle("Pick a category");
         setSize(300, 200);
+        setResizable(false);
         setAlwaysOnTop(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);

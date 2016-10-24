@@ -1,39 +1,40 @@
 package gui;
 
-import gameControl.GUIGameRunner;
+import guiGameControl.GUIGameRunner;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by Stephanie on 19/10/2016.
+ *
+ * This panel allows for setting up a game
+ *
  */
 public class GameSetupPanel extends JPanel {
-    GridLayout layout = new GridLayout(0, 2);
+    private GridLayout layout = new GridLayout(0, 2);
 
-    JPanel nameQueryPanel = new JPanel();
-    JLabel nameQuery = new JLabel("What is your name?");
-    JPanel nameFieldPanel = new JPanel();
-    JTextField nameField = new JTextField("Tony Stark");
+    private JPanel nameQueryPanel = new JPanel();
+    private JLabel nameQuery = new JLabel("What is your name?");
+    private JPanel nameFieldPanel = new JPanel();
+    private JTextField nameField = new JTextField("Tony Stark");
 
-    JPanel playersQueryPanel = new JPanel();
-    JLabel playersQuery = new JLabel("Select the number of players: ");
-    JPanel comboBoxPanel = new JPanel();
-    String[] playerNumberOptions = {"2", "3", "4"};
-    JComboBox comboBox = new JComboBox(playerNumberOptions);
+    private JPanel playersQueryPanel = new JPanel();
+    private JLabel playersQuery = new JLabel("Select number of opponents: ");
+    private JPanel comboBoxPanel = new JPanel();
+    private String[] playerNumberOptions = {"2", "3", "4"};
+    private JComboBox comboBox = new JComboBox(playerNumberOptions);
 
-    JPanel nextPanel = new JPanel();
-    Button next = new Button("Next");
+    private JPanel nextPanel = new JPanel();
+    private Button next = new Button("Next");
 
-    JPanel blankPanel = new JPanel();
+    private JPanel blankPanel = new JPanel();
 
-    Color background = new Color(28, 103, 116);
-    Font font = new Font("Arial", Font.PLAIN, 24);
+    private Color background = new Color(28, 103, 116);
+    private Font font = new Font("Arial", Font.PLAIN, 24);
 
-    int numberOfPlayers;
-    String playerName;
+    private int numberOfPlayers;
+    private String playerName;
 
     public GameSetupPanel() {
         setLayout(layout);
